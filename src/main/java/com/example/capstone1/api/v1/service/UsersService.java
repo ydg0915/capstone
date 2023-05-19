@@ -53,6 +53,7 @@ public class UsersService {
                 .username(signUp.getUsername())
                 .email(signUp.getEmail())
                 .password(passwordEncoder.encode(signUp.getPassword()))
+                .introduction("")
                 .roles(Collections.singletonList(Authority.ROLE_USER.name()))
                 .build();
         usersRepository.save(user);
@@ -134,23 +135,35 @@ public class UsersService {
     public ResponseEntity<?> updateUser(String username, UserRequestDto.Update update) {
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
 
-        if (!passwordEncoder.matches(update.getOldPassword(), user.getPassword())) {
-            return response.fail("기존 패스워드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
-        }
+        if (update.getOldPassword() != null) {
+            if (update.getNewPassword() == null)
+                return response.fail("새로운 패스워드를 입력해주세요.", HttpStatus.BAD_REQUEST);
 
-        String newPassword = update.getNewPassword();
-        user.setPassword(passwordEncoder.encode(newPassword));
+            if (!passwordEncoder.matches(update.getOldPassword(), user.getPassword())) {
+                return response.fail("기존 패스워드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+            }
+
+            String newPassword = update.getNewPassword();
+            user.setPassword(passwordEncoder.encode(newPassword));
+        }
+        if (update.getNewPassword() != null && update.getOldPassword() == null)
+                return response.fail("기존 패스워드를 입력해주세요.", HttpStatus.BAD_REQUEST);
+
+        if (update.getIntroduction() != null)
+                user.setIntroduction(update.getIntroduction());
+
         usersRepository.save(user);
 
-        return response.success("회원 정보가 변경 되었습니다.");
+        return response.success("회원 정보가 변경되었습니다.");
     }
 
-    public ResponseEntity<?> profiles(String username) {
+    public ResponseEntity<?> profile(String username) {
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
 
         UserResponseDto.UserInfo userInfo = UserResponseDto.UserInfo.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .introduction(user.getIntroduction())
                 .build();
 
         return response.success(userInfo, "회원 프로필 조회에 성공했습니다.", HttpStatus.OK);

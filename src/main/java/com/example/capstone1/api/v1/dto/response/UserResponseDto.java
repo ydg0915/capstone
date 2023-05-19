@@ -22,5 +22,6 @@ public class UserResponseDto {
     public static class UserInfo {
         private String username;
         private String email;
+        private String introduction;
     }
 }

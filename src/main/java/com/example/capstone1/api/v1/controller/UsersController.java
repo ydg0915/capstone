@@ -76,7 +76,7 @@ public class UsersController {
     }
 
     @PatchMapping("/{username}")
-    public ResponseEntity<?> updateUser(@PathVariable String username, @Validated @RequestBody UserRequestDto.Update update, @ApiIgnore Errors errors) {
+    public ResponseEntity<?> updateUser(@PathVariable String username, @Validated @RequestBody UserRequestDto.Update update, Errors errors) {
         if (errors.hasErrors()) {
             return response.invalidFields(Helper.refineErrors(errors));
         }
@@ -89,9 +89,9 @@ public class UsersController {
         return usersService.updateUser(username, update);
     }
 
-    @GetMapping("/{username}/profiles")
-    public ResponseEntity<?> profiles(@PathVariable String username) {
-        return usersService.profiles(username);
+    @GetMapping("/{username}")
+    public ResponseEntity<?> profile(@PathVariable String username) {
+        return usersService.profile(username);
     }
 
     @GetMapping("/search")
