@@ -4,15 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-
-public class MusicResponseDto {
+public class PostResponseDto {
 
     @Builder
     @Getter
     @AllArgsConstructor
-    public static class TrackInfo {
-        private String artistName;
-        private String trackTitle;
-        private String albumImageUrl;
+    public static class PostInfo {
+        private Long id;
+        private String title;
+        private String content;
+        private String username;
     }
 }

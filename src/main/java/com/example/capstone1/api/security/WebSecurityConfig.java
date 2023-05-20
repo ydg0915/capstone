@@ -30,11 +30,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/users/sign-up", "/api/v1/users/login", "/api/v1/users/authority",
-                        "/api/v1/users/reissue", "/api/v1/users/logout", "/api/v1/users/search",
-                        "/api/v1/music/*").permitAll()
+                        "/api/v1/users/reissue", "/api/v1/users/logout", "/api/v1/users/search").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/v1/users/{username}").permitAll()
-                .antMatchers("/api/v1/users/userTest").hasRole("USER")
                 .antMatchers(HttpMethod.PATCH, "/api/v1/users/{username}").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/api/v1/posts").hasRole("USER")
+                .antMatchers(HttpMethod.PUT, "/api/v1/posts/{id}").hasRole("USER")
+                .antMatchers(HttpMethod.DELETE, "/api/v1/posts/{id}").hasRole("USER")
+                .antMatchers("/api/v1/users/userTest").hasRole("USER")
                 .antMatchers("/api/v1/users/adminTest").hasRole("ADMIN")
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class);

@@ -76,7 +76,7 @@ public class UsersController {
     }
 
     @PatchMapping("/{username}")
-    public ResponseEntity<?> updateUser(@PathVariable String username, @Validated @RequestBody UserRequestDto.Update update, Errors errors) {
+    public ResponseEntity<?> update(@PathVariable String username, @Validated @RequestBody UserRequestDto.Update update, Errors errors) {
         if (errors.hasErrors()) {
             return response.invalidFields(Helper.refineErrors(errors));
         }
