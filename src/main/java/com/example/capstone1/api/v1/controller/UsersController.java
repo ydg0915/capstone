@@ -21,7 +21,6 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 public class UsersController {
 
-    private final JwtTokenProvider jwtTokenProvider;
     private final UsersService usersService;
     private final Response response;
 
@@ -76,16 +75,10 @@ public class UsersController {
     }
 
     @PatchMapping("/{username}")
-    public ResponseEntity<?> update(@PathVariable String username, @Validated @RequestBody UserRequestDto.Update update, Errors errors) {
+    public ResponseEntity<?> update(@PathVariable String username, @Validated @RequestBody UserRequestDto.Update update, @ApiIgnore Errors errors) {
         if (errors.hasErrors()) {
             return response.invalidFields(Helper.refineErrors(errors));
         }
-
-        String currentUser = SecurityUtil.getCurrentUsername();
-        if (!currentUser.equals(username)) {
-            return response.fail("접근 권한이 없습니다.", HttpStatus.FORBIDDEN);
-        }
-
         return usersService.updateUser(username, update);
     }
 

@@ -6,9 +6,7 @@ import com.example.capstone1.api.lib.Helper;
 import com.example.capstone1.api.security.SecurityUtil;
 import com.example.capstone1.api.v1.dto.Response;
 import com.example.capstone1.api.v1.dto.request.PostRequestDto;
-import com.example.capstone1.api.v1.dto.request.UserRequestDto;
 import com.example.capstone1.api.v1.dto.response.PostResponseDto;
-import com.example.capstone1.api.v1.dto.response.UserResponseDto;
 import com.example.capstone1.api.v1.service.PostsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
@@ -27,6 +27,10 @@ public class PostsController {
     private final PostsService postsService;
     private final Response response;
 
+    @GetMapping
+    public ResponseEntity<?> getAllPosts() {
+        return postsService.getAllPosts();
+    }
 
     @PostMapping
     public ResponseEntity<?> create(@Validated PostRequestDto.Create create, @ApiIgnore Errors errors) {
@@ -34,21 +38,12 @@ public class PostsController {
             return response.invalidFields(Helper.refineErrors(errors));
         }
 
-        String username = SecurityUtil.getCurrentUsername();
-
-        return postsService.create(create, username);
+        return postsService.create(create);
     }
 
     @GetMapping("/{id}")
-    public PostResponseDto.PostInfo getPostById(@PathVariable Long id) {
-        Posts post = postsService.getPostById(id);
-
-        return PostResponseDto.PostInfo.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .username(post.getUser().getUsername())
-                .build();
+    public ResponseEntity<?> getPostById(@PathVariable Long id) {
+        return postsService.getPostById(id);
     }
 
     @PutMapping("/{id}")
@@ -57,26 +52,11 @@ public class PostsController {
             return response.invalidFields(Helper.refineErrors(errors));
         }
 
-        Posts post = postsService.getPostById(id);
-
-        String username = SecurityUtil.getCurrentUsername();
-        if (!post.getUser().getUsername().equals(username)) {
-            return response.fail("접근 권한이 없습니다.", HttpStatus.FORBIDDEN);
-        }
-
-        return postsService.update(update, post);
+        return postsService.update(update, id);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-
-        Posts post = postsService.getPostById(id);
-
-        String username = SecurityUtil.getCurrentUsername();
-        if (!post.getUser().getUsername().equals(username)) {
-            return response.fail("접근 권한이 없습니다.", HttpStatus.FORBIDDEN);
-        }
-
-        return postsService.delete(post);
+        return postsService.delete(id);
     }
 }

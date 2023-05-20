@@ -133,6 +133,11 @@ public class UsersService {
     }
 
     public ResponseEntity<?> updateUser(String username, UserRequestDto.Update update) {
+        String currentUser = SecurityUtil.getCurrentUsername();
+        if (!currentUser.equals(username)) {
+            return response.fail("접근 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
 
         if (update.getOldPassword() != null) {
