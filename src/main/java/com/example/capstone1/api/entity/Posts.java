@@ -1,8 +1,13 @@
 package com.example.capstone1.api.entity;
 
+import com.example.capstone1.api.enums.Position;
+import com.example.capstone1.api.enums.TechStack;
 import lombok.*;
 
 import javax.persistence.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -23,10 +28,29 @@ public class Posts extends BaseTime {
     @JoinColumn
     private Users user;
 
-    @Column(length = 40, nullable = false)
+    @Column
     private String title;
 
     @Lob
-    @Column(nullable = false)
+    @Column
     private String content;
+
+    @Column
+    private int recruitmentSize;
+
+    @Column
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    private List<Position> position;
+
+    @Column
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    private List<TechStack> techStack;
+
+    @Column
+    private LocalDate recruitmentPeriod;
+
+    @Column
+    private int expectedDuration;
 }

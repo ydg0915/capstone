@@ -25,7 +25,8 @@ public class UsersController {
     private final Response response;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUp(@Validated UserRequestDto.SignUp signUp, @ApiIgnore Errors errors) {
+    public ResponseEntity<?> signUp(@Validated UserRequestDto.SignUp signUp,
+                                    @ApiIgnore Errors errors) {
         if (errors.hasErrors()) {
             return response.invalidFields(Helper.refineErrors(errors));
         }
@@ -33,7 +34,8 @@ public class UsersController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Validated UserRequestDto.Login login, @ApiIgnore Errors errors) {
+    public ResponseEntity<?> login(@Validated UserRequestDto.Login login,
+                                   @ApiIgnore Errors errors) {
         if (errors.hasErrors()) {
             return response.invalidFields(Helper.refineErrors(errors));
         }
@@ -41,7 +43,8 @@ public class UsersController {
     }
 
     @PostMapping("/reissue")
-        public ResponseEntity<?> reissue(@Validated UserRequestDto.Reissue reissue, @ApiIgnore Errors errors) {
+        public ResponseEntity<?> reissue(@Validated UserRequestDto.Reissue reissue,
+                                         @ApiIgnore Errors errors) {
             if (errors.hasErrors()) {
                 return response.invalidFields(Helper.refineErrors(errors));
             }

@@ -36,7 +36,7 @@ public class Users extends BaseTime implements UserDetails {
     private String introduction;
 
     @Column
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 

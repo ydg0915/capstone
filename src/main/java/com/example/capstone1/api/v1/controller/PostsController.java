@@ -1,23 +1,17 @@
 package com.example.capstone1.api.v1.controller;
 
-import com.example.capstone1.api.entity.Posts;
-import com.example.capstone1.api.entity.Users;
 import com.example.capstone1.api.lib.Helper;
-import com.example.capstone1.api.security.SecurityUtil;
 import com.example.capstone1.api.v1.dto.Response;
 import com.example.capstone1.api.v1.dto.request.PostRequestDto;
-import com.example.capstone1.api.v1.dto.response.PostResponseDto;
 import com.example.capstone1.api.v1.service.PostsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,7 +27,7 @@ public class PostsController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Validated PostRequestDto.Create create, @ApiIgnore Errors errors) {
+    public ResponseEntity<?> create(@Validated @RequestBody PostRequestDto.Create create, @ApiIgnore Errors errors) {
         if (errors.hasErrors()) {
             return response.invalidFields(Helper.refineErrors(errors));
         }
@@ -46,7 +40,7 @@ public class PostsController {
         return postsService.getPostById(id);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Validated @RequestBody PostRequestDto.Update update, @ApiIgnore Errors errors) {
         if (errors.hasErrors()) {
             return response.invalidFields(Helper.refineErrors(errors));

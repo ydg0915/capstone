@@ -38,9 +38,14 @@ public class PostsService {
             for (Posts post : posts) {
                 PostResponseDto.PostInfo postInfo = PostResponseDto.PostInfo.builder()
                         .id(post.getId())
+                        .username(post.getUser().getUsername())
                         .title(post.getTitle())
                         .content(post.getContent())
-                        .username(post.getUser().getUsername())
+                        .recruitmentSize(post.getRecruitmentSize())
+                        .position(post.getPosition())
+                        .techStack(post.getTechStack())
+                        .recruitmentPeriod(post.getRecruitmentPeriod())
+                        .expectedDuration(post.getExpectedDuration())
                         .build();
 
                 postInfos.add(postInfo);
@@ -61,9 +66,14 @@ public class PostsService {
 
         PostResponseDto.PostInfo postInfo = PostResponseDto.PostInfo.builder()
                 .id(post.getId())
+                .username(post.getUser().getUsername())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .username(post.getUser().getUsername())
+                .recruitmentSize(post.getRecruitmentSize())
+                .position(post.getPosition())
+                .techStack(post.getTechStack())
+                .recruitmentPeriod(post.getRecruitmentPeriod())
+                .expectedDuration(post.getExpectedDuration())
                 .build();
 
         return response.success(postInfo, "게시글 조회에 성공했습니다.", HttpStatus.OK);
@@ -76,9 +86,14 @@ public class PostsService {
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
 
         Posts post = Posts.builder()
+                .user(user)
                 .title(create.getTitle())
                 .content(create.getContent())
-                .user(user)
+                .recruitmentSize(create.getRecruitmentSize())
+                .position(create.getPosition())
+                .techStack(create.getTechStack())
+                .recruitmentPeriod(create.getRecruitmentPeriod())
+                .expectedDuration(create.getExpectedDuration())
                 .build();
 
         postsRepository.save(post);
@@ -100,8 +115,14 @@ public class PostsService {
             return response.fail("접근 권한이 없습니다.", HttpStatus.FORBIDDEN);
         }
 
-        post.setTitle(update.getTitle());
-        post.setContent(update.getContent());
+        update.getTitle().ifPresent(post::setTitle);
+        update.getContent().ifPresent(post::setContent);
+        update.getRecruitmentSize().ifPresent(post::setRecruitmentSize);
+        update.getPosition().ifPresent(post::setPosition);
+        update.getTechStack().ifPresent(post::setTechStack);
+        update.getRecruitmentPeriod().ifPresent(post::setRecruitmentPeriod);
+        update.getExpectedDuration().ifPresent(post::setExpectedDuration);
+
 
         postsRepository.save(post);
 
