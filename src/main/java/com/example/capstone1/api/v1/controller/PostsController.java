@@ -53,4 +53,9 @@ public class PostsController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         return postsService.delete(id);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(String query) {
+        return postsService.search(query);
+    }
 }

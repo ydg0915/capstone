@@ -6,6 +6,7 @@ import com.example.capstone1.api.security.SecurityUtil;
 import com.example.capstone1.api.v1.dto.Response;
 import com.example.capstone1.api.v1.dto.request.PostRequestDto;
 import com.example.capstone1.api.v1.dto.response.PostResponseDto;
+import com.example.capstone1.api.v1.dto.response.UserResponseDto;
 import com.example.capstone1.api.v1.repository.PostsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -146,5 +147,29 @@ public class PostsService {
         postsRepository.delete(post);
 
         return response.success("게시글 삭제에 성공했습니다.");
+    }
+
+    public ResponseEntity<?> search(String query) {
+        List<Posts> posts = postsRepository.findByTitleContainingOrContentContaining(query);
+        if (posts.isEmpty())
+            return response.success("'" + query + "'에 대한 검색결과가 없습니다.");
+        else {
+            List<PostResponseDto.PostInfo> postInfos = new ArrayList<>();
+            for (Posts post : posts) {
+                PostResponseDto.PostInfo postInfo = PostResponseDto.PostInfo.builder()
+                        .username(post.getUser().getUsername())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .recruitmentSize(post.getRecruitmentSize())
+                        .position(post.getPosition())
+                        .techStack(post.getTechStack())
+                        .recruitmentPeriod(post.getRecruitmentPeriod())
+                        .expectedDuration(post.getExpectedDuration())
+                        .build();
+
+                postInfos.add(postInfo);
+            }
+            return response.success(postInfos, "게시글 조회에 성공했습니다.", HttpStatus.OK);
+        }
     }
 }

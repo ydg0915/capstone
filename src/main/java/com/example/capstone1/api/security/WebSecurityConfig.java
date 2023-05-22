@@ -34,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/api/v1/users/{username}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/posts").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/posts/{id}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/posts/search").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/api/v1/users/{username}").hasRole("USER")
                 .antMatchers(HttpMethod.POST, "/api/v1/posts").hasRole("USER")
                 .antMatchers(HttpMethod.PATCH, "/api/v1/posts/{id}").hasRole("USER")

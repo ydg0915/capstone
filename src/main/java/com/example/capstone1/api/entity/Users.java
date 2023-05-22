@@ -1,5 +1,6 @@
 package com.example.capstone1.api.entity;
 
+import com.example.capstone1.api.enums.TechStack;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
