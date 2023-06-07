@@ -5,6 +5,7 @@ import com.example.capstone1.api.enums.TechStack;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +19,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Entity
 public class Posts extends BaseTime {
-    @Column
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,29 +29,31 @@ public class Posts extends BaseTime {
     @JoinColumn
     private Users user;
 
-    @Column
+    @Column(nullable = false)
+    @Size(max = 50)
     private String title;
 
-    @Column
+    @Column(nullable = false)
+    @Size(max = 500)
     @Lob
     private String content;
 
-    @Column
+    @Column(nullable = false)
     private int recruitmentSize;
 
-    @Column
+    @Column(nullable = false)
     @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     private List<Position> position;
 
-    @Column
+    @Column(nullable = false)
     @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     private List<TechStack> techStack;
 
-    @Column
+    @Column(nullable = false)
     private LocalDate recruitmentPeriod;
 
-    @Column
+    @Column(nullable = false)
     private int expectedDuration;
 }

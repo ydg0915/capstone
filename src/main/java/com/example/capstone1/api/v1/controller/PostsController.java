@@ -1,16 +1,16 @@
 package com.example.capstone1.api.v1.controller;
 
-import com.example.capstone1.api.lib.Helper;
 import com.example.capstone1.api.v1.dto.Response;
 import com.example.capstone1.api.v1.dto.request.PostRequestDto;
+import com.example.capstone1.api.v1.dto.response.PostResponseDto;
 import com.example.capstone1.api.v1.service.PostsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+
+import javax.validation.Valid;
+import java.util.List;
 
 
 @Slf4j
@@ -23,39 +23,38 @@ public class PostsController {
 
     @GetMapping
     public ResponseEntity<?> getAllPosts() {
-        return postsService.getAllPosts();
+        List<PostResponseDto.PostInfo> postInfos = postsService.getAllPosts();
+        return response.success(postInfos, "전체 게시글 조회에 성공했습니다.");
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Validated @RequestBody PostRequestDto.Create create, @ApiIgnore Errors errors) {
-        if (errors.hasErrors()) {
-            return response.invalidFields(Helper.refineErrors(errors));
-        }
-
-        return postsService.create(create);
+    public ResponseEntity<?> create(@Valid @RequestBody PostRequestDto.Create create) {
+        postsService.create(create);
+        return response.success("게시글 작성에 성공했습니다.");
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPostById(@PathVariable Long id) {
-        return postsService.getPostById(id);
+        PostResponseDto.PostInfo postInfo = postsService.getPostById(id);
+        return response.success(postInfo, "게시글 조회에 성공했습니다.");
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @Validated @RequestBody PostRequestDto.Update update, @ApiIgnore Errors errors) {
-        if (errors.hasErrors()) {
-            return response.invalidFields(Helper.refineErrors(errors));
-        }
-
-        return postsService.update(update, id);
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @Valid @RequestBody PostRequestDto.Update update) {
+        postsService.update(update, id);
+        return response.success("게시글 수정에 성공했습니다.");
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        return postsService.delete(id);
+        postsService.delete(id);
+        return response.success("게시글 삭제에 성공했습니다.");
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> search(String query) {
-        return postsService.search(query);
+    public ResponseEntity<?> searchPosts(String query) {
+        List<PostResponseDto.PostInfo> postInfos = postsService.searchPosts(query);
+        return response.success(postInfos, "게시글 조회에 성공했습니다.");
     }
 }

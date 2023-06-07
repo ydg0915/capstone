@@ -61,7 +61,7 @@ public class UsersController {
 
     @GetMapping("/search")
     public ResponseEntity<?> searchUsers(String query) {
-        List<UserResponseDto.UserInfoForSearching> userInfos = usersService.search(query);
+        List<UserResponseDto.UserInfoForSearching> userInfos = usersService.searchUsers(query);
         return response.success(userInfos, "회원 목록 조회에 성공했습니다.");
     }
 

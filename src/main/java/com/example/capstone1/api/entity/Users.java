@@ -6,6 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,24 +20,27 @@ import java.util.stream.Collectors;
 @Entity
 public class Users extends BaseTime implements UserDetails {
 
-    @Column
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
+    @Size(min = 4, max = 12)
     private String username;
 
-    @Column
+    @Column(nullable = false)
+    @Size(min = 8, max = 16)
     private String password;
 
-    @Column
+    @Column(nullable = false)
+    @Size(max = 254)
     private String email;
 
     @Column
+    @Size(max = 200)
     private String introduction;
 
-    @Column
+    @Column(nullable = false)
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     private List<String> roles = new ArrayList<>();

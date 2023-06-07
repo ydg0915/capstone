@@ -157,7 +157,7 @@ public class UsersService {
         return userInfo;
     }
 
-    public List<UserResponseDto.UserInfoForSearching> search(String query) {
+    public List<UserResponseDto.UserInfoForSearching> searchUsers(String query) {
         List<Users> users = usersRepository.findByUsernameContaining(query);
         if (users.isEmpty()) {
             return Collections.emptyList();
