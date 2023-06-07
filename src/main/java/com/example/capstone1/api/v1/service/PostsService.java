@@ -29,15 +29,15 @@ public class PostsService {
     private final CustomUserDetailsService customUserDetailsService;
 
 
-    public List<PostResponseDto.PostInfo> getAllPosts() {
+    public List<PostResponseDto.PostInfoForBlock> getAllPosts() {
 
         List<Posts> posts = postsRepository.findAll();
         if (posts.isEmpty())
             return Collections.emptyList();
         else {
-            List<PostResponseDto.PostInfo> postInfos = new ArrayList<>();
+            List<PostResponseDto.PostInfoForBlock> postInfos = new ArrayList<>();
             for (Posts post : posts) {
-                PostResponseDto.PostInfo postInfo = PostsMapper.INSTANCE.toPostInfo(post);
+                PostResponseDto.PostInfoForBlock postInfo = PostsMapper.INSTANCE.toPostInfoForBlock(post);
                 postInfos.add(postInfo);
             }
             return postInfos;
@@ -113,15 +113,15 @@ public class PostsService {
         postsRepository.delete(post);
     }
 
-    public List<PostResponseDto.PostInfo> searchPosts(String query) {
+    public List<PostResponseDto.PostInfoForBlock> searchPosts(String query) {
         List<Posts> posts = postsRepository.findByTitleContainingOrContentContaining(query);
         if (posts.isEmpty()) {
             return Collections.emptyList();
         }
         else {
-            List<PostResponseDto.PostInfo> postInfos = new ArrayList<>();
+            List<PostResponseDto.PostInfoForBlock> postInfos = new ArrayList<>();
             for (Posts post : posts) {
-                PostResponseDto.PostInfo postInfo = PostsMapper.INSTANCE.toPostInfo(post);
+                PostResponseDto.PostInfoForBlock postInfo = PostsMapper.INSTANCE.toPostInfoForBlock(post);
                 postInfos.add(postInfo);
             }
             return postInfos;

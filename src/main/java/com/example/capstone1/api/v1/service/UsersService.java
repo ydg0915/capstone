@@ -6,7 +6,6 @@ import com.example.capstone1.api.exception.CustomException;
 import com.example.capstone1.api.jwt.JwtTokenProvider;
 import com.example.capstone1.api.mapper.UsersMapper;
 import com.example.capstone1.api.security.SecurityUtil;
-import com.example.capstone1.api.v1.dto.Response;
 import com.example.capstone1.api.v1.dto.request.UserRequestDto;
 import com.example.capstone1.api.v1.dto.response.UserResponseDto;
 import com.example.capstone1.api.v1.repository.UsersRepository;
@@ -24,6 +23,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.example.capstone1.api.exception.ErrorCode.*;
@@ -74,24 +74,24 @@ public class UsersService {
         return tokenInfo;
     }
 
-    public UserResponseDto.TokenInfo reissue(UserRequestDto.Reissue reissue) {
-        if (!jwtTokenProvider.validateToken(reissue.getRefreshToken())) {
+    public UserResponseDto.TokenInfo reissue(String accessToken, String refreshToken) {
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
             throw new CustomException(BAD_TOKEN_FORMAT);
         }
 
-        Authentication authentication = jwtTokenProvider.getAuthentication(reissue.getAccessToken());
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
-        String refreshToken = (String)redisTemplate.opsForValue().get("RT:" + authentication.getName());
+        String redisRefreshToken = (String)redisTemplate.opsForValue().get("RT:" + authentication.getName());
 
-        if(ObjectUtils.isEmpty(refreshToken)) {
+        if(ObjectUtils.isEmpty(redisRefreshToken)) {
             throw new CustomException(REFRESH_TOKEN_NOT_FOUND);
         }
 
-        if(!refreshToken.equals(reissue.getRefreshToken())) {
+        if(!redisRefreshToken.equals(refreshToken)) {
             throw new CustomException(MISMATCH_REFRESH_TOKEN);
         }
 
-        UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateAccessToken(authentication, reissue.getRefreshToken());
+        UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateAccessToken(authentication, refreshToken);
 
         redisTemplate.opsForValue()
                 .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
@@ -99,20 +99,20 @@ public class UsersService {
         return tokenInfo;
     }
 
-    public void logout(UserRequestDto.Logout logout) {
-        if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
+    public void logout(String accessToken) {
+        if (!jwtTokenProvider.validateToken(accessToken)) {
             throw new CustomException(BAD_TOKEN_FORMAT);
         }
 
-        Authentication authentication = jwtTokenProvider.getAuthentication(logout.getAccessToken());
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
         if (redisTemplate.opsForValue().get("RT:" + authentication.getName()) != null) {
             redisTemplate.delete("RT:" + authentication.getName());
         }
 
-        Long expiration = jwtTokenProvider.getExpiration(logout.getAccessToken());
+        Long expiration = jwtTokenProvider.getExpiration(accessToken);
         redisTemplate.opsForValue()
-                .set(logout.getAccessToken(), "logout", expiration, TimeUnit.MILLISECONDS);
+                .set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
     }
 
     public void authority() {
@@ -150,8 +150,14 @@ public class UsersService {
         usersRepository.save(user);
     }
 
-    public UserResponseDto.UserInfo getUserInfoById(String username) {
-        Users user = (Users) customUserDetailsService.loadUserByUsername(username);
+    public UserResponseDto.UserInfo getUserInfoById(Long userId) {
+        Optional<Users> optionalUser = usersRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new CustomException(USER_NOT_FOUND);
+        }
+
+        Users user = optionalUser.get();
+
         UserResponseDto.UserInfo userInfo = UsersMapper.INSTANCE.toUserInfo(user);
 
         return userInfo;

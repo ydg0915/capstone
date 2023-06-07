@@ -19,6 +19,7 @@ public class UserResponseDto {
     @Getter
     @AllArgsConstructor
     public static class UserInfo {
+        private Long id;
         private String username;
         private String email;
         private String introduction;

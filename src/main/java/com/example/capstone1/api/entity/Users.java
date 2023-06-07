@@ -29,7 +29,6 @@ public class Users extends BaseTime implements UserDetails {
     private String username;
 
     @Column(nullable = false)
-    @Size(min = 8, max = 16)
     private String password;
 
     @Column(nullable = false)

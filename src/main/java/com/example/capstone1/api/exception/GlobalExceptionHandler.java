@@ -8,6 +8,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -18,9 +19,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    protected ResponseEntity<ErrorResponse> handleCustomEx(CustomException e) {
+    protected ResponseEntity<?> handleCustomEx(CustomException e) {
         log.error("CustomException throw Exception : {}", e.getErrorCode());
         return ErrorResponse.toResponseEntity(e.getErrorCode());
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    protected ResponseEntity<?> handleMissingRequestHeaderEx(MissingRequestHeaderException e) {
+        log.error("MissingRequestHeaderException throw Exception : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @Override
@@ -28,7 +35,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                          HttpHeaders headers,
                                                          HttpStatus status, WebRequest request) {
         log.error("BindException throw Exception : {}", e.getMessage());
-
         return getResponseEntity(e, status);
     }
 
@@ -38,7 +44,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
         log.error("MethodArgumentNotValidException throw Exception : {}", e.getMessage());
-
         return getResponseEntity(e, status);
     }
 

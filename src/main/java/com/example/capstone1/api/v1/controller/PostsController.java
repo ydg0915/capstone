@@ -23,38 +23,38 @@ public class PostsController {
 
     @GetMapping
     public ResponseEntity<?> getAllPosts() {
-        List<PostResponseDto.PostInfo> postInfos = postsService.getAllPosts();
+        List<PostResponseDto.PostInfoForBlock> postInfos = postsService.getAllPosts();
         return response.success(postInfos, "전체 게시글 조회에 성공했습니다.");
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody PostRequestDto.Create create) {
+    public ResponseEntity<?> create(@Valid PostRequestDto.Create create) {
         postsService.create(create);
         return response.success("게시글 작성에 성공했습니다.");
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getPostById(@PathVariable Long id) {
-        PostResponseDto.PostInfo postInfo = postsService.getPostById(id);
+    @GetMapping("/{postId}")
+    public ResponseEntity<?> getPostById(@PathVariable Long postId) {
+        PostResponseDto.PostInfo postInfo = postsService.getPostById(postId);
         return response.success(postInfo, "게시글 조회에 성공했습니다.");
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,
-                                    @Valid @RequestBody PostRequestDto.Update update) {
-        postsService.update(update, id);
+    @PatchMapping("/{postId}")
+    public ResponseEntity<?> update(@PathVariable Long postId,
+                                    @Valid PostRequestDto.Update update) {
+        postsService.update(update, postId);
         return response.success("게시글 수정에 성공했습니다.");
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        postsService.delete(id);
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> delete(@PathVariable Long postId) {
+        postsService.delete(postId);
         return response.success("게시글 삭제에 성공했습니다.");
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> searchPosts(String query) {
-        List<PostResponseDto.PostInfo> postInfos = postsService.searchPosts(query);
+        List<PostResponseDto.PostInfoForBlock> postInfos = postsService.searchPosts(query);
         return response.success(postInfos, "게시글 조회에 성공했습니다.");
     }
 }
