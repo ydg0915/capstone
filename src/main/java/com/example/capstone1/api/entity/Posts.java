@@ -18,9 +18,9 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Entity
 public class Posts extends BaseTime {
+    @Column
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long id;
 
 
@@ -31,8 +31,8 @@ public class Posts extends BaseTime {
     @Column
     private String title;
 
-    @Lob
     @Column
+    @Lob
     private String content;
 
     @Column

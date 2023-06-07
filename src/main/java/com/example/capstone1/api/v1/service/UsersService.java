@@ -2,7 +2,9 @@ package com.example.capstone1.api.v1.service;
 
 import com.example.capstone1.api.entity.Users;
 import com.example.capstone1.api.enums.Authority;
+import com.example.capstone1.api.exception.CustomException;
 import com.example.capstone1.api.jwt.JwtTokenProvider;
+import com.example.capstone1.api.mapper.UsersMapper;
 import com.example.capstone1.api.security.SecurityUtil;
 import com.example.capstone1.api.v1.dto.Response;
 import com.example.capstone1.api.v1.dto.request.UserRequestDto;
@@ -11,8 +13,6 @@ import com.example.capstone1.api.v1.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.example.capstone1.api.exception.ErrorCode.*;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -34,37 +36,30 @@ public class UsersService {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final UsersRepository usersRepository;
-    private final Response response;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RedisTemplate redisTemplate;
 
-    public ResponseEntity<?> signUp(UserRequestDto.SignUp signUp) {
+    public void signUp(UserRequestDto.SignUp signUp) {
         if (usersRepository.existsByUsername(signUp.getUsername())) {
-            return response.fail("이미 회원가입된 아이디입니다.", HttpStatus.BAD_REQUEST);
+            throw new CustomException(DUPLICATE_USERNAME);
         }
 
         if (usersRepository.existsByEmail(signUp.getEmail())) {
-            return response.fail("이미 회원가입된 이메일입니다.", HttpStatus.BAD_REQUEST);
+            throw new CustomException(DUPLICATE_EMAIL);
         }
 
-        Users user = Users.builder()
-                .username(signUp.getUsername())
-                .email(signUp.getEmail())
-                .password(passwordEncoder.encode(signUp.getPassword()))
-                .introduction("")
-                .roles(Collections.singletonList(Authority.ROLE_USER.name()))
-                .build();
-        usersRepository.save(user);
+        Users user = UsersMapper.INSTANCE.toUser(signUp);
+        user.setPassword(passwordEncoder.encode(signUp.getPassword()));
 
-        return response.success("회원가입에 성공했습니다.");
+        usersRepository.save(user);
     }
 
-    public ResponseEntity<?> login(UserRequestDto.Login login) {
+    public UserResponseDto.TokenInfo login(UserRequestDto.Login login) {
 
-        if (usersRepository.findByUsername(login.getUsername()).orElse(null) == null) {
-            return response.fail("해당하는 유저가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+        if (!usersRepository.existsByUsername(login.getUsername())) {
+            throw new CustomException(USER_NOT_FOUND);
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = login.toAuthentication();
@@ -76,12 +71,12 @@ public class UsersService {
         redisTemplate.opsForValue()
                 .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
 
-        return response.success(tokenInfo, "로그인에 성공했습니다.", HttpStatus.OK);
+        return tokenInfo;
     }
 
-    public ResponseEntity<?> reissue(UserRequestDto.Reissue reissue) {
+    public UserResponseDto.TokenInfo reissue(UserRequestDto.Reissue reissue) {
         if (!jwtTokenProvider.validateToken(reissue.getRefreshToken())) {
-            return response.fail("Refresh Token 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
+            throw new CustomException(BAD_TOKEN_FORMAT);
         }
 
         Authentication authentication = jwtTokenProvider.getAuthentication(reissue.getAccessToken());
@@ -89,10 +84,11 @@ public class UsersService {
         String refreshToken = (String)redisTemplate.opsForValue().get("RT:" + authentication.getName());
 
         if(ObjectUtils.isEmpty(refreshToken)) {
-            return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+            throw new CustomException(REFRESH_TOKEN_NOT_FOUND);
         }
+
         if(!refreshToken.equals(reissue.getRefreshToken())) {
-            return response.fail("Refresh Token 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+            throw new CustomException(MISMATCH_REFRESH_TOKEN);
         }
 
         UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateAccessToken(authentication, reissue.getRefreshToken());
@@ -100,12 +96,12 @@ public class UsersService {
         redisTemplate.opsForValue()
                 .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
 
-        return response.success(tokenInfo, "Token 정보가 갱신되었습니다.", HttpStatus.OK);
+        return tokenInfo;
     }
 
-    public ResponseEntity<?> logout(UserRequestDto.Logout logout) {
+    public void logout(UserRequestDto.Logout logout) {
         if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
-            return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+            throw new CustomException(BAD_TOKEN_FORMAT);
         }
 
         Authentication authentication = jwtTokenProvider.getAuthentication(logout.getAccessToken());
@@ -117,78 +113,62 @@ public class UsersService {
         Long expiration = jwtTokenProvider.getExpiration(logout.getAccessToken());
         redisTemplate.opsForValue()
                 .set(logout.getAccessToken(), "logout", expiration, TimeUnit.MILLISECONDS);
-
-        return response.success("로그아웃 되었습니다.");
     }
 
-    public ResponseEntity<?> authority() {
+    public void authority() {
         String username = SecurityUtil.getCurrentUsername();
 
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
 
         user.getRoles().add(Authority.ROLE_ADMIN.name());
         usersRepository.save(user);
-
-        return response.success();
     }
 
-    public ResponseEntity<?> updateUser(String username, UserRequestDto.Update update) {
-        String currentUser = SecurityUtil.getCurrentUsername();
-        if (!currentUser.equals(username)) {
-            return response.fail("접근 권한이 없습니다.", HttpStatus.FORBIDDEN);
-        }
-
+    public void updateMyUserInfo(UserRequestDto.Update update) {
+        String username = SecurityUtil.getCurrentUsername();
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
 
         if (update.getOldPassword() != null) {
-            if (update.getNewPassword() == null)
-                return response.fail("새로운 패스워드를 입력해주세요.", HttpStatus.BAD_REQUEST);
+            if (update.getNewPassword() == null) {
+                throw new CustomException(OLD_PASSWORD_REQUIRED);
+            }
 
             if (!passwordEncoder.matches(update.getOldPassword(), user.getPassword())) {
-                return response.fail("기존 패스워드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+                throw new CustomException(MISMATCH_PASSWORD);
             }
 
             String newPassword = update.getNewPassword();
             user.setPassword(passwordEncoder.encode(newPassword));
         }
-        if (update.getNewPassword() != null && update.getOldPassword() == null)
-                return response.fail("기존 패스워드를 입력해주세요.", HttpStatus.BAD_REQUEST);
+        if (update.getNewPassword() != null && update.getOldPassword() == null) {
+            throw new CustomException(NEW_PASSWORD_REQUIRED);
+        }
 
         if (update.getIntroduction() != null)
                 user.setIntroduction(update.getIntroduction());
 
         usersRepository.save(user);
-
-        return response.success("회원 정보가 변경되었습니다.");
     }
 
-    public ResponseEntity<?> profile(String username) {
+    public UserResponseDto.UserInfo getUserInfoById(String username) {
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
+        UserResponseDto.UserInfo userInfo = UsersMapper.INSTANCE.toUserInfo(user);
 
-        UserResponseDto.UserInfo userInfo = UserResponseDto.UserInfo.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .introduction(user.getIntroduction())
-                .build();
-
-        return response.success(userInfo, "회원 프로필 조회에 성공했습니다.", HttpStatus.OK);
+        return userInfo;
     }
 
-    public ResponseEntity<?> search(String query) {
+    public List<UserResponseDto.UserInfoForSearching> search(String query) {
         List<Users> users = usersRepository.findByUsernameContaining(query);
-        if (users.isEmpty())
-            return response.success("'" + query + "'에 대한 검색결과가 없습니다.");
+        if (users.isEmpty()) {
+            return Collections.emptyList();
+        }
         else {
-            List<UserResponseDto.UserInfo> userInfos = new ArrayList<>();
+            List<UserResponseDto.UserInfoForSearching> userInfos = new ArrayList<>();
             for (Users user : users) {
-                UserResponseDto.UserInfo userInfo = UserResponseDto.UserInfo.builder()
-                        .username(user.getUsername())
-                        .email(user.getEmail())
-                        .build();
-
+                UserResponseDto.UserInfoForSearching userInfo = UsersMapper.INSTANCE.toUserInfoForSearching(user);
                 userInfos.add(userInfo);
             }
-            return response.success(userInfos, "유저 조회에 성공했습니다.", HttpStatus.OK);
+            return userInfos;
         }
     }
 }

@@ -6,7 +6,6 @@ import com.example.capstone1.api.security.SecurityUtil;
 import com.example.capstone1.api.v1.dto.Response;
 import com.example.capstone1.api.v1.dto.request.PostRequestDto;
 import com.example.capstone1.api.v1.dto.response.PostResponseDto;
-import com.example.capstone1.api.v1.dto.response.UserResponseDto;
 import com.example.capstone1.api.v1.repository.PostsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -157,6 +156,7 @@ public class PostsService {
             List<PostResponseDto.PostInfo> postInfos = new ArrayList<>();
             for (Posts post : posts) {
                 PostResponseDto.PostInfo postInfo = PostResponseDto.PostInfo.builder()
+                        .id(post.getId())
                         .username(post.getUser().getUsername())
                         .title(post.getTitle())
                         .content(post.getContent())

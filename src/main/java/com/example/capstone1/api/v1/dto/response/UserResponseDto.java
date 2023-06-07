@@ -16,12 +16,18 @@ public class UserResponseDto {
         private Long refreshTokenExpirationTime;
     }
 
-    @Builder
     @Getter
     @AllArgsConstructor
     public static class UserInfo {
         private String username;
         private String email;
         private String introduction;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class UserInfoForSearching {
+        private String id;
+        private String username;
     }
 }

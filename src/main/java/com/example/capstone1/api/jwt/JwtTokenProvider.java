@@ -1,5 +1,7 @@
 package com.example.capstone1.api.jwt;
 
+import com.example.capstone1.api.exception.CustomException;
+import com.example.capstone1.api.exception.ErrorCode;
 import com.example.capstone1.api.v1.dto.response.UserResponseDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -101,7 +103,7 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
 
         Collection<? extends GrantedAuthority> authorities =
@@ -118,9 +120,9 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token");
+            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token");
+            throw new CustomException(ErrorCode.EXPIRED_ACCESS_TOKEN);
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token");
         } catch (IllegalArgumentException e) {

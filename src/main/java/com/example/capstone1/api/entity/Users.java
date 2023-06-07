@@ -1,6 +1,5 @@
 package com.example.capstone1.api.entity;
 
-import com.example.capstone1.api.enums.TechStack;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +19,7 @@ import java.util.stream.Collectors;
 @Entity
 public class Users extends BaseTime implements UserDetails {
 
+    @Column
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
