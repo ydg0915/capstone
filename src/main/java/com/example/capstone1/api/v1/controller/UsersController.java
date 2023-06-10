@@ -47,6 +47,12 @@ public class UsersController {
         return response.success("로그아웃 되었습니다.");
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyUserInfo() {
+        UserResponseDto.UserInfo userInfo = usersService.getMyUserInfo();
+        return response.success(userInfo, "내 프로필 조회에 성공했습니다.");
+    }
+
     @PatchMapping("/me")
     public ResponseEntity<?> updateMyUserInfo(@Valid @RequestBody UserRequestDto.Update update) {
         usersService.updateMyUserInfo(update);

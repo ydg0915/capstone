@@ -124,6 +124,15 @@ public class UsersService {
         usersRepository.save(user);
     }
 
+    public UserResponseDto.UserInfo getMyUserInfo() {
+        String username = SecurityUtil.getCurrentUsername();
+        Users user = (Users) customUserDetailsService.loadUserByUsername(username);
+
+        UserResponseDto.UserInfo userInfo = UsersMapper.INSTANCE.toUserInfo(user);
+
+        return userInfo;
+    }
+
     public void updateMyUserInfo(UserRequestDto.Update update) {
         String username = SecurityUtil.getCurrentUsername();
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
