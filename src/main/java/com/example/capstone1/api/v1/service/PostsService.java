@@ -44,9 +44,9 @@ public class PostsService {
         }
     }
 
-    public PostResponseDto.PostInfo getPostById(Long id) {
+    public PostResponseDto.PostInfo getPostById(Long postId) {
 
-        Optional<Posts> optionalPost = postsRepository.findById(id);
+        Optional<Posts> optionalPost = postsRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             throw new CustomException(POST_NOT_FOUND);
         }
@@ -70,9 +70,9 @@ public class PostsService {
         postsRepository.save(post);
     }
 
-    public void update(PostRequestDto.Update update, Long id) {
+    public void update(PostRequestDto.Create update, Long postId) {
 
-        Optional<Posts> optionalPost = postsRepository.findById(id);
+        Optional<Posts> optionalPost = postsRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             throw new CustomException(POST_NOT_FOUND);
         }
@@ -84,21 +84,14 @@ public class PostsService {
             throw new CustomException(MISMATCH_USER);
         }
 
-        update.getTitle().ifPresent(post::setTitle);
-        update.getContent().ifPresent(post::setContent);
-        update.getRecruitmentSize().ifPresent(post::setRecruitmentSize);
-        update.getPosition().ifPresent(post::setPosition);
-        update.getTechStack().ifPresent(post::setTechStack);
-        update.getRecruitmentPeriod().ifPresent(post::setRecruitmentPeriod);
-        update.getExpectedDuration().ifPresent(post::setExpectedDuration);
-
+        post.updateFields(update);
 
         postsRepository.save(post);
     }
 
-    public void delete(Long id) {
+    public void delete(Long postId) {
 
-        Optional<Posts> optionalPost = postsRepository.findById(id);
+        Optional<Posts> optionalPost = postsRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             throw new CustomException(POST_NOT_FOUND);
         }
@@ -126,5 +119,9 @@ public class PostsService {
             }
             return postInfos;
         }
+    }
+
+    public void updateView(Long postId) {
+        postsRepository.updateView(postId);
     }
 }

@@ -40,18 +40,4 @@ public class PostRequestDto {
         @NotNull
         private int expectedDuration;
     }
-
-    @Getter
-    @Setter
-    public static class Update {
-
-        private Optional<String> title = Optional.empty();
-        private Optional<String> content = Optional.empty();
-        private Optional<Integer> recruitmentSize = Optional.empty();
-        private Optional<List<Position>> position = Optional.empty();
-        private Optional<List<TechStack>> techStack = Optional.empty();
-        @DateTimeFormat(pattern = "yyyy-MM-dd")
-        private Optional<LocalDate> recruitmentPeriod = Optional.empty();
-        private Optional<Integer> expectedDuration = Optional.empty();
-    }
 }

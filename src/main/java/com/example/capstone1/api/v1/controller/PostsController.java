@@ -24,7 +24,7 @@ public class PostsController {
     @GetMapping
     public ResponseEntity<?> getAllPosts() {
         List<PostResponseDto.PostInfoForBlock> postInfos = postsService.getAllPosts();
-        return response.success(postInfos, "전체 게시글 조회에 성공했습니다.");
+        return response.success(postInfos, "전체 게시글 목록 조회에 성공했습니다.");
     }
 
     @PostMapping
@@ -36,12 +36,13 @@ public class PostsController {
     @GetMapping("/{postId}")
     public ResponseEntity<?> getPostById(@PathVariable Long postId) {
         PostResponseDto.PostInfo postInfo = postsService.getPostById(postId);
+        postsService.updateView(postId);
         return response.success(postInfo, "게시글 조회에 성공했습니다.");
     }
 
     @PatchMapping("/{postId}")
     public ResponseEntity<?> update(@PathVariable Long postId,
-                                    @Valid PostRequestDto.Update update) {
+                                    @Valid PostRequestDto.Create update) {
         postsService.update(update, postId);
         return response.success("게시글 수정에 성공했습니다.");
     }
@@ -55,6 +56,6 @@ public class PostsController {
     @GetMapping("/search")
     public ResponseEntity<?> searchPosts(String query) {
         List<PostResponseDto.PostInfoForBlock> postInfos = postsService.searchPosts(query);
-        return response.success(postInfos, "게시글 조회에 성공했습니다.");
+        return response.success(postInfos, "게시글 목록 검색에 성공했습니다.");
     }
 }
