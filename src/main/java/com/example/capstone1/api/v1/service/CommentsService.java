@@ -15,7 +15,6 @@ import com.example.capstone1.api.v1.repository.PostsRepository;
 import com.example.capstone1.api.v1.repository.RepliesRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,8 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.capstone1.api.exception.ErrorCode.COMMENT_NOT_FOUND;
-import static com.example.capstone1.api.exception.ErrorCode.POST_NOT_FOUND;
+import static com.example.capstone1.api.exception.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -61,7 +59,15 @@ public class CommentsService {
                         replyInfos.add(replyInfo);
                     }
                 }
-                CommentResponseDto.CommentInfo commentInfo = CommentsMapper.INSTANCE.toCommentInfo(comment, replyInfos);
+
+                CommentResponseDto.CommentInfo commentInfo = new CommentResponseDto.CommentInfo();
+                if (comment.isDeleted()) {
+                    commentInfo.setContent("[삭제된 댓글입니다.]");
+                    commentInfo.setReplyInfos(replyInfos);
+                } else {
+                    commentInfo = CommentsMapper.INSTANCE.toCommentInfo(comment, replyInfos);
+                }
+
                 commentInfos.add(commentInfo);
             }
             return commentInfos;
@@ -84,6 +90,31 @@ public class CommentsService {
         commentsRepository.save(comment);
     }
 
+    public void deleteComment(Long postId, Long commentId) {
+        if (!postsRepository.existsById(postId)) {
+            throw new CustomException(POST_NOT_FOUND);
+        }
+
+        Optional<Comments> optionalComment = commentsRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            throw new CustomException(COMMENT_NOT_FOUND);
+        }
+
+        Comments comment = optionalComment.get();
+
+        String username = SecurityUtil.getCurrentUsername();
+        if (!comment.getUser().getUsername().equals(username)) {
+            throw new CustomException(MISMATCH_USER);
+        }
+
+        if (repliesRepository.existsByCommentId(commentId)) {
+            comment.setDeleted(true);
+            commentsRepository.save(comment);
+        } else {
+            commentsRepository.delete(comment);
+        }
+    }
+
     public void createReply(Long postId, Long commentId, CommentRequestDto.CreateReply create) {
         if (!postsRepository.existsById(postId)) {
             throw new CustomException(POST_NOT_FOUND);
@@ -102,6 +133,31 @@ public class CommentsService {
         Replies reply = RepliesMapper.INSTANCE.toReply(create, user, comment);
 
         repliesRepository.save(reply);
+    }
+
+    public void deleteReply(Long postId, Long replyId) {
+        if (!postsRepository.existsById(postId)) {
+            throw new CustomException(POST_NOT_FOUND);
+        }
+
+        Optional<Replies> optionalReply = repliesRepository.findById(replyId);
+        if (optionalReply.isEmpty()) {
+            throw new CustomException(REPLY_NOT_FOUND);
+        }
+
+        Replies reply = optionalReply.get();
+
+        String username = SecurityUtil.getCurrentUsername();
+        if (!reply.getUser().getUsername().equals(username)) {
+            throw new CustomException(MISMATCH_USER);
+        }
+
+        repliesRepository.delete(reply);
+
+        Comments comment = reply.getComment();
+        if (comment.isDeleted()) {
+            commentsRepository.delete(comment);
+        }
     }
 
 }

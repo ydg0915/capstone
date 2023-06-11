@@ -28,5 +28,4 @@ public class Replies extends BaseTime {
 
     @Column(nullable = false)
     private String content;
-
 }

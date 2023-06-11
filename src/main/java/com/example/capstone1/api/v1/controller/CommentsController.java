@@ -34,6 +34,13 @@ public class CommentsController {
         return response.success("댓글 작성에 성공했습니다.");
     }
 
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long postId,
+                                           @PathVariable Long commentId) {
+        commentsService.deleteComment(postId, commentId);
+        return response.success("댓글 삭제에 성공했습니다.");
+    }
+
     @PostMapping("/{commentId}/replies")
     public ResponseEntity<?> createReply(@PathVariable Long postId,
                                          @PathVariable Long commentId,
@@ -41,4 +48,12 @@ public class CommentsController {
         commentsService.createReply(postId, commentId, create);
         return response.success("대댓글 작성에 성공했습니다.");
     }
+
+    @DeleteMapping("/replies/{replyId}")
+    public ResponseEntity<?> deleteReply(@PathVariable Long postId,
+                                         @PathVariable Long replyId) {
+        commentsService.deleteReply(postId, replyId);
+        return response.success("대댓글 삭제에 성공했습니다.");
+    }
+
 }

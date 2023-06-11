@@ -1,9 +1,14 @@
 package com.example.capstone1.api.entity;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.*;
 
 @Builder
@@ -28,4 +33,11 @@ public class Comments extends BaseTime {
 
     @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
+    @ColumnDefault("FALSE")
+    private boolean isDeleted;
+
+    @OneToMany(mappedBy = "comment", orphanRemoval = true)
+    private List<Replies> replies = new ArrayList<>();
 }

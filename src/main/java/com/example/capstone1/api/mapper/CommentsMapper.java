@@ -17,6 +17,7 @@ public interface CommentsMapper {
     CommentsMapper INSTANCE = Mappers.getMapper(CommentsMapper.class);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "isDeleted", ignore = true)
     @Mapping(target = "post", source = "post")
     @Mapping(target = "content", source = "create.content")
     Comments toComment(CommentRequestDto.CreateComment create, Users user, Posts post);
