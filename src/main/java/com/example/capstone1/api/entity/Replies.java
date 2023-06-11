@@ -1,5 +1,6 @@
 package com.example.capstone1.api.entity;
 
+import com.example.capstone1.api.v1.dto.request.CommentRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,4 +29,8 @@ public class Replies extends BaseTime {
 
     @Column(nullable = false)
     private String content;
+
+    public void updateFields(CommentRequestDto.CreateReply update) {
+        this.content = update.getContent();
+    }
 }

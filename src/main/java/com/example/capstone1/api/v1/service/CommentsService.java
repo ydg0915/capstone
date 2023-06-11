@@ -75,12 +75,8 @@ public class CommentsService {
     }
 
     public void createComment(Long postId, CommentRequestDto.CreateComment create) {
-        Optional<Posts> optionalPost = postsRepository.findById(postId);
-        if (optionalPost.isEmpty()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
-
-        Posts post = optionalPost.get();
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
         String username = SecurityUtil.getCurrentUsername();
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
@@ -90,17 +86,35 @@ public class CommentsService {
         commentsRepository.save(comment);
     }
 
+    public void updateComment(Long postId, Long commentId, CommentRequestDto.CreateComment update) {
+        if (!postsRepository.existsById(postId)) {
+            throw new CustomException(POST_NOT_FOUND);
+        }
+
+        Comments comment = commentsRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+
+        if (comment.isDeleted()) {
+            throw new CustomException(COMMENT_NOT_FOUND);
+        }
+
+        String username = SecurityUtil.getCurrentUsername();
+        if (!comment.getUser().getUsername().equals(username)) {
+            throw new CustomException(MISMATCH_USER);
+        }
+
+        comment.updateFields(update);
+
+        commentsRepository.save(comment);
+    }
+
     public void deleteComment(Long postId, Long commentId) {
         if (!postsRepository.existsById(postId)) {
             throw new CustomException(POST_NOT_FOUND);
         }
 
-        Optional<Comments> optionalComment = commentsRepository.findById(commentId);
-        if (optionalComment.isEmpty()) {
-            throw new CustomException(COMMENT_NOT_FOUND);
-        }
-
-        Comments comment = optionalComment.get();
+        Comments comment = commentsRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
 
         String username = SecurityUtil.getCurrentUsername();
         if (!comment.getUser().getUsername().equals(username)) {
@@ -120,12 +134,8 @@ public class CommentsService {
             throw new CustomException(POST_NOT_FOUND);
         }
 
-        Optional<Comments> optionalComment = commentsRepository.findById(commentId);
-        if (optionalComment.isEmpty()) {
-            throw new CustomException(COMMENT_NOT_FOUND);
-        }
-
-        Comments comment = optionalComment.get();
+        Comments comment = commentsRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
 
         String username = SecurityUtil.getCurrentUsername();
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
@@ -135,17 +145,31 @@ public class CommentsService {
         repliesRepository.save(reply);
     }
 
+    public void updateReply(Long postId, Long replyId, CommentRequestDto.CreateReply update) {
+        if (!postsRepository.existsById(postId)) {
+            throw new CustomException(POST_NOT_FOUND);
+        }
+
+        Replies reply = repliesRepository.findById(replyId)
+                .orElseThrow(() -> new CustomException(REPLY_NOT_FOUND));
+
+        String username = SecurityUtil.getCurrentUsername();
+        if (!reply.getUser().getUsername().equals(username)) {
+            throw new CustomException(MISMATCH_USER);
+        }
+
+        reply.updateFields(update);
+
+        repliesRepository.save(reply);
+    }
+
     public void deleteReply(Long postId, Long replyId) {
         if (!postsRepository.existsById(postId)) {
             throw new CustomException(POST_NOT_FOUND);
         }
 
-        Optional<Replies> optionalReply = repliesRepository.findById(replyId);
-        if (optionalReply.isEmpty()) {
-            throw new CustomException(REPLY_NOT_FOUND);
-        }
-
-        Replies reply = optionalReply.get();
+        Replies reply = repliesRepository.findById(replyId)
+                .orElseThrow(() -> new CustomException(REPLY_NOT_FOUND));
 
         String username = SecurityUtil.getCurrentUsername();
         if (!reply.getUser().getUsername().equals(username)) {

@@ -1,5 +1,6 @@
 package com.example.capstone1.api.entity;
 
+import com.example.capstone1.api.v1.dto.request.CommentRequestDto;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -40,4 +41,8 @@ public class Comments extends BaseTime {
 
     @OneToMany(mappedBy = "comment", orphanRemoval = true)
     private List<Replies> replies = new ArrayList<>();
+
+    public void updateFields(CommentRequestDto.CreateComment update) {
+        this.content = update.getContent();
+    }
 }
