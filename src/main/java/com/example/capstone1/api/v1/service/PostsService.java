@@ -61,11 +61,9 @@ public class PostsService {
     public void create(PostRequestDto.Create create) {
 
         String username = SecurityUtil.getCurrentUsername();
-
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
 
-        Posts post = PostsMapper.INSTANCE.toPost(create);
-        post.setUser(user);
+        Posts post = PostsMapper.INSTANCE.toPost(create, user);
 
         postsRepository.save(post);
     }

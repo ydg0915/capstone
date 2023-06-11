@@ -1,6 +1,7 @@
 package com.example.capstone1.api.mapper;
 
 import com.example.capstone1.api.entity.Posts;
+import com.example.capstone1.api.entity.Users;
 import com.example.capstone1.api.v1.dto.request.PostRequestDto;
 import com.example.capstone1.api.v1.dto.response.PostResponseDto;
 import org.mapstruct.Mapper;
@@ -13,7 +14,8 @@ public interface PostsMapper {
 
     PostsMapper INSTANCE = Mappers.getMapper(PostsMapper.class);
 
-    Posts toPost(PostRequestDto.Create create);
+    @Mapping(target = "user", source = "user")
+    Posts toPost(PostRequestDto.Create create, Users user);
 
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "username", source = "user.username")
