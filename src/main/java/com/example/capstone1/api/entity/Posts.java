@@ -27,7 +27,6 @@ public class Posts extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn
     private Users user;
