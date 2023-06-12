@@ -10,6 +10,9 @@ import com.example.capstone1.api.v1.dto.response.PostResponseDto;
 import com.example.capstone1.api.v1.repository.PostsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +32,9 @@ public class PostsService {
     private final CustomUserDetailsService customUserDetailsService;
 
 
-    public List<PostResponseDto.PostInfoForBlock> getAllPosts() {
+    public List<PostResponseDto.PostInfoForBlock> getAllPosts(PageRequest pageRequest) {
 
-        List<Posts> posts = postsRepository.findAll();
+        Page<Posts> posts = postsRepository.findAll(pageRequest);
         if (posts.isEmpty())
             return Collections.emptyList();
         else {

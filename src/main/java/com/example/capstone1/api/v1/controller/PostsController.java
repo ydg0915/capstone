@@ -6,6 +6,9 @@ import com.example.capstone1.api.v1.dto.response.PostResponseDto;
 import com.example.capstone1.api.v1.service.PostsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +25,13 @@ public class PostsController {
     private final Response response;
 
     @GetMapping
-    public ResponseEntity<?> getAllPosts() {
-        List<PostResponseDto.PostInfoForBlock> postInfos = postsService.getAllPosts();
+    public ResponseEntity<?> getAllPosts(Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createDate")
+        );
+        List<PostResponseDto.PostInfoForBlock> postInfos = postsService.getAllPosts(pageRequest);
         return response.success(postInfos, "전체 게시글 목록 조회에 성공했습니다.");
     }
 
