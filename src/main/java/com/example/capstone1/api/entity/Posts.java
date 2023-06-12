@@ -4,6 +4,7 @@ import com.example.capstone1.api.enums.Position;
 import com.example.capstone1.api.enums.TechStack;
 import com.example.capstone1.api.v1.dto.request.PostRequestDto;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -70,6 +71,9 @@ public class Posts extends BaseTime {
 
     @OneToMany(mappedBy = "post", cascade = ALL, orphanRemoval = true)
     private List<Comments> comments = new ArrayList<>();
+
+    @ColumnDefault("FALSE")
+    private boolean isCompleted;
 
     @Transient
     private int totalCommentsAndReplies;

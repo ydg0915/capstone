@@ -30,6 +30,12 @@ public class PostsController {
         return response.success(postInfos, "전체 게시글 목록 조회에 성공했습니다.");
     }
 
+    @GetMapping("/recruiting")
+    public ResponseEntity<?> getAllRecruitingPosts(Pageable pageable) {
+        List<PostResponseDto.PostInfoForBlock> postInfos = postsService.getAllRecruitingPosts(pageable);
+        return response.success(postInfos, "모집 중인 게시글 목록 조회에 성공했습니다.");
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody PostRequestDto.Create create) {
         postsService.create(create);
@@ -48,6 +54,11 @@ public class PostsController {
                                     @Valid @RequestBody PostRequestDto.Create update) {
         postsService.update(update, postId);
         return response.success("게시글 수정에 성공했습니다.");
+    }
+    @PatchMapping("/{postId}/complete")
+    public ResponseEntity<?> complete(@PathVariable Long postId) {
+        postsService.complete(postId);
+        return response.success("모집 완료 처리에 성공했습니다.");
     }
 
     @DeleteMapping("/{postId}")

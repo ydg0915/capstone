@@ -54,6 +54,27 @@ public class PostsService {
         }
     }
 
+    public List<PostResponseDto.PostInfoForBlock> getAllRecruitingPosts(Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createDate")
+        );
+
+        Page<Posts> posts = postsRepository.findAllByIsCompletedFalse(pageRequest);
+        if (posts.isEmpty())
+            return Collections.emptyList();
+        else {
+            List<PostResponseDto.PostInfoForBlock> postInfos = new ArrayList<>();
+            for (Posts post : posts) {
+                post.calculateTotalCommentsAndReplies();
+                PostResponseDto.PostInfoForBlock postInfo = PostsMapper.INSTANCE.toPostInfoForBlock(post);
+                postInfos.add(postInfo);
+            }
+            return postInfos;
+        }
+    }
+
     public PostResponseDto.PostInfo getPostById(Long postId) {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -82,6 +103,20 @@ public class PostsService {
         }
 
         post.updateFields(update);
+
+        postsRepository.save(post);
+    }
+
+    public void complete(Long postId) {
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
+        String username = SecurityUtil.getCurrentUsername();
+        if (!post.getUser().getUsername().equals(username)) {
+            throw new CustomException(MISMATCH_USER);
+        }
+
+        post.setCompleted(true);
 
         postsRepository.save(post);
     }
