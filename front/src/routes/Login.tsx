@@ -3,17 +3,12 @@ import Header from "../Components/Header";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  hideErrorMessage,
-  loginUser,
-  setLoginStatus,
-  showErrorMessage,
-} from "../_actions/user_action";
+import { hideErrorMessage, loginUser } from "../_actions/user_action";
 import { useHistory } from "react-router-dom";
-import { RootState } from "../_reducers";
+import { RootState, store } from "../_reducers";
 
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 90vh;
   display: flex;
   align-items: center;
@@ -69,8 +64,8 @@ const Btn = styled.input`
 `;
 export const ErrorMessage = styled.span`
   color: red;
-  font-size: 14px;
-  margin-top: 20px;
+  font-size: 0.875;
+  margin-top: 1.25;
 `;
 
 // const SocialBox = styled.div`
@@ -140,16 +135,9 @@ function Login() {
     setPassword(event.target.value);
   };
 
-  const btnPrevent = async (event) => {
+  const btnPrevent = (event) => {
     event.preventDefault();
-    dispatch(loginUser(formData));
-
-    if (username == "") {
-      dispatch(showErrorMessage("아이디를 입력해주세요"));
-    } else if (password == "") {
-      dispatch(showErrorMessage("비밀번호를 입력해주세요"));
-    } else {
-    }
+    store.dispatch(loginUser(formData));
   };
 
   useEffect(() => {

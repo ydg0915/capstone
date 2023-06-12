@@ -87,11 +87,11 @@ const Part = styled.div`
 
 const Stack = styled.div`
   display: flex;
-  font-size: 25px;
-  margin-top: 50px;
+  font-size: 1.563rem;
+  margin-top: 3.125rem;
   li {
     list-style: none;
-    margin-right: 20px;
+    margin-right: 1.25rem;
     cursor: pointer;
     &:hover {
       text-decoration: underline;
@@ -101,20 +101,20 @@ const Stack = styled.div`
 
 const Select = styled.div`
   display: flex;
-  font-size: 15px;
-  margin-top: 100px;
+  font-size: 0.938rem;
+  margin-top: 6.25rem;
   li {
     display: flex;
     align-items: center;
     list-style: none;
-    margin-right: 20px;
+    margin-right: 1.25rem;
     background-color: whitesmoke;
-    padding: 5px 10px;
+    padding: 0.313rem 0.625rem;
     color: black;
-    border-radius: 30px;
+    border-radius: 1.875rem;
     cursor: pointer;
     svg {
-      margin-left: 5px;
+      margin-left: 0.313rem;
     }
   }
 `;

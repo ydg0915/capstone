@@ -2,14 +2,14 @@ import { styled } from "styled-components";
 import { Link } from "react-router-dom";
 
 const Wrapper = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 100vh;
-  padding: 50px 200px 00px 200px;
+  padding: 3.125rem 12.5rem 0px 12.5rem;
   background-color: whitesmoke;
   svg {
-    width: 30px;
-    height: 30px;
-    margin-bottom: 30px;
+    width: 1.875rem;
+    height: 1.875rem;
+    margin-bottom: 1.875rem;
   }
 `;
 
@@ -17,46 +17,45 @@ const ChatBox = styled.div`
   display: flex;
   justify-content: space-around;
   width: 100%;
-  height: auto;
 `;
 
 const Chatting = styled.div`
   width: 30%;
-  height: 700px;
+  height: 43.75rem;
   background-color: #b1c7d9;
-  border-radius: 50px;
+  border-radius: 3.125rem;
   position: relative;
 
   input {
     width: 100%;
-    height: 120px;
-    border-radius: 3px;
+    height: 7.5rem;
+    border-radius: 0.188rem;
     border: 0;
     position: absolute;
-    bottom: -5px;
-    line-height: 5px;
+    bottom: -0.313rem;
+    line-height: 0.313rem;
   }
 
   button {
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 600;
     background-color: #feff86;
     border: 0;
     width: 10%;
-    border-radius: 5px;
-    height: 30px;
+    border-radius: 0.313rem;
+    height: 1.875rem;
     position: absolute;
-    right: 10px;
-    bottom: 5px;
+    right: 0.625rem;
+    bottom: 0.313rem;
     float: right;
   }
 `;
 const ChatList = styled.div`
   width: 50%;
-  height: 700px;
-  border-radius: 60px;
+  height: 43.75rem;
+  border-radius: 3.75rem;
   background-color: teal;
-  border: 5px solid white;
+  border: 0.313rem solid white;
 `;
 
 function Chat() {

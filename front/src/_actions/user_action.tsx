@@ -14,10 +14,10 @@ export const loginUser = (formData) => {
         "http://localhost:8080/api/v1/users/login",
         formData
       );
+      console.log(res);
       const data = res.data.data;
       const accessToken = data.accessToken;
       const refreshToken = data.refreshToken;
-      localStorage.setItem("formData", formData);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
@@ -26,7 +26,6 @@ export const loginUser = (formData) => {
           Authorization: `Bearer ${accessToken}`,
         },
       };
-
       const userRes = await axios.get(
         "http://localhost:8080/api/v1/users/me",
         config
@@ -39,11 +38,6 @@ export const loginUser = (formData) => {
         type: LOGIN_USER,
         payload: true,
       });
-
-      return {
-        type: LOGIN_USER,
-        payload: true,
-      };
     } catch (error: any) {
       console.log(error.response);
       dispatch(showErrorMessage(error.response.data.message.split(",")[0]));
@@ -52,15 +46,9 @@ export const loginUser = (formData) => {
         type: LOGIN_USER,
         payload: false,
       });
-
-      return {
-        type: LOGIN_USER,
-        payload: false,
-      };
     }
   };
 };
-
 export const logoutUser = (accessToken) => {
   const config = {
     headers: {
