@@ -71,6 +71,17 @@ public class Posts extends BaseTime {
     @OneToMany(mappedBy = "post", cascade = ALL, orphanRemoval = true)
     private List<Comments> comments = new ArrayList<>();
 
+    @Transient
+    private int totalCommentsAndReplies;
+
+    public void calculateTotalCommentsAndReplies() {
+        int totalCommentsAndReplies = comments.size();
+        for (Comments comment : comments) {
+            totalCommentsAndReplies += comment.getReplies().size();
+        }
+        this.totalCommentsAndReplies = totalCommentsAndReplies;
+    }
+
     public void updateFields(PostRequestDto.Create update) {
         this.title = update.getTitle();
         this.content = update.getContent();

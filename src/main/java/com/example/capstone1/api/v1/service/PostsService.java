@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,12 @@ public class PostsService {
     private final CustomUserDetailsService customUserDetailsService;
 
 
-    public List<PostResponseDto.PostInfoForBlock> getAllPosts(PageRequest pageRequest) {
+    public List<PostResponseDto.PostInfoForBlock> getAllPosts(Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createDate")
+        );
 
         Page<Posts> posts = postsRepository.findAll(pageRequest);
         if (posts.isEmpty())
@@ -40,6 +46,7 @@ public class PostsService {
         else {
             List<PostResponseDto.PostInfoForBlock> postInfos = new ArrayList<>();
             for (Posts post : posts) {
+                post.calculateTotalCommentsAndReplies();
                 PostResponseDto.PostInfoForBlock postInfo = PostsMapper.INSTANCE.toPostInfoForBlock(post);
                 postInfos.add(postInfo);
             }

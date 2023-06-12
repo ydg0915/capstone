@@ -26,17 +26,12 @@ public class PostsController {
 
     @GetMapping
     public ResponseEntity<?> getAllPosts(Pageable pageable) {
-        PageRequest pageRequest = PageRequest.of(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createDate")
-        );
-        List<PostResponseDto.PostInfoForBlock> postInfos = postsService.getAllPosts(pageRequest);
+        List<PostResponseDto.PostInfoForBlock> postInfos = postsService.getAllPosts(pageable);
         return response.success(postInfos, "전체 게시글 목록 조회에 성공했습니다.");
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Valid PostRequestDto.Create create) {
+    public ResponseEntity<?> create(@Valid @RequestBody PostRequestDto.Create create) {
         postsService.create(create);
         return response.success("게시글 작성에 성공했습니다.");
     }
@@ -50,7 +45,7 @@ public class PostsController {
 
     @PatchMapping("/{postId}")
     public ResponseEntity<?> update(@PathVariable Long postId,
-                                    @Valid PostRequestDto.Create update) {
+                                    @Valid @RequestBody PostRequestDto.Create update) {
         postsService.update(update, postId);
         return response.success("게시글 수정에 성공했습니다.");
     }
