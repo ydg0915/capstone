@@ -55,13 +55,8 @@ public class PostsService {
     }
 
     public PostResponseDto.PostInfo getPostById(Long postId) {
-
-        Optional<Posts> optionalPost = postsRepository.findById(postId);
-        if (optionalPost.isEmpty()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
-
-        Posts post = optionalPost.get();
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
         PostResponseDto.PostInfo postInfo = PostsMapper.INSTANCE.toPostInfo(post);
 
@@ -69,7 +64,6 @@ public class PostsService {
     }
 
     public void create(PostRequestDto.Create create) {
-
         String username = SecurityUtil.getCurrentUsername();
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
 
@@ -79,13 +73,8 @@ public class PostsService {
     }
 
     public void update(PostRequestDto.Create update, Long postId) {
-
-        Optional<Posts> optionalPost = postsRepository.findById(postId);
-        if (optionalPost.isEmpty()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
-
-        Posts post = optionalPost.get();
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
         String username = SecurityUtil.getCurrentUsername();
         if (!post.getUser().getUsername().equals(username)) {
@@ -98,13 +87,8 @@ public class PostsService {
     }
 
     public void delete(Long postId) {
-
-        Optional<Posts> optionalPost = postsRepository.findById(postId);
-        if (optionalPost.isEmpty()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
-
-        Posts post = optionalPost.get();
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
         String username = SecurityUtil.getCurrentUsername();
         if (!post.getUser().getUsername().equals(username)) {
