@@ -11,8 +11,10 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 
 @Builder
@@ -26,7 +28,6 @@ public class Posts extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn
@@ -66,6 +67,9 @@ public class Posts extends BaseTime {
 
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int view;
+
+    @OneToMany(mappedBy = "post", cascade = ALL, orphanRemoval = true)
+    private List<Comments> comments = new ArrayList<>();
 
     public void updateFields(PostRequestDto.Create update) {
         this.title = update.getTitle();
