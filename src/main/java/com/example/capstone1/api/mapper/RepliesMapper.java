@@ -15,6 +15,7 @@ public interface RepliesMapper {
     RepliesMapper INSTANCE = Mappers.getMapper(RepliesMapper.class);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", source = "user")
     @Mapping(target = "comment", source = "comment")
     @Mapping(target = "content", source = "create.content")
     Replies toReply(CommentRequestDto.CreateReply create, Users user, Comments comment);
