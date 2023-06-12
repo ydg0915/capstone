@@ -1,5 +1,8 @@
 import { styled } from "styled-components";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import rootReducer, { RootState } from "../_reducers";
+import LogoutButton from "./LogoutBtn";
 
 const Nav = styled.div`
   display: flex;
@@ -10,12 +13,19 @@ const Nav = styled.div`
   margin-bottom: 0.25rem;
 
   padding: 1.875rem 5%;
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 600;
   color: ${(props) => props.theme.textColor};
   box-shadow: 0px 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
   span {
     margin-right: 21.875rem;
+  }
+  button {
+    border: none;
+    background-color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
   }
 `;
 
@@ -54,18 +64,14 @@ const NavRoute = styled.nav`
   display: flex;
   justify-content: end;
   align-items: center;
-  width: 25%;
   opacity: 0.6;
   span {
     margin-right: 1.563rem;
   }
 `;
 
-const user = {
-  logIn: false,
-};
-
 function Header() {
+  const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
   return (
     <Nav>
       <Link to={"/"}>
@@ -85,7 +91,7 @@ function Header() {
         </SearchBtn>
       </SearchForm>
 
-      {user.logIn === true ? (
+      {isLogin === true ? (
         <NavRoute>
           <Link to={"/chat"}>
             <span>채팅</span>
@@ -105,6 +111,7 @@ function Header() {
           <Link to={"/profile"}>
             <span>프로필</span>
           </Link>
+          <LogoutButton></LogoutButton>
         </NavRoute>
       ) : (
         <NavRoute>

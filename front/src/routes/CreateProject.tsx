@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 import Header from "../Components/Header";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../_reducers";
 
-const Wrapper = styled.div`
+const Wrapper = styled.form`
   padding: 50px 200px 150px 300px;
 `;
 
@@ -116,6 +121,70 @@ const BtnDiv = styled.div`
 `;
 
 function CreateProject() {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [expectedDuration, setExpectedDuration] = useState("");
+  const [recruitmentPeriod, setRecruitmentPeriod] = useState("");
+  const [recruitmentSize, setRecruitmentSize] = useState("");
+  const [position, setPosition] = useState("");
+  const [techStack, setTechStack] = useState("");
+  const history = useHistory();
+  const accessToken = localStorage.getItem("accessToken");
+
+  const titleChange = (event) => {
+    setTitle(event.target.value);
+  };
+  const contentChange = (event) => {
+    setContent(event.target.value);
+  };
+  const expectedDurationChange = (event) => {
+    setExpectedDuration(event.target.value);
+  };
+  const recruitmentPeriodChange = (event) => {
+    setRecruitmentPeriod(event.target.value);
+  };
+  const recruitmentSizeChange = (event) => {
+    setRecruitmentSize(event.target.value);
+  };
+  const positionChange = (event) => {
+    setPosition(event.target.value);
+  };
+  const techStackChange = (event) => {
+    setTechStack(event.target.value);
+  };
+
+  const btnPrevent = (event) => {
+    event.preventDefault();
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    axios({
+      method: "post",
+      url: "http://localhost:8080/api/v1/posts",
+      data: formData,
+      headers: config.headers,
+    })
+      .then((res) => {
+        console.log(res);
+        history.push("/");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("content", content);
+  formData.append("expectedDuration", expectedDuration);
+  formData.append("recruitmentPeriod", recruitmentPeriod);
+  formData.append("recruitmentSize", recruitmentSize);
+  formData.append("position", position);
+  formData.append("techStack", techStack);
+
   return (
     <>
       <Header />
@@ -127,22 +196,27 @@ function CreateProject() {
         <Info>
           <InfoSelect>
             <h1>모집 인원</h1>
-            <select>
-              <option>미정</option>
-              <option>1명</option>
-              <option>2명</option>
-              <option>3명</option>
-              <option>4명</option>
-              <option>5명</option>
+            <select value={recruitmentSize} onChange={recruitmentSizeChange}>
+              <option>0</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
             </select>
           </InfoSelect>
           <InfoSelect>
             <h1>모집 마감일</h1>
-            <input type="date" placeholder="날짜 선택"></input>
+            <input
+              value={recruitmentPeriod}
+              onChange={recruitmentPeriodChange}
+              type="date"
+              placeholder="날짜 선택"
+            ></input>
           </InfoSelect>
           <InfoSelect>
             <h1>모집 분야</h1>
-            <select>
+            <select value={position} onChange={positionChange}>
               <option>프론트엔드</option>
               <option>백엔드</option>
               <option>디자이너</option>
@@ -151,7 +225,7 @@ function CreateProject() {
           </InfoSelect>
           <InfoSelect>
             <h1>예상기간</h1>
-            <select>
+            <select value={expectedDuration} onChange={expectedDurationChange}>
               <option>미정</option>
               <option>1개월~3개월</option>
               <option>3개월~6개월</option>
@@ -161,7 +235,7 @@ function CreateProject() {
           </InfoSelect>
           <InfoSelect>
             <h1>사용 스택</h1>
-            <select>
+            <select value={techStack} onChange={techStackChange}>
               <option>React</option>
               <option>NodeJS</option>
               <option>NextJs</option>
@@ -203,29 +277,27 @@ function CreateProject() {
           <h1>프로젝트 소개</h1>
         </Title>
         <Description>
-          <input type="text" placeholder="제목을 입력해주세요" />
-          <input type="text" placeholder="프로젝트를 소개해주세요" />
+          <input
+            onChange={titleChange}
+            type="text"
+            placeholder="제목을 입력해주세요"
+          />
+          <input
+            onChange={contentChange}
+            type="text"
+            placeholder="프로젝트를 소개해주세요"
+          />
         </Description>
-        <Title>
-          <div>3</div>
-          <h1>이런 파트너를 찾아요</h1>
-        </Title>
-        <input
-          style={{
-            width: "100%",
-            height: "300px",
-            marginTop: "100px",
-            marginBottom: "100px",
-            padding: "10px 10px",
-          }}
-          type="text"
-          placeholder="희망하는 파트너에 대해 자세히 설명해주세요"
-        />
         <BtnDiv>
           <Link to={"/"}>
             <button>취소</button>
           </Link>
-          <input type="submit" value="글 등록" />
+          <input
+            style={{ cursor: "pointer" }}
+            onSubmit={btnPrevent}
+            type="submit"
+            value="글 등록"
+          />
         </BtnDiv>
       </Wrapper>
     </>

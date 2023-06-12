@@ -3,6 +3,7 @@ import Header from "../Components/Header";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { error } from "console";
+import { useEffect, useState } from "react";
 
 const users = {
   id: 1,
@@ -191,23 +192,41 @@ const CircleBox = styled.div`
 `;
 
 function Profile() {
-  axios
-    .get("/api/v1/users/${username}")
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  interface User {
+    username: string;
+    email: string;
+    id: number;
+    introduction: string;
+  }
+  const [user, setUser] = useState<User | null>(null);
+  const accessToken = localStorage.getItem("accessToken");
+
+  useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    axios
+      .get("http://localhost:8080/api/v1/users/me", config)
+      .then((res) => {
+        const userData = res.data.data;
+        setUser(userData);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [accessToken]);
+
   return (
     <>
       <Header />
       <Wrapper>
         <ProfileBox>
           <Subbox>
-            <span>{users.image}</span>
-            <p>{users.name}</p>
-            <p style={{ marginBottom: "50px" }}>{users.github}</p>
+            <p>{user?.username}</p>
+            <p style={{ marginBottom: "50px" }}>{user?.email}</p>
             <div style={{ display: "flex" }}>
               <Link to={"/chat"}>
                 <Chat>
@@ -221,12 +240,14 @@ function Profile() {
                   1대1 채팅
                 </Chat>
               </Link>
-              <EditProfile>프로필 수정</EditProfile>
+              <Link to={"/editProfile"}>
+                <EditProfile>프로필 수정</EditProfile>
+              </Link>
             </div>
           </Subbox>
           <ProduceBox>
             <p>자기소개</p>
-            <p>{users.produce}</p>
+            <p>{user?.introduction}</p>
           </ProduceBox>
         </ProfileBox>
         <EtcBox>
