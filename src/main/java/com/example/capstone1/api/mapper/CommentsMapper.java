@@ -20,6 +20,7 @@ public interface CommentsMapper {
     @Mapping(target = "isDeleted", ignore = true)
     @Mapping(target = "post", source = "post")
     @Mapping(target = "content", source = "create.content")
+    @Mapping(target = "replies", expression = "java(new ArrayList<>())")
     Comments toComment(CommentRequestDto.CreateComment create, Users user, Posts post);
 
     @Mapping(target = "userId", source = "comment.user.id")

@@ -25,7 +25,7 @@ public class PostResponseDto {
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         private LocalDate recruitmentPeriod;
         private int expectedDuration;
-        private Long view;
+        private int view;
     }
 
     @Getter
@@ -39,6 +39,7 @@ public class PostResponseDto {
         private List<TechStack> techStack;
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         private LocalDate recruitmentPeriod;
-        private Long view;
+        private int view;
+        private int totalCommentsAndReplies;
     }
 }

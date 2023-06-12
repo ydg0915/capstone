@@ -6,6 +6,9 @@ import com.example.capstone1.api.v1.dto.response.PostResponseDto;
 import com.example.capstone1.api.v1.service.PostsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,13 +25,19 @@ public class PostsController {
     private final Response response;
 
     @GetMapping
-    public ResponseEntity<?> getAllPosts() {
-        List<PostResponseDto.PostInfoForBlock> postInfos = postsService.getAllPosts();
+    public ResponseEntity<?> getAllPosts(Pageable pageable) {
+        List<PostResponseDto.PostInfoForBlock> postInfos = postsService.getAllPosts(pageable);
         return response.success(postInfos, "전체 게시글 목록 조회에 성공했습니다.");
     }
 
+    @GetMapping("/recruiting")
+    public ResponseEntity<?> getAllRecruitingPosts(Pageable pageable) {
+        List<PostResponseDto.PostInfoForBlock> postInfos = postsService.getAllRecruitingPosts(pageable);
+        return response.success(postInfos, "모집 중인 게시글 목록 조회에 성공했습니다.");
+    }
+
     @PostMapping
-    public ResponseEntity<?> create(@Valid PostRequestDto.Create create) {
+    public ResponseEntity<?> create(@Valid @RequestBody PostRequestDto.Create create) {
         postsService.create(create);
         return response.success("게시글 작성에 성공했습니다.");
     }
@@ -42,9 +51,14 @@ public class PostsController {
 
     @PatchMapping("/{postId}")
     public ResponseEntity<?> update(@PathVariable Long postId,
-                                    @Valid PostRequestDto.Create update) {
+                                    @Valid @RequestBody PostRequestDto.Create update) {
         postsService.update(update, postId);
         return response.success("게시글 수정에 성공했습니다.");
+    }
+    @PatchMapping("/{postId}/complete")
+    public ResponseEntity<?> complete(@PathVariable Long postId) {
+        postsService.complete(postId);
+        return response.success("모집 완료 처리에 성공했습니다.");
     }
 
     @DeleteMapping("/{postId}")

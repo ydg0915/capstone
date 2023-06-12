@@ -35,7 +35,6 @@ public class Comments extends BaseTime {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
     @ColumnDefault("FALSE")
     private boolean isDeleted;
 

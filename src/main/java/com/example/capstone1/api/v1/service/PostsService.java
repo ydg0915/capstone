@@ -10,6 +10,10 @@ import com.example.capstone1.api.v1.dto.response.PostResponseDto;
 import com.example.capstone1.api.v1.repository.PostsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,14 +33,41 @@ public class PostsService {
     private final CustomUserDetailsService customUserDetailsService;
 
 
-    public List<PostResponseDto.PostInfoForBlock> getAllPosts() {
+    public List<PostResponseDto.PostInfoForBlock> getAllPosts(Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createDate")
+        );
 
-        List<Posts> posts = postsRepository.findAll();
+        Page<Posts> posts = postsRepository.findAll(pageRequest);
         if (posts.isEmpty())
             return Collections.emptyList();
         else {
             List<PostResponseDto.PostInfoForBlock> postInfos = new ArrayList<>();
             for (Posts post : posts) {
+                post.calculateTotalCommentsAndReplies();
+                PostResponseDto.PostInfoForBlock postInfo = PostsMapper.INSTANCE.toPostInfoForBlock(post);
+                postInfos.add(postInfo);
+            }
+            return postInfos;
+        }
+    }
+
+    public List<PostResponseDto.PostInfoForBlock> getAllRecruitingPosts(Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createDate")
+        );
+
+        Page<Posts> posts = postsRepository.findAllByIsCompletedFalse(pageRequest);
+        if (posts.isEmpty())
+            return Collections.emptyList();
+        else {
+            List<PostResponseDto.PostInfoForBlock> postInfos = new ArrayList<>();
+            for (Posts post : posts) {
+                post.calculateTotalCommentsAndReplies();
                 PostResponseDto.PostInfoForBlock postInfo = PostsMapper.INSTANCE.toPostInfoForBlock(post);
                 postInfos.add(postInfo);
             }
@@ -45,13 +76,8 @@ public class PostsService {
     }
 
     public PostResponseDto.PostInfo getPostById(Long postId) {
-
-        Optional<Posts> optionalPost = postsRepository.findById(postId);
-        if (optionalPost.isEmpty()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
-
-        Posts post = optionalPost.get();
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
         PostResponseDto.PostInfo postInfo = PostsMapper.INSTANCE.toPostInfo(post);
 
@@ -59,7 +85,6 @@ public class PostsService {
     }
 
     public void create(PostRequestDto.Create create) {
-
         String username = SecurityUtil.getCurrentUsername();
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
 
@@ -69,13 +94,8 @@ public class PostsService {
     }
 
     public void update(PostRequestDto.Create update, Long postId) {
-
-        Optional<Posts> optionalPost = postsRepository.findById(postId);
-        if (optionalPost.isEmpty()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
-
-        Posts post = optionalPost.get();
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
         String username = SecurityUtil.getCurrentUsername();
         if (!post.getUser().getUsername().equals(username)) {
@@ -87,14 +107,23 @@ public class PostsService {
         postsRepository.save(post);
     }
 
-    public void delete(Long postId) {
+    public void complete(Long postId) {
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
-        Optional<Posts> optionalPost = postsRepository.findById(postId);
-        if (optionalPost.isEmpty()) {
-            throw new CustomException(POST_NOT_FOUND);
+        String username = SecurityUtil.getCurrentUsername();
+        if (!post.getUser().getUsername().equals(username)) {
+            throw new CustomException(MISMATCH_USER);
         }
 
-        Posts post = optionalPost.get();
+        post.setCompleted(true);
+
+        postsRepository.save(post);
+    }
+
+    public void delete(Long postId) {
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
         String username = SecurityUtil.getCurrentUsername();
         if (!post.getUser().getUsername().equals(username)) {
