@@ -2,34 +2,22 @@ import { styled } from "styled-components";
 import Header from "../Components/Header";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { error } from "console";
 import { useEffect, useState } from "react";
 
-const users = {
-  id: 1,
-  github: "abcd123",
-  name: "홍길동",
-  password: 1234,
-  produce: "안녕하세요",
-  stacks: ["Java", "React"],
-  hopePro: ["육아 다이어리", "프로젝트 매칭"],
-  image: "프로필사진",
-};
-
 const Wrapper = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 100vh;
-  padding: 100px;
+  padding: 6.25rem;
   display: flex;
   background-color: whitesmoke;
 `;
 
 const ProfileBox = styled.div`
-  width: 700px;
-  height: 500px;
+  width: 43.75rem;
+  height: 31.25rem;
   border: none;
-  border-radius: 30px;
-  box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 1.875rem;
+  box-shadow: 0px 0.188rem 0.188rem rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -37,7 +25,7 @@ const ProfileBox = styled.div`
   font-size: 1.2rem;
   background-color: white;
   span {
-    margin-bottom: 30px;
+    margin-bottom: 1.875rem;
   }
 `;
 
@@ -47,13 +35,13 @@ const Chat = styled.div`
   justify-content: center;
   font-size: 1.2rem;
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   background-color: #fee500;
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   color: black;
-  margin-right: 20px;
+  margin-right: 1.25rem;
   svg {
-    margin-right: 5px;
+    margin-right: 0.313rem;
   }
 `;
 const EditProfile = styled.div`
@@ -62,12 +50,12 @@ const EditProfile = styled.div`
   justify-content: center;
   font-size: 1.2rem;
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   background-color: whitesmoke;
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   color: black;
   svg {
-    margin-right: 5px;
+    margin-right: 0.313rem;
   }
 `;
 
@@ -79,7 +67,7 @@ const Subbox = styled.div`
   align-items: center;
   font-weight: 600;
   p {
-    margin: 18px 0px;
+    margin: 1.125rem 0px;
   }
 `;
 const ProduceBox = styled.div`
@@ -88,13 +76,13 @@ const ProduceBox = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: 0.625rem;
   height: auto;
-  padding: 20px;
-  border-top: 2px solid gray;
+  padding: 1.25rem;
+  border-top: 0.125rem solid gray;
   font-weight: 600;
   p:first-child {
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
     opacity: 0.5;
   }
 `;
@@ -103,31 +91,31 @@ const EtcBox = styled.div`
   width: 60%;
   height: 100%;
   background-color: white;
-  border-radius: 30px;
-  border: 3px solid white;
-  margin-left: 30px;
+  border-radius: 1.875rem;
+  border: 0.188rem solid white;
+  margin-left: 1.875rem;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 0.625rem;
 `;
 
 const TopDiv = styled.div`
   width: 100%;
   height: 50%;
-  border-bottom: 2px solid black;
+  border-bottom: 0.125rem solid black;
   display: flex;
-  padding: 20px;
+  padding: 1.25rem;
 `;
 
 const StackBox = styled.div`
-  border-right: 2px solid black;
+  border-right: 0.125rem solid black;
   width: 50%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: start;
   span {
-    margin-bottom: 30px;
+    margin-bottom: 1.875rem;
     &:first-child {
       font-size: 1.6rem;
     }
@@ -139,9 +127,9 @@ const StackBox = styled.div`
   }
   ul > span {
     background-color: #7d92e9;
-    padding: 3px 20px;
+    padding: 0.188rem 1.25rem;
     font-size: 1.6rem;
-    border-radius: 30px;
+    border-radius: 1.875rem;
     appearance: none;
     color: black;
   }
@@ -151,7 +139,7 @@ const StackBox = styled.div`
 
 const HopePro = styled.div`
   font-weight: 600;
-  padding-left: 30px;
+  padding-left: 1.875rem;
   width: 50%;
   height: 100%;
   display: flex;
@@ -161,7 +149,7 @@ const HopePro = styled.div`
   span {
     &:first-child {
       font-size: 1.6rem;
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem;
     }
   }
   ul {
@@ -171,24 +159,24 @@ const HopePro = styled.div`
     justify-content: space-around;
   }
   ul > span {
-    padding: 3px 12px;
-    font-size: 15px;
-    border-radius: 15px;
+    padding: 0.188rem 12px;
+    font-size: 0.938rem;
+    border-radius: 0.938rem;
   }
   align-items: center;
 `;
 const CircleStyle = styled.div`
-  width: 15px;
-  height: 15px;
-  border-radius: 7.5px;
+  width: 0.938rem;
+  height: 0.938rem;
+  border-radius: 0.469rem;
   background-color: yellowgreen;
-  margin-right: 10px;
+  margin-right: 0.625rem;
 `;
 
 const CircleBox = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 `;
 
 function Profile() {
@@ -254,27 +242,14 @@ function Profile() {
           <TopDiv>
             <StackBox>
               <span>선호하는 기술</span>
-              <ul>
-                {users.stacks.map((stack) => (
-                  <span>{stack}</span>
-                ))}
-              </ul>
             </StackBox>
             <HopePro>
               <span>프로젝트 목록</span>
-              <ul>
-                {users.hopePro.map((hope) => (
-                  <CircleBox>
-                    <CircleStyle></CircleStyle>
-                    <span>{hope}</span>
-                  </CircleBox>
-                ))}
-              </ul>
             </HopePro>
           </TopDiv>
           <div
             style={{
-              padding: "20px",
+              padding: "1.25rem",
               fontWeight: "600",
               fontSize: "1.7rem",
             }}

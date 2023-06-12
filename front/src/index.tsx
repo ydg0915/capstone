@@ -4,20 +4,10 @@ import App from "./App";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./theme";
 import { Provider } from "react-redux";
-import { createStore, applyMiddleware, compose } from "redux";
-import Reducer from "./_reducers";
-import thunk from "redux-thunk";
+import { store } from "./_reducers";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
-);
-const store = createStore(
-  Reducer,
-  compose(
-    applyMiddleware(thunk),
-    (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
-      (window as any).__REDUX_DEVTOOLS_EXTENSION__()
-  )
 );
 
 root.render(

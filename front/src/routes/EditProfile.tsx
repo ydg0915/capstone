@@ -9,7 +9,7 @@ import { RootState } from "../_reducers";
 import { hideErrorMessage, showErrorMessage } from "../_actions/user_action";
 
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 90vh;
   display: flex;
   align-items: center;
@@ -63,6 +63,11 @@ const Btn = styled.input`
 `;
 
 function EditProfile() {
+  const intro = localStorage.getItem("user");
+  const user = intro ? JSON.parse(intro) : null;
+
+  console.log(user);
+
   const [introduction, setIntroduction] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -71,7 +76,13 @@ function EditProfile() {
   let errorMessage = useSelector(
     (state: RootState) => state.errorReducer.errorMessage
   );
-  const usernameChange = (event) => {
+  useEffect(() => {
+    if (user) {
+      setIntroduction(user.introduction);
+    }
+  }, []);
+
+  const introChange = (event) => {
     setIntroduction(event.target.value);
   };
 
@@ -97,14 +108,7 @@ function EditProfile() {
         Authorization: `Bearer ${accessToken}`, // 헤더에 Bearer 토큰 추가
       },
     };
-
-    if (introduction == "") {
-      dispatch(showErrorMessage("자기소개를 입력해주세요"));
-    } else if (oldPassword == "") {
-      dispatch(showErrorMessage("기존 비밀번호를 입력해주세요"));
-    } else if (newPassword == "") {
-      dispatch(showErrorMessage("새 비밀번호를 입력해주세요"));
-    } else {
+    {
       axios
         .patch("http://localhost:8080/api/v1/users/me", body, config)
         .then((res) => {
@@ -113,25 +117,7 @@ function EditProfile() {
         })
         .catch((error) => {
           console.log(error);
-          switch (error.response.status) {
-            case 400:
-              dispatch(
-                showErrorMessage(
-                  "비밀번호 형식(8~16자리 영어,숫자,특수문자)을 지켜주세요"
-                )
-              );
-              break;
-            case 403:
-              break;
-            case 409:
-              dispatch(
-                showErrorMessage("이미 존재하는 아이디 혹은 이메일입니다")
-              );
-              break;
-            default:
-              dispatch(showErrorMessage("알 수 없는 오류가 발생했습니다"));
-              break;
-          }
+          dispatch(showErrorMessage(error.response.data.message.split(",")[0]));
         });
     }
   };
@@ -153,7 +139,8 @@ function EditProfile() {
           <Title>프로필 수정</Title>
           <FormBox onSubmit={btnPrevent}>
             <InputId
-              onChange={usernameChange}
+              onChange={introChange}
+              value={introduction}
               type="text"
               placeholder="자기소개 수정"
             ></InputId>

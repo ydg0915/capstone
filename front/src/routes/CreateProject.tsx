@@ -7,64 +7,63 @@ import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../_reducers";
 
-const Wrapper = styled.form`
-  padding: 50px 200px 150px 300px;
+const Wrapper = styled.div`
+  padding: 3.125rem 12.5rem 9.375rem 18.75rem;
 `;
 
 const Title = styled.div`
-  margin-top: 50px;
+  margin-top: 3.125rem;
   display: flex;
   align-items: center;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-  padding-bottom: 30px;
+  border-bottom: 0.125rem solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 1.875rem;
   div {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 25px;
+    font-size: 1.563rem;
     font-weight: 600;
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
-    margin-right: 20px;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 1.25rem;
+    margin-right: 1.25rem;
     background-color: #7d92e9;
     color: white;
   }
   h1 {
-    font-size: 25px;
+    font-size: 1.563rem;
     font-weight: 600;
   }
 `;
 
 const Info = styled.div`
-  margin-top: 50px;
-  padding: 0px 100px;
+  margin-top: 3.125rem;
+  padding: 0px 6.25rem;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  grid-row-gap: 50px;
-  margin-bottom: 100px;
+  grid-row-gap: 3.125rem;
+  margin-bottom: 6.25rem;
 `;
 const InfoSelect = styled.div`
   h1 {
-    font-size: 25px;
+    font-size: 1.563rem;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
   }
   select {
     width: 50%;
-    padding: 10px 15px;
+    padding: 0.625rem 0.938rem;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    border: 1px solid #999;
-    background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxkwxLjLLTs9GYubvxA-r8Bd3XoIcKLi9RpQ&usqp=CAU");
+    border: 0.063rem solid #999;
   }
 
   input {
     width: 50%;
-    padding: 10px 15px;
-    border: 1px solid #999;
+    padding: 0.625rem 0.938rem;
+    border: 0.063rem solid #999;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -75,47 +74,55 @@ const Description = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-top: 100px;
-  margin-bottom: 100px;
+  margin-top: 6.25rem;
+  margin-bottom: 6.25rem;
   input {
-    padding: 10px 10px;
+    padding: 0.625rem 0.625rem;
   }
   input:focus {
     outline: none;
   }
   input::placeholder {
     color: black;
-    opacity: 1;
+    opacity: 0.8;
   }
   input:first-child {
-    margin-bottom: 20px;
-    height: 40px;
+    margin-bottom: 1.25rem;
+    height: 2.5rem;
   }
   input:last-child {
-    height: 300px;
+    height: 18.75rem;
   }
 `;
 
-const BtnDiv = styled.div`
+const BtnDiv = styled.form`
   display: flex;
   justify-content: end;
-  margin-right: 50px;
+  margin-right: 3.125rem;
 
   button {
-    margin-right: 20px;
+    margin-right: 1.25rem;
     background-color: teal;
-    border-radius: 15px;
+    border-radius: 0.938rem;
     border: 0;
     color: white;
     font-weight: 600;
-    padding: 5px 20px;
+    padding: 0.313rem 1.25rem;
+    &.submit {
+      background-color: #7d92e9;
+      border-radius: 1.25rem;
+      border: 0;
+      color: white;
+      padding: 0.313rem 1.25rem;
+      font-weight: 600;
+    }
   }
   input {
     background-color: #7d92e9;
-    border-radius: 20px;
+    border-radius: 1.25rem;
     border: 0;
     color: white;
-    padding: 5px 20px;
+    padding: 0.313rem 1.25rem;
     font-weight: 600;
   }
 `;
@@ -123,11 +130,11 @@ const BtnDiv = styled.div`
 function CreateProject() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [expectedDuration, setExpectedDuration] = useState("");
+  const [expectedDuration, setExpectedDuration] = useState(0);
   const [recruitmentPeriod, setRecruitmentPeriod] = useState("");
-  const [recruitmentSize, setRecruitmentSize] = useState("");
-  const [position, setPosition] = useState("");
-  const [techStack, setTechStack] = useState("");
+  const [recruitmentSize, setRecruitmentSize] = useState(0);
+  const [position, setPosition] = useState<string[]>([]);
+  const [techStack, setTechStack] = useState<string[]>([]);
   const history = useHistory();
   const accessToken = localStorage.getItem("accessToken");
 
@@ -138,33 +145,46 @@ function CreateProject() {
     setContent(event.target.value);
   };
   const expectedDurationChange = (event) => {
-    setExpectedDuration(event.target.value);
+    setExpectedDuration(Number(event.target.value));
   };
   const recruitmentPeriodChange = (event) => {
     setRecruitmentPeriod(event.target.value);
   };
   const recruitmentSizeChange = (event) => {
-    setRecruitmentSize(event.target.value);
+    setRecruitmentSize(Number(event.target.value));
   };
   const positionChange = (event) => {
-    setPosition(event.target.value);
+    setPosition([...position, event.target.value]);
   };
   const techStackChange = (event) => {
-    setTechStack(event.target.value);
+    setTechStack([...techStack, event.target.value]);
+  };
+
+  const body = {
+    title,
+    content,
+    expectedDuration,
+    recruitmentPeriod,
+    recruitmentSize,
+    position,
+    techStack,
   };
 
   const btnPrevent = (event) => {
     event.preventDefault();
+
     const config = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     };
 
+    console.log(body, config.headers);
+
     axios({
       method: "post",
       url: "http://localhost:8080/api/v1/posts",
-      data: formData,
+      data: body,
       headers: config.headers,
     })
       .then((res) => {
@@ -175,16 +195,6 @@ function CreateProject() {
         console.log(error);
       });
   };
-
-  const formData = new FormData();
-  formData.append("title", title);
-  formData.append("content", content);
-  formData.append("expectedDuration", expectedDuration);
-  formData.append("recruitmentPeriod", recruitmentPeriod);
-  formData.append("recruitmentSize", recruitmentSize);
-  formData.append("position", position);
-  formData.append("techStack", techStack);
-
   return (
     <>
       <Header />
@@ -216,52 +226,62 @@ function CreateProject() {
           </InfoSelect>
           <InfoSelect>
             <h1>모집 분야</h1>
-            <select value={position} onChange={positionChange}>
-              <option>프론트엔드</option>
-              <option>백엔드</option>
-              <option>디자이너</option>
-              <option>안드로이드</option>
+            <select multiple={true} value={position} onChange={positionChange}>
+              <option>FRONTEND</option>
+              <option>BACKEND</option>
+              <option>DATABASE</option>
+              <option>DEVOPS</option>
+              <option>ANDROID</option>
+              <option>DEVOPS</option>
+              <option>IOS</option>
+              <option>DESIGNER</option>
+              <option>AI</option>
             </select>
           </InfoSelect>
           <InfoSelect>
             <h1>예상기간</h1>
             <select value={expectedDuration} onChange={expectedDurationChange}>
-              <option>미정</option>
-              <option>1개월~3개월</option>
-              <option>3개월~6개월</option>
-              <option>6개월~1년</option>
-              <option>1년 이상</option>
+              <option>0</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
             </select>
           </InfoSelect>
           <InfoSelect>
             <h1>사용 스택</h1>
-            <select value={techStack} onChange={techStackChange}>
-              <option>React</option>
-              <option>NodeJS</option>
-              <option>NextJs</option>
-              <option>NestJs</option>
-              <option>Python</option>
-              <option>Spring</option>
-              <option>TypeScript</option>
+            <select
+              multiple={true}
+              value={techStack}
+              onChange={techStackChange}
+            >
+              <option>JAVA</option>
               <option>JavaScript</option>
-              <option>Vue</option>
-              <option>Java</option>
-              <option>C</option>
-              <option>Go</option>
-              <option>Swift</option>
-              <option>Kotlin</option>
+              <option>React</option>
+              <option>VUE</option>
+              <option>Python</option>
+              <option>Angular</option>
+              <option>NodeJS</option>
+              <option>SpringBoot</option>
+              <option>Django</option>
+              <option>RubyOnRails</option>
+              <option>PHP</option>
+              <option>Laravel</option>
+              <option>ASPNET</option>
+              <option>ExpressJS</option>
               <option>MySQL</option>
               <option>MongoDB</option>
-              <option>php</option>
-              <option>GraphQL</option>
-              <option>Firebase</option>
-              <option>Unity</option>
-              <option>Flutter</option>
-              <option>AWS</option>
+              <option>PostgreSQL</option>
               <option>Docker</option>
+              <option>Kubernetes</option>
+              <option>Jenkins</option>
+              <option>Swift</option>
+              <option>AWS</option>
+              <option>Kotlin</option>
               <option>Git</option>
-              <option>Figma</option>
-              <option>Zeplin</option>
+              <option>CSharp</option>
+              <option>Unity</option>
+              <option>TensorFlow</option>
             </select>
           </InfoSelect>
           <InfoSelect>
@@ -292,12 +312,14 @@ function CreateProject() {
           <Link to={"/"}>
             <button>취소</button>
           </Link>
-          <input
+          <button
+            onClick={btnPrevent}
+            className="submit"
             style={{ cursor: "pointer" }}
-            onSubmit={btnPrevent}
             type="submit"
-            value="글 등록"
-          />
+          >
+            글 등록
+          </button>
         </BtnDiv>
       </Wrapper>
     </>

@@ -9,7 +9,7 @@ import { ErrorMessage } from "./Login";
 import { RootState } from "../_reducers";
 
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 90vh;
   display: flex;
   align-items: center;
