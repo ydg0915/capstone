@@ -1,7 +1,12 @@
 import styled from "styled-components";
 import Header from "../Components/Header";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { hideErrorMessage, showErrorMessage } from "../_actions/user_action";
+import { ErrorMessage } from "./Login";
+import { RootState } from "../_reducers";
 
 const Container = styled.div`
   width: 100vw;
@@ -61,36 +66,53 @@ function Join() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const btnPrevent = (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("username", username);
-    formData.append("password", password);
-    formData.append("email", email);
-    axios({
-      method: "post",
-      url: "http://localhost:3000/api/v1/users/sign-up",
-      data: formData,
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const history = useHistory();
+  const dispatch = useDispatch();
+  let errorMessage = useSelector(
+    (state: RootState) => state.errorReducer.errorMessage
+  );
 
   const usernameChange = (event) => {
     setUsername(event.target.value);
   };
-
   const emailChange = (event) => {
     setEmail(event.target.value);
   };
   const passwordChange = (event) => {
     setPassword(event.target.value);
   };
+
+  const formData = new FormData();
+  formData.append("username", username);
+  formData.append("password", password);
+  formData.append("email", email);
+
+  const btnPrevent = (event) => {
+    event.preventDefault();
+    axios({
+      method: "post",
+      url: "http://localhost:8080/api/v1/users/sign-up",
+      data: formData,
+    })
+      .then((res) => {
+        console.log(res);
+        dispatch(showErrorMessage("회원가입 성공"));
+        history.push("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch(showErrorMessage(error.response.data.message.split(",")[0]));
+      });
+  };
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        dispatch(hideErrorMessage());
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage, dispatch]);
 
   return (
     <>
@@ -105,15 +127,16 @@ function Join() {
               placeholder="아이디"
             ></InputId>
             <InputId
-              onChange={emailChange}
-              type="email"
-              placeholder="이메일"
-            ></InputId>
-            <InputId
               onChange={passwordChange}
               type="password"
               placeholder="비밀번호"
             ></InputId>
+            <InputId
+              onChange={emailChange}
+              type="email"
+              placeholder="이메일"
+            ></InputId>
+            <ErrorMessage>{errorMessage}</ErrorMessage>
             <Btn type="submit" value={"회원가입"}></Btn>
           </FormBox>
         </Box>

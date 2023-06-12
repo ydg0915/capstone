@@ -157,10 +157,6 @@ function Home() {
       <Header />
       <Notice>
         <p>공 지 사 항</p>
-        <p>
-          디자인 갈아엎기(+반응형), 페이징처리, 프로젝트 수정 페이지,정렬
-          컴포넌트
-        </p>
       </Notice>
       <DotBox>
         <Dot />

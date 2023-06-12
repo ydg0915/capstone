@@ -8,6 +8,7 @@ import Login from "./routes/Login";
 import Join from "./routes/Join";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import EditProfile from "./routes/EditProfile";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -38,6 +39,9 @@ function Router() {
         </Route>
         <Route path="/join">
           <Join />
+        </Route>
+        <Route path="/editProfile">
+          <EditProfile />
         </Route>
         <Route path="/:projectId">
           <Project />

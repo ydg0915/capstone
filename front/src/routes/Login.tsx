@@ -2,6 +2,15 @@ import styled from "styled-components";
 import Header from "../Components/Header";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  hideErrorMessage,
+  loginUser,
+  setLoginStatus,
+  showErrorMessage,
+} from "../_actions/user_action";
+import { useHistory } from "react-router-dom";
+import { RootState } from "../_reducers";
 
 const Container = styled.div`
   width: 100vw;
@@ -58,6 +67,11 @@ const Btn = styled.input`
   border-radius: 0.313rem;
   cursor: pointer;
 `;
+export const ErrorMessage = styled.span`
+  color: red;
+  font-size: 14px;
+  margin-top: 20px;
+`;
 
 // const SocialBox = styled.div`
 //   display: flex;
@@ -107,13 +121,16 @@ const Btn = styled.input`
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
+  let errorMessage = useSelector(
+    (state: RootState) => state.errorReducer.errorMessage
+  );
+  const history = useHistory();
 
-  const api = axios.create({
-    proxy: {
-      host: "localhost",
-      port: 8080,
-    },
-  });
+  const formData = new FormData();
+  formData.append("username", username);
+  formData.append("password", password);
 
   const usernameChange = (event) => {
     setUsername(event.target.value);
@@ -123,17 +140,32 @@ function Login() {
     setPassword(event.target.value);
   };
 
-  const btnPrevent = (event) => {
+  const btnPrevent = async (event) => {
     event.preventDefault();
-    api
-      .post("/api/v1/users/login", { username, password })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    dispatch(loginUser(formData));
+
+    if (username == "") {
+      dispatch(showErrorMessage("아이디를 입력해주세요"));
+    } else if (password == "") {
+      dispatch(showErrorMessage("비밀번호를 입력해주세요"));
+    } else {
+    }
   };
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        dispatch(hideErrorMessage());
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage, dispatch]);
+
+  useEffect(() => {
+    if (isLogin === true) {
+      history.push("/");
+    }
+  }, [isLogin]);
 
   return (
     <>
@@ -144,6 +176,7 @@ function Login() {
           <FormBox onSubmit={btnPrevent}>
             <InputId
               onChange={usernameChange}
+              className={`${errorMessage ? "error" : ""}`}
               type="text"
               placeholder="아이디"
               value={username}
@@ -154,6 +187,7 @@ function Login() {
               placeholder="비밀번호"
               value={password}
             ></InputId>
+            <ErrorMessage>{errorMessage}</ErrorMessage>
             <Btn type="submit" value={"로그인"}></Btn>
           </FormBox>
         </Box>
