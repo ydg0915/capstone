@@ -1,128 +1,75 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 
-export const projects = [
-  {
-    id: 1,
-    crew: 5,
-    title: "프로젝트 하실분",
-    description: `안녕하세요. 기깔나는 사람들에서 대규모 팀원 모집합니다 🔥 
-    우리는 이런 일을 해요!
-      
-커리어 관리 시대’가 도래함에 따라 ‘나’의 히스토리를 한 곳에 볼 수 있는 온라인 공간이 없다는 걸 알게 되었습니다.
+const Toggle = styled.label`
+  margin: 1.875rem 18.75rem 1.875rem 18.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: 600;
 
+  [type="checkbox"] {
+    appearance: none;
+    position: relative;
+    border: max(2px, 0.1em) solid gray;
+    border-radius: 1.25em;
+    width: 2.25em;
+    height: 1.25em;
+    margin-right: 10px;
+  }
+  [type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    transform: scale(0.8);
+    background-color: gray;
+    transition: left 250ms linear;
+  }
+  [type="checkbox"]:checked::before {
+    background-color: white;
+    left: 1em;
+  }
 
+  [type="checkbox"]:checked {
+    background-color: tomato;
+    border-color: tomato;
+  }
+  [type="checkbox"]:disabled {
+    border-color: lightgray;
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
 
-그래서 우리는!! 포트폴리오 + 블로그 + 구인 / 구직 + 사이드 프로젝트 모집 등 한 곳에 작성하고, 공유할 수 있는 서비스를 제작하고 있습니다.
+  [type="checkbox"]:disabled:before {
+    background-color: lightgray;
+  }
 
+  [type="checkbox"]:disabled + span {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
 
+  [type="checkbox"]:focus-visible {
+    outline-offset: max(2px, 0.1em);
+    outline: max(2px, 0.1em) solid tomato;
+  }
 
-앞으로 다양한 사회 문제를 발견하고 해결할 수 있는 서비스를 만들어 영향력 있는 크루가 되고자 합니다.
-
-
-
-우리와 뜻을 함께할 새로운 크루를 모집하오니 많은 관심 부탁드립니다🤗
-      `,
-    want: `호기심이 많고 성장에 대한 욕구가 가득하신 분!!
-    큰 꿈을 향한 새로운 도전에 가슴이 콩닥콩닥 뛰시는 분!!
-    팀원을 존중하고 배려하는 따뜻한 마음을 가지신 분!!
-    자발적으로 일에서 가치를 찾고 자신의 역할에 동기부여가 되시는 분!!
-    `,
-    writer: "닉네임",
-    finish: 3,
-    view: 1,
-    comments: 0,
-    end: 3,
-    tag: ["프론트엔드", "백엔드"],
-    stack: ["리액트", "스프링"],
-    date: "23.04.08",
-  },
-  {
-    id: 2,
-    crew: 5,
-    finish: 3,
-
-    title: "사이드 프로젝트 디자이너 구해요",
-    writer: "닉네임2",
-    view: 2,
-    comments: 2,
-    end: 4,
-    tag: ["프론트엔드", "디자이너"],
-    stack: ["자바", "스프링"],
-    date: "23.04.08",
-  },
-  {
-    id: 3,
-    crew: 5,
-    finish: 3,
-
-    title: "프로젝트 하실분3",
-    writer: "닉네임3",
-    view: 3,
-    comments: 3,
-    end: 5,
-    tag: ["프론트엔드", "안드로이드"],
-    stack: ["NodeJS", "스프링"],
-    date: "23.04.08",
-  },
-  {
-    id: 4,
-    title: "프로젝트 하실분3",
-    writer: "닉네임3",
-    view: 3,
-    comments: 3,
-    end: 5,
-    crew: 5,
-    finish: 3,
-
-    tag: ["프론트엔드", "안드로이드"],
-    stack: ["NodeJS", "스프링"],
-    date: "23.04.08",
-  },
-  {
-    id: 5,
-    title: "프로젝트 하실분3",
-    writer: "닉네임3",
-    crew: 5,
-    finish: 3,
-
-    view: 3,
-    comments: 3,
-    end: 5,
-    tag: ["프론트엔드", "안드로이드"],
-    stack: ["NodeJS", "스프링"],
-    date: "23.04.08",
-  },
-  {
-    id: 6,
-    title: "프로젝트 하실분3",
-    writer: "닉네임3",
-    view: 3,
-    comments: 3,
-    crew: 5,
-    finish: 3,
-
-    end: 5,
-    tag: ["프론트엔드", "안드로이드"],
-    date: "23.04.08",
-
-    stack: ["NodeJS", "스프링"],
-  },
-  {
-    id: 7,
-    title: "프로젝트 하실분3",
-    crew: 5,
-    finish: 3,
-
-    writer: "닉네임3",
-    view: 3,
-    comments: 3,
-    end: 5,
-    tag: ["프론트엔드", "안드로이드"],
-    stack: ["NodeJS", "스프링"],
-    date: "23.04.08",
-  },
-];
+  [type="checkbox"]:enabled:hover {
+    box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
+  }
+  .span {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+`;
 
 const ProjectBox = styled.div`
   display: grid;
@@ -239,41 +186,121 @@ const ProjectDetail = styled.div`
 `;
 
 function ProjectList() {
+  interface Project {
+    id: number;
+    position: string[];
+    recruitmentPeriod: string;
+    techStack: string[];
+    title: string;
+    content: string;
+    totalCommentsAndReplies: number;
+    userId: number;
+    username: string;
+    view: number;
+  }
+
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isChecked, setIsChecked] = useState(true);
+
+  const btnClick = () => {
+    setIsChecked((prevState) => !prevState);
+    console.log(isChecked);
+  };
+
+  const page = 0;
+  const size = 15;
+  const sort = "DESC";
+
+  const body = {
+    page,
+    size,
+    sort,
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (isChecked === true) {
+          const res = await axios.get(
+            `http://localhost:8080/api/v1/posts/recruiting`,
+            {
+              params: {
+                page: page,
+                size: size,
+                sort: sort,
+              },
+            }
+          );
+          const projectData = res.data.data;
+          setProjects(projectData);
+          console.log(projectData);
+        } else {
+          const res = await axios.get(`http://localhost:8080/api/v1/posts`, {
+            params: {
+              page: page,
+              size: size,
+              sort: sort,
+            },
+          });
+          const projectData = res.data.data;
+          setProjects(projectData);
+          console.log(projectData);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <ProjectBox>
-      {projects.map((project) => (
-        <Link to={`/${project.id}`}>
-          <Project key={project.id}>
-            <Detail>
-              <TagBox>
-                <span>마감일 | {project.end}일 남음</span>
-                <Tag>
-                  <Range>{project.tag[0]}</Range>
-                  <Range>{project.tag[1]}</Range>
-                </Tag>
-              </TagBox>
-              <Stack>
-                <span>{project.stack[0]}</span>
-                <span>{project.stack[1]}</span>
-              </Stack>
-            </Detail>
-            <Title>{project.title}</Title>
-            <User>
-              <UserDetail>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                  <path d="M399 384.2C376.9 345.8 335.4 320 288 320H224c-47.4 0-88.9 25.8-111 64.2c35.2 39.2 86.2 63.8 143 63.8s107.8-24.7 143-63.8zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 16a72 72 0 1 0 0-144 72 72 0 1 0 0 144z" />
-                </svg>
-                <span>{project.writer}</span>
-              </UserDetail>
-              <ProjectDetail>
-                <span>조회 수 {project.view}</span>
-                <span>댓글 수 {project.comments}</span>
-              </ProjectDetail>
-            </User>
-          </Project>
-        </Link>
-      ))}
-    </ProjectBox>
+    <>
+      <Toggle>
+        <input
+          checked={isChecked}
+          onClick={btnClick}
+          role="switch"
+          type="checkbox"
+        />
+        <span>모집 중인 글만 보기</span>
+      </Toggle>
+      <ProjectBox>
+        {projects.map((project) => (
+          <Link to={`/${project.id}`}>
+            <Project key={project.id}>
+              <Detail>
+                <TagBox>
+                  <span>마감일 | {project.recruitmentPeriod}</span>
+                  <Tag>
+                    {project.position.map((ps) => (
+                      <Range>{ps}</Range>
+                    ))}
+                  </Tag>
+                </TagBox>
+                <Stack>
+                  {project.techStack.map((stack) => (
+                    <span>{stack}</span>
+                  ))}
+                </Stack>
+              </Detail>
+              <Title>{project.title}</Title>
+              <User>
+                <UserDetail>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M399 384.2C376.9 345.8 335.4 320 288 320H224c-47.4 0-88.9 25.8-111 64.2c35.2 39.2 86.2 63.8 143 63.8s107.8-24.7 143-63.8zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 16a72 72 0 1 0 0-144 72 72 0 1 0 0 144z" />
+                  </svg>
+                  <span>{project.username}</span>
+                </UserDetail>
+                <ProjectDetail>
+                  <span>조회 수 {project.view}</span>
+                  <span>댓글 수 {project.totalCommentsAndReplies}</span>
+                </ProjectDetail>
+              </User>
+            </Project>
+          </Link>
+        ))}
+      </ProjectBox>
+    </>
   );
 }
 

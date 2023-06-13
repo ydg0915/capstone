@@ -10,38 +10,38 @@ import {
 export const loginUser = (formData) => {
   return async (dispatch) => {
     try {
-      const res = await axios.post(
-        "http://localhost:8080/api/v1/users/login",
-        formData
-      );
-      console.log(res);
-      const data = res.data.data;
-      const accessToken = data.accessToken;
-      const refreshToken = data.refreshToken;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      await axios({
+        method: "post",
+        url: "http://localhost:8080/api/v1/users/login",
+        data: formData,
+      }).then(async (res) => {
+        console.log(res);
+        const data = res.data.data;
+        const accessToken = data.accessToken;
+        const refreshToken = data.refreshToken;
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-      const userRes = await axios.get(
-        "http://localhost:8080/api/v1/users/me",
-        config
-      );
-      const user = userRes.data.data;
-      localStorage.setItem("user", JSON.stringify(user));
-      console.log(user);
-
-      dispatch({
-        type: LOGIN_USER,
-        payload: true,
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        await axios
+          .get("http://localhost:8080/api/v1/users/me", config)
+          .then((res) => {
+            const user = res.data.data;
+            console.log(user);
+            localStorage.setItem("user", JSON.stringify(user));
+          });
+        dispatch({
+          type: LOGIN_USER,
+          payload: true,
+        });
       });
     } catch (error: any) {
-      console.log(error.response);
+      console.log(error);
       dispatch(showErrorMessage(error.response.data.message.split(",")[0]));
-
       dispatch({
         type: LOGIN_USER,
         payload: false,
@@ -49,6 +49,7 @@ export const loginUser = (formData) => {
     }
   };
 };
+
 export const logoutUser = (accessToken) => {
   const config = {
     headers: {

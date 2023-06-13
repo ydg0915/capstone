@@ -3,7 +3,11 @@ import Header from "../Components/Header";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { hideErrorMessage, loginUser } from "../_actions/user_action";
+import {
+  hideErrorMessage,
+  loginUser,
+  setLoginStatus,
+} from "../_actions/user_action";
 import { useHistory } from "react-router-dom";
 import { RootState, store } from "../_reducers";
 
@@ -64,8 +68,8 @@ const Btn = styled.input`
 `;
 export const ErrorMessage = styled.span`
   color: red;
-  font-size: 0.875;
-  margin-top: 1.25;
+  font-size: 0.875rem;
+  margin-top: 1.25rem;
 `;
 
 // const SocialBox = styled.div`
@@ -137,7 +141,9 @@ function Login() {
 
   const btnPrevent = (event) => {
     event.preventDefault();
+    console.log(isLogin);
     store.dispatch(loginUser(formData));
+    setLoginStatus(true);
   };
 
   useEffect(() => {
