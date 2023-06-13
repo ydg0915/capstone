@@ -15,33 +15,39 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-06-09T17:35:45+0900",
+    date = "2023-06-13T18:59:25+0900",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 11.0.19 (Azul Systems, Inc.)"
 )
 @Component
 public class PostsMapperImpl implements PostsMapper {
 
     @Override
-    public Posts toPost(Create create) {
-        if ( create == null ) {
+    public Posts toPost(Create create, Users user) {
+        if ( create == null && user == null ) {
             return null;
         }
 
         PostsBuilder posts = Posts.builder();
 
-        posts.title( create.getTitle() );
-        posts.content( create.getContent() );
-        posts.recruitmentSize( create.getRecruitmentSize() );
-        List<Position> list = create.getPosition();
-        if ( list != null ) {
-            posts.position( new ArrayList<Position>( list ) );
+        if ( create != null ) {
+            posts.title( create.getTitle() );
+            posts.content( create.getContent() );
+            posts.recruitmentSize( create.getRecruitmentSize() );
+            List<Position> list = create.getPosition();
+            if ( list != null ) {
+                posts.position( new ArrayList<Position>( list ) );
+            }
+            List<TechStack> list1 = create.getTechStack();
+            if ( list1 != null ) {
+                posts.techStack( new ArrayList<TechStack>( list1 ) );
+            }
+            posts.recruitmentPeriod( create.getRecruitmentPeriod() );
+            posts.expectedDuration( create.getExpectedDuration() );
         }
-        List<TechStack> list1 = create.getTechStack();
-        if ( list1 != null ) {
-            posts.techStack( new ArrayList<TechStack>( list1 ) );
+        if ( user != null ) {
+            posts.user( user );
         }
-        posts.recruitmentPeriod( create.getRecruitmentPeriod() );
-        posts.expectedDuration( create.getExpectedDuration() );
+        posts.comments( new ArrayList<>() );
 
         return posts.build();
     }
@@ -70,6 +76,7 @@ public class PostsMapperImpl implements PostsMapper {
         }
         postInfo.setRecruitmentPeriod( post.getRecruitmentPeriod() );
         postInfo.setExpectedDuration( post.getExpectedDuration() );
+        postInfo.setView( post.getView() );
 
         return postInfo;
     }
@@ -95,6 +102,8 @@ public class PostsMapperImpl implements PostsMapper {
             postInfoForBlock.setTechStack( new ArrayList<TechStack>( list1 ) );
         }
         postInfoForBlock.setRecruitmentPeriod( post.getRecruitmentPeriod() );
+        postInfoForBlock.setView( post.getView() );
+        postInfoForBlock.setTotalCommentsAndReplies( post.getTotalCommentsAndReplies() );
 
         return postInfoForBlock;
     }
