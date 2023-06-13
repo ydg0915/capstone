@@ -12,6 +12,7 @@ public interface UsersMapper {
 
     UsersMapper INSTANCE = Mappers.getMapper(UsersMapper.class);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "roles", expression = "java(java.util.Collections.singletonList(com.example.capstone1.api.enums.Authority.ROLE_USER.name()))")
     Users toUser(UserRequestDto.SignUp signUp);
 

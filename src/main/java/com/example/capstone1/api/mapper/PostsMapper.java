@@ -14,6 +14,7 @@ public interface PostsMapper {
 
     PostsMapper INSTANCE = Mappers.getMapper(PostsMapper.class);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", source = "user")
     @Mapping(target = "comments", expression = "java(new ArrayList<>())")
     Posts toPost(PostRequestDto.Create create, Users user);
