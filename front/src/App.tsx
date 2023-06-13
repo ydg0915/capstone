@@ -9,16 +9,15 @@ function useCheckSession() {
   const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
   const accessToken = localStorage.getItem("accessToken");
   const storedUser = localStorage.getItem("user");
-  const user = storedUser ? JSON.parse(storedUser) : null;
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (accessToken && user) {
+    if (accessToken && storedUser) {
       dispatch(setLoginStatus(true));
     } else {
       console.log("로그인되지 않은 상태입니다.");
     }
-  }, [isLogin, accessToken, user]);
+  }, [isLogin, accessToken, storedUser]);
 }
 
 function App() {

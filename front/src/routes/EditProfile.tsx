@@ -63,12 +63,7 @@ const Btn = styled.input`
 `;
 
 function EditProfile() {
-  const intro = localStorage.getItem("user");
-  const user = intro ? JSON.parse(intro) : null;
-
-  console.log(user);
-
-  const [introduction, setIntroduction] = useState("");
+  const [introduction, setIntroduction] = useState<string>("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const dispatch = useDispatch();
@@ -76,10 +71,21 @@ function EditProfile() {
   let errorMessage = useSelector(
     (state: RootState) => state.errorReducer.errorMessage
   );
+  interface User {
+    username: string;
+    email: string;
+    id: number;
+    introduction: string;
+  }
+
+  // ...
+
+  const obje = localStorage.getItem("user");
+  const user: User | null = obje ? JSON.parse(obje) : null;
+  console.log(user?.introduction);
+
   useEffect(() => {
-    if (user) {
-      setIntroduction(user.introduction);
-    }
+    if (user) setIntroduction(user?.introduction);
   }, []);
 
   const introChange = (event) => {
@@ -105,21 +111,19 @@ function EditProfile() {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${accessToken}`, // 헤더에 Bearer 토큰 추가
+        Authorization: `Bearer ${accessToken}`,
       },
     };
-    {
-      axios
-        .patch("http://localhost:8080/api/v1/users/me", body, config)
-        .then((res) => {
-          console.log(res);
-          history.push("/profile");
-        })
-        .catch((error) => {
-          console.log(error);
-          dispatch(showErrorMessage(error.response.data.message.split(",")[0]));
-        });
-    }
+    await axios
+      .patch("http://localhost:8080/api/v1/users/me", body, config)
+      .then((res) => {
+        console.log(res);
+        history.push("/profile");
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch(showErrorMessage(error.response.data.message.split(",")[0]));
+      });
   };
 
   useEffect(() => {
