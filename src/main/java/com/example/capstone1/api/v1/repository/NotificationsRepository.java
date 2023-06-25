@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface NotificationsRepository extends JpaRepository<Notifications, Long> {
     List<Notifications> findAllByReceiverOrderByCreateDateDesc(Users receiver);
+    int countByReceiverAndIsReadFalse(Users receiver);
 }
