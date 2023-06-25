@@ -15,7 +15,6 @@ export const loginUser = (formData) => {
         url: "http://localhost:8080/api/v1/users/login",
         data: formData,
       }).then(async (res) => {
-        console.log(res);
         const data = res.data.data;
         const accessToken = data.accessToken;
         const refreshToken = data.refreshToken;
@@ -31,13 +30,16 @@ export const loginUser = (formData) => {
           .get("http://localhost:8080/api/v1/users/me", config)
           .then((res) => {
             const user = res.data.data;
-            console.log(user);
             localStorage.setItem("user", JSON.stringify(user));
           });
         dispatch({
           type: LOGIN_USER,
           payload: true,
         });
+        return {
+          type: LOGIN_USER,
+          payload: true,
+        };
       });
     } catch (error: any) {
       console.log(error);
@@ -61,9 +63,13 @@ export const logoutUser = (accessToken) => {
     url: "http://localhost:8080/api/v1/users/logout",
     data: null,
     headers: config.headers,
-  }).catch((error) => {
-    console.log(error);
-  });
+  })
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
   return {
     type: LOGOUT_USER,
@@ -72,6 +78,7 @@ export const logoutUser = (accessToken) => {
 };
 
 export const setLoginStatus = (status) => {
+  localStorage.setItem("isLogin", status);
   return {
     type: SET_LOGIN_STATUS,
     payload: status,

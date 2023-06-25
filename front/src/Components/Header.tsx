@@ -1,8 +1,10 @@
 import { styled } from "styled-components";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import rootReducer, { RootState } from "../_reducers";
+import { RootState } from "../_reducers";
 import LogoutButton from "./LogoutBtn";
+import { useState } from "react";
+import axios from "axios";
 
 const Nav = styled.div`
   display: flex;
@@ -72,14 +74,39 @@ const NavRoute = styled.nav`
 
 function Header() {
   const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
+  const [searchContent, setSearchContent] = useState("");
+
+  const searchChange = (event) => {
+    setSearchContent(event.target.value);
+  };
+
+  const search = () => {
+    axios({
+      method: "get",
+      url: `http://localhost:8080/api/v1/posts/search`,
+      params: { content: searchContent },
+    })
+      .then((res) => {
+        console.log(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <Nav>
       <Link to={"/"}>
         <span>로고</span>
       </Link>
 
-      <SearchForm>
-        <SearchInput type="text" placeholder="검색"></SearchInput>
+      <SearchForm onSubmit={search}>
+        <SearchInput
+          onChange={searchChange}
+          value={searchContent}
+          type="text"
+          placeholder="검색"
+        ></SearchInput>
         <SearchBtn type="submit">
           <svg
             xmlns="http://www.w3.org/2000/svg"

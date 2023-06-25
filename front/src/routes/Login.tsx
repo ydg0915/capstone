@@ -141,9 +141,7 @@ function Login() {
 
   const btnPrevent = (event) => {
     event.preventDefault();
-    console.log(isLogin);
     store.dispatch(loginUser(formData));
-    setLoginStatus(true);
   };
 
   useEffect(() => {

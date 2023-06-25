@@ -68,6 +68,8 @@ function EditProfile() {
   const [newPassword, setNewPassword] = useState("");
   const dispatch = useDispatch();
   const history = useHistory();
+  const accessToken = localStorage.getItem("accessToken");
+
   let errorMessage = useSelector(
     (state: RootState) => state.errorReducer.errorMessage
   );
@@ -78,15 +80,8 @@ function EditProfile() {
     introduction: string;
   }
 
-  // ...
-
   const obje = localStorage.getItem("user");
-  const user: User | null = obje ? JSON.parse(obje) : null;
-  console.log(user?.introduction);
-
-  useEffect(() => {
-    if (user) setIntroduction(user?.introduction);
-  }, []);
+  const user: User = obje ? JSON.parse(obje) : null;
 
   const introChange = (event) => {
     setIntroduction(event.target.value);
@@ -107,7 +102,6 @@ function EditProfile() {
 
   const btnPrevent = async (event) => {
     event.preventDefault();
-    const accessToken = localStorage.getItem("accessToken");
 
     const config = {
       headers: {
@@ -118,6 +112,8 @@ function EditProfile() {
       .patch("http://localhost:8080/api/v1/users/me", body, config)
       .then((res) => {
         console.log(res);
+        user.introduction = introduction;
+        localStorage.setItem("user", JSON.stringify(user));
         history.push("/profile");
       })
       .catch((error) => {
