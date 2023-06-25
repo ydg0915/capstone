@@ -9,6 +9,7 @@ import com.example.capstone1.api.mapper.CommentsMapper;
 import com.example.capstone1.api.mapper.RepliesMapper;
 import com.example.capstone1.api.security.SecurityUtil;
 import com.example.capstone1.api.v1.dto.request.CommentRequestDto;
+import com.example.capstone1.api.v1.dto.request.NotificationRequestDto;
 import com.example.capstone1.api.v1.dto.response.CommentResponseDto;
 import com.example.capstone1.api.v1.repository.CommentsRepository;
 import com.example.capstone1.api.v1.repository.PostsRepository;
@@ -35,6 +36,7 @@ public class CommentsService {
     private final PostsRepository postsRepository;
     private final CommentsRepository commentsRepository;
     private final RepliesRepository repliesRepository;
+    private final NotificationsService notificationsService;
 
     public List<CommentResponseDto.CommentInfo> getAllCommentsAndRepliesByPostId(@PathVariable Long postId) {
         if (!postsRepository.existsById(postId)) {
@@ -83,6 +85,14 @@ public class CommentsService {
         Comments comment = CommentsMapper.INSTANCE.toComment(create, user, post);
 
         commentsRepository.save(comment);
+
+        NotificationRequestDto.Send send = NotificationRequestDto.Send.builder()
+                .content("새로운 댓글이 달렸습니다.")
+                .url("예시 url")
+                .receiver(post.getUser())
+                .build();
+
+        notificationsService.send(send);
     }
 
     public void updateComment(Long postId, Long commentId, CommentRequestDto.CreateComment update) {
