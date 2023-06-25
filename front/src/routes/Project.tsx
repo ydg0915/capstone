@@ -135,24 +135,51 @@ const Comment = styled.section`
     margin-left: 1.25rem;
   }
   input {
-    width: 100%;
-    height: 12.5rem;
-    margin-top: 1.875rem;
-    border-radius: 0.938rem;
-    border: 0.125rem solid rgba(0, 0, 0, 0.2);
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    border: none;
+    outline: none;
+    width: 90%;
+    height: 100%;
   }
   button {
-    background-color: #7d92e9;
+    background-color: #e6e6e6;
     border: 0;
-    padding: 0.5rem 0.938rem;
-    color: white;
+    height: 100%;
+    padding: 0.5rem 20px;
     font-weight: 600;
-    border-radius: 1.25rem;
-    float: right;
-    margin-top: 1.25rem;
+    border-radius: 10px;
+    &:hover {
+      background-color: #d9d9d9;
+    }
+  }
+`;
+
+export const Content = styled.div`
+  width: 100%;
+  height: 120px;
+  padding: 10px;
+  margin-top: 1.875rem;
+  border-radius: 0.938rem;
+  border: 0.125rem solid rgba(0, 0, 0, 0.2);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+`;
+
+const Comments = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+`;
+const CommentBox = styled.div`
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 20px;
+  padding: 15px 0px;
+  div:first-child {
+    margin-bottom: 15px;
+    opacity: 0.5;
   }
 `;
 
@@ -177,28 +204,51 @@ function Project() {
     id: number;
     introduction: string;
   }
+  interface Comment {
+    username: string;
+    id: number;
+    userId: number;
+    content: string;
+    replyInfos: Reple[];
+  }
+  interface Reple {
+    username: string;
+    id: number;
+    userId: number;
+    content: string;
+  }
 
   const [project, setProject] = useState<Project | null>(null);
+  const [content, setContent] = useState("");
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [selectedCommentId, setSelectedCommentId] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isrepleMode, setIsRepleMode] = useState(false);
+  const [isrepleEditMode, setIsRepleEditMode] = useState(false);
+
+  const [editedContent, setEditedContent] = useState("");
+  const [repleContent, setRepleContent] = useState("");
+
   const postId = useParams().projectId;
   const history = useHistory();
   const userString = localStorage.getItem("user");
   const user = userString ? JSON.parse(userString) : null;
   const userId = user ? user.id : null;
   const accessToken = localStorage.getItem("accessToken");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:8080/api/v1/posts/${postId}`,
-          {
-            params: {
-              postId: postId,
-            },
-          }
+        const postRes = await axios.get(
+          `http://localhost:8080/api/v1/posts/${postId}`
         );
-        const projectData = res.data.data;
+        const projectData = postRes.data.data;
         setProject(projectData);
-        console.log(projectData);
+
+        const commentRes = await axios.get(
+          `http://localhost:8080/api/v1/posts/${postId}/comments`
+        );
+        setComments(commentRes.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -249,6 +299,148 @@ function Project() {
         console.log(error);
       });
   };
+
+  const contentChange = (event) => {
+    setContent(event.target.value);
+  };
+
+  const createComment = (event) => {
+    event.preventDefault();
+    axios({
+      method: "post",
+      url: `http://localhost:8080/api/v1/posts/${postId}/comments`,
+      params: { content },
+      headers: config.headers,
+    })
+      .then(async (res) => {
+        const commentRes = await axios.get(
+          `http://localhost:8080/api/v1/posts/${postId}/comments`
+        );
+        setComments(commentRes.data.data);
+
+        setContent("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const editCommentClick = (editContent) => {
+    setIsEditMode(true);
+    setIsRepleMode(false);
+    setIsRepleEditMode(false);
+    setEditedContent(editContent);
+  };
+  const exitEditClick = () => {
+    setIsEditMode(false);
+  };
+  const repleClick = () => {
+    setIsRepleMode((prevState) => !prevState);
+    setIsEditMode(false);
+    setIsRepleEditMode(false);
+  };
+  const editRepleClick = (editReple) => {
+    setIsRepleEditMode((prevState) => !prevState);
+    setIsRepleMode(false);
+    setIsEditMode(false);
+    setEditedContent(editReple);
+  };
+  const handleCommentClick = (commentId) => {
+    setSelectedCommentId(commentId);
+    console.log(commentId);
+  };
+
+  const editContentChange = (event) => {
+    setEditedContent(event.target.value);
+  };
+  const repleContentChange = (event) => {
+    setRepleContent(event.target.value);
+  };
+
+  const editComment = (commentId) => {
+    axios({
+      method: "patch",
+      url: `http://localhost:8080/api/v1/posts/${postId}/comments/${commentId}`,
+      params: { content: editedContent },
+      headers: config.headers,
+    }).then(async (res) => {
+      const commentRes = await axios.get(
+        `http://localhost:8080/api/v1/posts/${postId}/comments`
+      );
+      setComments(commentRes.data.data);
+      setEditedContent("");
+      setIsEditMode(false);
+    });
+  };
+  const editReple = (replyId) => {
+    axios({
+      method: "patch",
+      url: `http://localhost:8080/api/v1/posts/${postId}/comments/replies/${replyId}`,
+      params: { content: editedContent },
+      headers: config.headers,
+    })
+      .then(async (res) => {
+        const commentRes = await axios.get(
+          `http://localhost:8080/api/v1/posts/${postId}/comments`
+        );
+        setComments(commentRes.data.data);
+        setEditedContent("");
+        setIsRepleEditMode(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const deleteComment = (commentId) => {
+    axios({
+      method: "delete",
+      url: `http://localhost:8080/api/v1/posts/${postId}/comments/${commentId}`,
+      headers: config.headers,
+    }).then(async (res) => {
+      const commentRes = await axios.get(
+        `http://localhost:8080/api/v1/posts/${postId}/comments`
+      );
+      setComments(commentRes.data.data);
+      const ex = commentRes.data.data.find(
+        (comment) => comment.id === commentId
+      );
+      console.log(ex);
+      setContent("");
+    });
+  };
+
+  const deleteReple = (repleId) => {
+    axios({
+      method: "delete",
+      url: `http://localhost:8080/api/v1/posts/${postId}/comments/replies/${repleId}`,
+      headers: config.headers,
+    }).then(async (res) => {
+      const commentRes = await axios.get(
+        `http://localhost:8080/api/v1/posts/${postId}/comments`
+      );
+      setComments(commentRes.data.data);
+      setContent("");
+      console.log(res);
+    });
+  };
+
+  const createReple = (commentId) => {
+    axios({
+      method: "post",
+      url: `http://localhost:8080/api/v1/posts/${postId}/comments/${commentId}/replies`,
+      params: { content: repleContent },
+      headers: config.headers,
+    }).then(async (res) => {
+      const commentRes = await axios.get(
+        `http://localhost:8080/api/v1/posts/${postId}/comments`
+      );
+      setComments(commentRes.data.data);
+      setEditedContent("");
+      setIsRepleMode(false);
+    });
+  };
+
   return (
     <>
       <Header />
@@ -316,10 +508,209 @@ function Project() {
             <span>댓글</span>
             <span>{project?.totalCommentsAndReplies} Comment</span>
           </div>
-          <form>
-            <input />
-            <button>댓글 등록</button>
-          </form>
+          <Comments>
+            {comments.map((comment) => (
+              <CommentBox key={comment.id}>
+                <div
+                  onClick={() => handleCommentClick(comment.id)}
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div>{comment.username}</div>
+                  {userId === comment.userId ? (
+                    <div style={{ fontSize: "14px" }}>
+                      {isrepleMode && comment.id === selectedCommentId ? (
+                        <span
+                          onClick={() => repleClick()}
+                          style={{ cursor: "pointer", marginRight: "20px" }}
+                        >
+                          취소
+                        </span>
+                      ) : (
+                        <span
+                          onClick={() => repleClick()}
+                          style={{ cursor: "pointer", marginRight: "20px" }}
+                        >
+                          답글 쓰기
+                        </span>
+                      )}
+                      {isEditMode && comment.id === selectedCommentId ? (
+                        <span
+                          onClick={exitEditClick}
+                          style={{ cursor: "pointer" }}
+                        >
+                          취소
+                        </span>
+                      ) : (
+                        <span
+                          onClick={() => editCommentClick(comment.content)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          수정
+                        </span>
+                      )}
+                      <span
+                        onClick={() => deleteComment(comment.id)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        삭제
+                      </span>
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: "14px" }}>
+                      <span
+                        onClick={() => repleClick()}
+                        style={{ cursor: "pointer" }}
+                      >
+                        답글 쓰기
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div>{comment.content}</div>
+                {comment.replyInfos.map((reple) => (
+                  <Comments>
+                    <CommentBox style={{ marginLeft: "50px", opacity: "1" }}>
+                      <div
+                        onClick={() => handleCommentClick(reple.id)}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>{reple.username}</div>
+                        {userId === reple.userId ? (
+                          <div style={{ fontSize: "14px" }}>
+                            {isEditMode && reple.id === selectedCommentId ? (
+                              <span style={{ cursor: "pointer" }}>취소</span>
+                            ) : (
+                              <span
+                                onClick={() => editRepleClick(reple.content)}
+                                style={{ cursor: "pointer" }}
+                              >
+                                수정
+                              </span>
+                            )}
+                            <span
+                              onClick={() => deleteReple(reple.id)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              삭제
+                            </span>
+                          </div>
+                        ) : null}
+                      </div>
+                      <div>{reple.content}</div>
+                      {isrepleEditMode && reple.id === selectedCommentId ? (
+                        <Content
+                          onClick={() => handleCommentClick(reple.id)}
+                          key={reple.id}
+                          style={{ marginLeft: "50px" }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              height: "100%",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <input
+                              onChange={editContentChange}
+                              value={editedContent}
+                              type="text"
+                            />
+                            <button
+                              onClick={() => editReple(reple.id)}
+                              style={{ cursor: "pointer" }}
+                              type="submit"
+                            >
+                              수정
+                            </button>
+                          </div>
+                        </Content>
+                      ) : null}
+                    </CommentBox>
+                  </Comments>
+                ))}
+                {isrepleMode && comment.id === selectedCommentId ? (
+                  <Content
+                    onClick={() => handleCommentClick(comment.id)}
+                    key={comment.id}
+                    style={{ marginLeft: "50px" }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        height: "100%",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <input
+                        onChange={repleContentChange}
+                        value={repleContent}
+                        type="text"
+                      />
+                      <button
+                        onClick={() => createReple(comment.id)}
+                        style={{ cursor: "pointer" }}
+                        type="submit"
+                      >
+                        답글
+                      </button>
+                    </div>
+                  </Content>
+                ) : null}
+
+                {isEditMode && comment.id === selectedCommentId ? (
+                  <Content>
+                    <div
+                      style={{
+                        display: "flex",
+                        height: "100%",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <input
+                        onChange={editContentChange}
+                        value={editedContent}
+                        type="text"
+                      />
+                      <button
+                        onClick={() => editComment(comment.id)}
+                        style={{ cursor: "pointer" }}
+                        type="submit"
+                      >
+                        수정
+                      </button>
+                    </div>
+                  </Content>
+                ) : null}
+              </CommentBox>
+            ))}
+          </Comments>
+
+          <Content>
+            <div
+              style={{
+                display: "flex",
+                height: "100%",
+                justifyContent: "space-between",
+              }}
+            >
+              <input
+                placeholder="댓글을 입력하세요"
+                onChange={contentChange}
+                value={content}
+                type="text"
+              />
+              <button
+                onClick={createComment}
+                style={{ cursor: "pointer" }}
+                type="submit"
+              >
+                등록
+              </button>
+            </div>
+          </Content>
         </Comment>
       </Container>
     </>

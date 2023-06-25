@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { styled } from "styled-components";
+import ListPagenation from "./Paging";
+import { ScrollToTop } from "../Router";
 
 const Toggle = styled.label`
   margin: 1.875rem 18.75rem 1.875rem 18.75rem;
@@ -74,7 +76,8 @@ const Toggle = styled.label`
 const ProjectBox = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-areas: ". . .";
+  grid-auto-rows: minmax(0, 1fr);
   row-gap: 5rem;
   column-gap: 1.875rem;
   margin: 6.25rem 10%;
@@ -201,57 +204,83 @@ function ProjectList() {
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [isChecked, setIsChecked] = useState(true);
+  const [size, setSize] = useState(15); // 한 페이지에 보여줄 데이터의 개수
+  const [startPage, setStartPage] = useState(1); // 페이지 초기 값은 1페이지
+  const [counts, setCounts] = useState(0); // 데이터의 총 개수를 setCounts 에 저장해서 사용
+  const [blockNum, setBlockNum] = useState(0); // 한 페이지에 보여 줄 페이지네이션의 개수를 block으로 지정하는 state. 초기 값은 0
+  let pageNumber = 0;
 
   const btnClick = () => {
     setIsChecked((prevState) => !prevState);
-    console.log(isChecked);
   };
 
-  const page = 0;
-  const size = 15;
   const sort = "DESC";
 
-  const body = {
-    page,
-    size,
-    sort,
-  };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (isChecked === true) {
-          const res = await axios.get(
-            `http://localhost:8080/api/v1/posts/recruiting`,
-            {
-              params: {
-                page: page,
-                size: size,
-                sort: sort,
-              },
-            }
-          );
-          const projectData = res.data.data;
-          setProjects(projectData);
-          console.log(projectData);
-        } else {
-          const res = await axios.get(`http://localhost:8080/api/v1/posts`, {
+  const fetchData = async (pageNumber): Promise<any> => {
+    try {
+      if (isChecked === true) {
+        const res = await axios.get(
+          `http://localhost:8080/api/v1/posts/recruiting`,
+          {
             params: {
-              page: page,
-              size: size,
-              sort: sort,
+              page: pageNumber,
+              size,
+              sort,
             },
-          });
-          const projectData = res.data.data;
-          setProjects(projectData);
-          console.log(projectData);
-        }
+          }
+        );
+        const projectData = res.data.data;
+        setProjects(projectData);
+        return projectData;
+      } else {
+        const res = await axios.get(`http://localhost:8080/api/v1/posts`, {
+          params: {
+            page: pageNumber,
+            size,
+            sort,
+          },
+        });
+        const projectData = res.data.data;
+        setProjects(projectData);
+        return projectData;
+      }
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
+
+  async function loadAllData() {
+    let allData = [];
+    let newData = await fetchData(pageNumber);
+    console.log(newData);
+
+    while (newData.length !== 0) {
+      allData = allData.concat(newData);
+      pageNumber++;
+      newData = await fetchData(pageNumber);
+    }
+
+    // 모든 데이터 로드 완료 후 처리할 로직 작성
+    console.log("모든 데이터 로드 완료");
+    console.log("총 데이터 개수:", allData.length);
+    console.log("데이터:", allData);
+    setCounts(allData.length);
+  }
+
+  useEffect(() => {
+    const fetchDataAndLoadData = async () => {
+      try {
+        await loadAllData();
+        await fetchData(startPage - 1);
       } catch (error) {
         console.log(error);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchDataAndLoadData();
+    window.scrollTo(0, 0);
+  }, [isChecked, startPage]);
 
   return (
     <>
@@ -266,20 +295,20 @@ function ProjectList() {
       </Toggle>
       <ProjectBox>
         {projects.map((project) => (
-          <Link to={`/${project.id}`}>
-            <Project key={project.id}>
+          <Link key={project.id} to={`/${project.id}`}>
+            <Project>
               <Detail>
                 <TagBox>
                   <span>마감일 | {project.recruitmentPeriod}</span>
                   <Tag>
-                    {project.position.map((ps) => (
-                      <Range>{ps}</Range>
+                    {project.position.map((ps, index) => (
+                      <Range key={index}>{ps}</Range>
                     ))}
                   </Tag>
                 </TagBox>
                 <Stack>
-                  {project.techStack.map((stack) => (
-                    <span>{stack}</span>
+                  {project.techStack.map((stack, index) => (
+                    <span key={index}>{stack}</span>
                   ))}
                 </Stack>
               </Detail>
@@ -300,6 +329,14 @@ function ProjectList() {
           </Link>
         ))}
       </ProjectBox>
+      <ListPagenation
+        limit={size}
+        page={startPage}
+        setPage={setStartPage}
+        blockNum={blockNum}
+        setBlockNum={setBlockNum}
+        counts={counts}
+      />
     </>
   );
 }

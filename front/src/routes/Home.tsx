@@ -51,90 +51,90 @@ const Dot = styled.div`
   background-color: gray;
 `;
 
-const Filter = styled.div`
-  width: auto;
-  height: 21.875rem;
-  background-color: #7d92e9;
-  margin: 1.875rem 18.75rem 1.875rem 18.75rem;
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  border-radius: 1.25rem;
-  padding: 1.25rem 1.25rem;
-  font-weight: 600;
-  color: ${(props) => props.theme.bgColor};
-`;
+// const Filter = styled.div`
+//   width: auto;
+//   height: 21.875rem;
+//   background-color: #7d92e9;
+//   margin: 1.875rem 18.75rem 1.875rem 18.75rem;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: start;
+//   border-radius: 1.25rem;
+//   padding: 1.25rem 1.25rem;
+//   font-weight: 600;
+//   color: ${(props) => props.theme.bgColor};
+// `;
 
-const Part = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  span {
-    font-size: 1.438rem;
-    padding: 0px 0.625rem;
-    border-right: 0.125rem solid white;
-    margin-right: 0.625rem;
-    cursor: pointer;
+// const Part = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   span {
+//     font-size: 1.438rem;
+//     padding: 0px 0.625rem;
+//     border-right: 0.125rem solid white;
+//     margin-right: 0.625rem;
+//     cursor: pointer;
 
-    &:last-child {
-      border: none;
-    }
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
+//     &:last-child {
+//       border: none;
+//     }
+//     &:hover {
+//       text-decoration: underline;
+//     }
+//   }
+// `;
 
-const Stack = styled.div`
-  display: flex;
-  font-size: 1.563rem;
-  margin-top: 3.125rem;
-  li {
-    list-style: none;
-    margin-right: 1.25rem;
-    cursor: pointer;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
+// const Stack = styled.div`
+//   display: flex;
+//   font-size: 1.563rem;
+//   margin-top: 3.125rem;
+//   li {
+//     list-style: none;
+//     margin-right: 1.25rem;
+//     cursor: pointer;
+//     &:hover {
+//       text-decoration: underline;
+//     }
+//   }
+// `;
 
-const Select = styled.div`
-  display: flex;
-  font-size: 0.938rem;
-  margin-top: 6.25rem;
-  li {
-    display: flex;
-    align-items: center;
-    list-style: none;
-    margin-right: 1.25rem;
-    background-color: whitesmoke;
-    padding: 0.313rem 0.625rem;
-    color: black;
-    border-radius: 1.875rem;
-    cursor: pointer;
-    svg {
-      margin-left: 0.313rem;
-    }
-  }
-`;
+// const Select = styled.div`
+//   display: flex;
+//   font-size: 0.938rem;
+//   margin-top: 6.25rem;
+//   li {
+//     display: flex;
+//     align-items: center;
+//     list-style: none;
+//     margin-right: 1.25rem;
+//     background-color: whitesmoke;
+//     padding: 0.313rem 0.625rem;
+//     color: black;
+//     border-radius: 1.875rem;
+//     cursor: pointer;
+//     svg {
+//       margin-left: 0.313rem;
+//     }
+//   }
+// `;
 
 function Home() {
   const [part, setPart] = useState("프론트엔드");
   const [stack, setStack] = useState<any[]>([]);
   const [select, setSelect] = useState<any[]>([]);
 
-  const partClick = (event) => {
-    setPart(event.target.innerText);
-  };
-  const selectClick = (event) => {
-    setSelect((select) => [...select, event.target.innerText]);
-  };
-  const deleteClick = (event) => {
-    const index = select.indexOf(event.target.innerText);
-    select.splice(index, 1);
-    console.log(select);
-  };
+  // const partClick = (event) => {
+  //   setPart(event.target.innerText);
+  // };
+  // const selectClick = (event) => {
+  //   setSelect((select) => [...select, event.target.innerText]);
+  // };
+  // const deleteClick = (event) => {
+  //   const index = select.indexOf(event.target.innerText);
+  //   select.splice(index, 1);
+  //   console.log(select);
+  // };
   useEffect(() => {
     switch (part) {
       case "프론트엔드":
@@ -157,11 +157,12 @@ function Home() {
       <Header />
       <Notice>
         <p>공 지 사 항</p>
+        <p>디자인-네비게이션 바를 왼쪽 메뉴에 숨김</p>
       </Notice>
       <DotBox>
         <Dot />
       </DotBox>
-      <Filter>
+      {/* <Filter>
         <Part>
           <span onClick={partClick}>프론트엔드</span>
           <span onClick={partClick}>백엔드</span>
@@ -187,10 +188,9 @@ function Home() {
             </li>
           ))}
         </Select>
-      </Filter>
-
+      </Filter> */}
       <ProjectList />
-      <Footer></Footer>
+      <Footer />
     </>
   );
 }

@@ -12,7 +12,7 @@ function LogoutButton() {
   const handleLogout = async () => {
     try {
       dispatch(logoutUser(accessToken));
-      localStorage.removeItem("accessToken");
+      localStorage.clear();
       dispatch(setLoginStatus(false));
       await history.push("/");
     } catch (error) {

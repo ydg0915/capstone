@@ -189,13 +189,13 @@ function Profile() {
   const [user, setUser] = useState<User | null>(null);
   const accessToken = localStorage.getItem("accessToken");
 
-  useEffect(() => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
 
+  useEffect(() => {
     axios
       .get("http://localhost:8080/api/v1/users/me", config)
       .then((res) => {

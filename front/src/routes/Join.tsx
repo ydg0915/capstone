@@ -4,7 +4,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { hideErrorMessage, showErrorMessage } from "../_actions/user_action";
+import {
+  hideErrorMessage,
+  setLoginStatus,
+  showErrorMessage,
+} from "../_actions/user_action";
 import { ErrorMessage } from "./Login";
 import { RootState } from "../_reducers";
 
@@ -98,6 +102,7 @@ function Join() {
         console.log(res);
         dispatch(showErrorMessage("회원가입 성공"));
         history.push("/login");
+        setLoginStatus(false);  
       })
       .catch((error) => {
         console.log(error);
