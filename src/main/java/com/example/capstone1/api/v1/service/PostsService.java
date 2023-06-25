@@ -32,7 +32,6 @@ public class PostsService {
     private final PostsRepository postsRepository;
     private final CustomUserDetailsService customUserDetailsService;
 
-
     public List<PostResponseDto.PostInfoForBlock> getAllPosts(Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(
                 pageable.getPageNumber(),
