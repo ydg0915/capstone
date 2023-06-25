@@ -36,4 +36,10 @@ public class NotificationsController {
         notificationsService.read(notificationId);
         return response.success("알림 조회에 성공했습니다.");
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> count() {
+        int count = notificationsService.count();
+        return response.success(count, "알림 개수 조회에 성공했습니다.");
+    }
 }

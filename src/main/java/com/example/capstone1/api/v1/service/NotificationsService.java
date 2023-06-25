@@ -98,6 +98,13 @@ public class NotificationsService {
         notification.setRead(true);
     }
 
+    public int count() {
+        String username = SecurityUtil.getCurrentUsername();
+        Users user = (Users) customUserDetailsService.loadUserByUsername(username);
+
+        return notificationsRepository.countByReceiverAndIsReadFalse(user);
+    }
+
     private String makeTimeIncludeId(Long userId) {
         return userId + "_" + System.currentTimeMillis();
     }
