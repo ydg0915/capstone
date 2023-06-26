@@ -32,6 +32,11 @@ export const loginUser = (formData) => {
             const user = res.data.data;
             localStorage.setItem("user", JSON.stringify(user));
           });
+
+        const eventSource = new EventSource(
+          "http://localhost:8080/api/v1/notifications/subscribe"
+        );
+        console.log(eventSource);
         dispatch({
           type: LOGIN_USER,
           payload: true,
@@ -55,16 +60,15 @@ export const loginUser = (formData) => {
 export const logoutUser = (accessToken) => {
   const config = {
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: accessToken,
     },
   };
   axios({
     method: "post",
     url: "http://localhost:8080/api/v1/users/logout",
-    data: null,
     headers: config.headers,
   })
-    .then((res) => {
+    .then(async (res) => {
       console.log(res.data);
     })
     .catch((error) => {

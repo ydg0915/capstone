@@ -123,6 +123,7 @@ function Home() {
   const [part, setPart] = useState("프론트엔드");
   const [stack, setStack] = useState<any[]>([]);
   const [select, setSelect] = useState<any[]>([]);
+  const [message, setMessage] = useState("");
 
   // const partClick = (event) => {
   //   setPart(event.target.innerText);
@@ -135,6 +136,21 @@ function Home() {
   //   select.splice(index, 1);
   //   console.log(select);
   // };
+  useEffect(() => {
+    const eventSource = new EventSource(
+      "http://localhost:8080/api/v1/notifications/subscribe"
+    );
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setMessage(data.message);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  });
+
   useEffect(() => {
     switch (part) {
       case "프론트엔드":
@@ -157,7 +173,7 @@ function Home() {
       <Header />
       <Notice>
         <p>공 지 사 항</p>
-        <p>디자인-네비게이션 바를 왼쪽 메뉴에 숨김</p>
+        <p>{message}</p>
       </Notice>
       <DotBox>
         <Dot />

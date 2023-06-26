@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../_reducers";
 import LogoutButton from "./LogoutBtn";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 const Nav = styled.div`
   display: flex;
@@ -72,13 +73,90 @@ const NavRoute = styled.nav`
   }
 `;
 
+const NotificationCount = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background-color: red;
+  color: white;
+  font-size: 14px;
+  position: absolute;
+  top: -15px;
+  left: 10px;
+`;
+
+const NotificationBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  background-color: gray;
+  border: 2px solid whitesmoke;
+  color: black;
+  border-radius: 20px;
+  top: 50px;
+  font-size: 16px;
+  width: 250px;
+  padding: 20px 0px;
+  span {
+    margin-bottom: 10px;
+  }
+`;
+
+const MiniNotifiBox = styled.div``;
+
 function Header() {
+  interface Notification {
+    url: string;
+    id: number;
+    read: boolean;
+    content: string;
+  }
   const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
   const [searchContent, setSearchContent] = useState("");
+  const accessToken = localStorage.getItem("accessToken");
+  const [countNotification, setCountNotification] = useState(0);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [openNotification, setOpenNotification] = useState(false);
+
+  const history = useHistory();
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
 
   const searchChange = (event) => {
     setSearchContent(event.target.value);
   };
+
+  const NotifiStateClick = () => {
+    setOpenNotification((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (isLogin === true) {
+      axios
+        .get("http://localhost:8080/api/v1/notifications", config)
+        .then((res) => {
+          setNotifications(res.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      axios
+        .get("http://localhost:8080/api/v1/notifications/count", config)
+        .then((res) => {
+          setCountNotification(res.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [notifications]);
 
   const search = () => {
     axios({
@@ -92,6 +170,16 @@ function Header() {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const handleNotifi = (notificationId) => {
+    axios({
+      method: "patch",
+      url: `http://localhost:8080/api/v1/notifications/${notificationId}`,
+      headers: config.headers,
+    }).then((res) => {
+      console.log(res.data);
+    });
   };
 
   return (
@@ -126,7 +214,15 @@ function Header() {
           <Link to={"/createproject"}>
             <span>프로젝트 생성</span>
           </Link>
-          <span style={{ cursor: "pointer" }}>
+          <span
+            style={{
+              cursor: "pointer",
+              fontSize: "20px",
+              position: "relative",
+              color: "black",
+            }}
+            onClick={NotifiStateClick}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="1em"
@@ -134,6 +230,25 @@ function Header() {
             >
               <path d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z" />
             </svg>
+
+            {countNotification === 0 ? null : (
+              <NotificationCount>{countNotification}</NotificationCount>
+            )}
+            {openNotification === false ? null : (
+              <NotificationBox>
+                {notifications.map((notification) => (
+                  <span
+                    key={notification.id}
+                    onClick={() => handleNotifi(notification.id)}
+                    style={{
+                      textDecoration: notification.read ? "none" : "underline",
+                    }}
+                  >
+                    {notification.content}
+                  </span>
+                ))}
+              </NotificationBox>
+            )}
           </span>
           <Link to={"/profile"}>
             <span>프로필</span>
