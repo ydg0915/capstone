@@ -1,20 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, setLoginStatus } from "../_actions/user_action";
+import { RootState } from "../_reducers";
 
 function LogoutButton() {
   const dispatch = useDispatch();
   const history = useHistory();
   const accessToken = localStorage.getItem("accessToken");
+  const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
 
   const handleLogout = async () => {
     try {
       dispatch(logoutUser(accessToken));
       localStorage.clear();
-      dispatch(setLoginStatus(false));
-      await history.push("/");
     } catch (error) {
       console.log(error);
     }

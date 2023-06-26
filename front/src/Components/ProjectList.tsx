@@ -253,18 +253,12 @@ function ProjectList() {
   async function loadAllData() {
     let allData = [];
     let newData = await fetchData(pageNumber);
-    console.log(newData);
 
     while (newData.length !== 0) {
       allData = allData.concat(newData);
       pageNumber++;
       newData = await fetchData(pageNumber);
     }
-
-    // 모든 데이터 로드 완료 후 처리할 로직 작성
-    console.log("모든 데이터 로드 완료");
-    console.log("총 데이터 개수:", allData.length);
-    console.log("데이터:", allData);
     setCounts(allData.length);
   }
 
