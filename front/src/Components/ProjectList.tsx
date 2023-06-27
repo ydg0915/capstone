@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import ListPagenation from "./Paging";
-import { ScrollToTop } from "../Router";
+import React from "react";
 
 const Toggle = styled.label`
   margin: 1.875rem 18.75rem 1.875rem 18.75rem;
@@ -90,7 +90,7 @@ const Project = styled.div`
   align-items: center;
   width: 100%;
   height: 18.75rem;
-  background-color: whitesmoke;
+  border: 3px solid #c2dedc;
   border-radius: 3.125rem;
   padding: 1.875rem;
   padding-bottom: 0px;
@@ -161,7 +161,7 @@ const User = styled.div`
   align-items: center;
   width: 100%;
   height: 3.125rem;
-  border-top: 0.063rem solid;
+  border-top: 0.063rem solid #c2dedc;
 `;
 
 const UserDetail = styled.div`

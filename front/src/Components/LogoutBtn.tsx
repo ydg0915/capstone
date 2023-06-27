@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, setLoginStatus } from "../_actions/user_action";
@@ -14,13 +13,19 @@ function LogoutButton() {
   const handleLogout = async () => {
     try {
       dispatch(logoutUser(accessToken));
+      setLoginStatus(false);
       localStorage.clear();
+      history.go(0);
     } catch (error) {
       console.log(error);
     }
   };
 
-  return <button onClick={handleLogout}>로그아웃</button>;
+  return (
+    <span style={{ cursor: "pointer" }} onClick={handleLogout}>
+      로그아웃
+    </span>
+  );
 }
 
 export default LogoutButton;

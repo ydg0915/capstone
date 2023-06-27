@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { styled } from "styled-components";
+import styled from "styled-components";
+import React from "react";
 
 const Container = styled.footer`
   display: flex;

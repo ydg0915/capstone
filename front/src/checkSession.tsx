@@ -11,22 +11,23 @@ export function useCheckSession() {
   const bfRefreshToken = localStorage.getItem("refreshToken");
 
   useEffect(() => {
-    const Token = {
-      headers: {
-        ACCESS_TOKEN: bfAccessToken,
-        REFRESH_TOKEN: bfRefreshToken,
-      },
-    };
-
     const reIssue = async () => {
       try {
+        const Token = {
+          headers: {
+            ACCESS_TOKEN: bfAccessToken,
+            REFRESH_TOKEN: bfRefreshToken,
+          },
+        };
+
         const response = await axios.post(
           "http://localhost:8080/api/v1/users/reissue",
-
+          null,
           {
             headers: Token.headers,
           }
         );
+
         console.log(response.data);
         localStorage.setItem("accessToken", response.data.data.accessToken);
         localStorage.setItem("refreshToken", response.data.data.refreshToken);
@@ -40,13 +41,14 @@ export function useCheckSession() {
 
   const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
   const storedUser = localStorage.getItem("user");
+  const Login = localStorage.getItem("isLogin");
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (accessToken && storedUser) {
-      dispatch(setLoginStatus(true));
+      setLoginStatus(true);
     } else {
       console.log("로그인되지 않은 상태입니다.");
     }
-  }, [isLogin, accessToken, storedUser]);
+  }, [isLogin, accessToken, refreshToken]);
 }

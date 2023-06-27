@@ -1,30 +1,31 @@
 import { Link, useParams, useHistory } from "react-router-dom";
 import Header from "../Components/Header";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import axios from "axios";
+import React from "react";
 import { useEffect, useState } from "react";
 
 const Container = styled.div`
-  padding: 6.25rem 15rem 12.5rem 15rem;
+  padding: 6.25rem 300px 12.5rem 300px;
 `;
 
 const Title = styled.div`
   width: 100%;
   height: 6.25rem;
-  font-size: 3.125rem;
+  font-size: 40px;
   font-weight: 600;
 `;
 
 const Writer = styled.div`
   width: auto;
   height: auto;
-  font-size: 1.563rem;
+  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: start;
   svg {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2rem;
+    height: 2rem;
     margin-right: 1.25rem;
   }
 `;

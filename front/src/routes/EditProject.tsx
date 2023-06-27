@@ -1,11 +1,10 @@
 import { Link, useParams } from "react-router-dom";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import Header from "../Components/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../_reducers";
+import React from "react";
 
 const Wrapper = styled.div`
   padding: 3.125rem 12.5rem 9.375rem 18.75rem;

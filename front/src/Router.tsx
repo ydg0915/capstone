@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import EditProfile from "./routes/EditProfile";
 import EditProject from "./routes/EditProject";
+import React from "react";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
