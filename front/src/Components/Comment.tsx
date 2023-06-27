@@ -1,8 +1,8 @@
-// Comment 컴포넌트 수정 버튼과 선택된 댓글 관리
-
 import axios from "axios";
 import { useState } from "react";
 import { useParams } from "react-router";
+import React from "react";
+
 import { Content } from "../routes/Project";
 
 const Comment = ({

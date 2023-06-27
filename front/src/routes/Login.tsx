@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import Header from "../Components/Header";
 import axios from "axios";
+import React from "react";
+
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -142,6 +144,7 @@ function Login() {
   const btnPrevent = (event) => {
     event.preventDefault();
     store.dispatch(loginUser(formData));
+    setLoginStatus(true);
   };
 
   useEffect(() => {

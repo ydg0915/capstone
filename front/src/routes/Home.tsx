@@ -3,6 +3,9 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import ProjectList from "../Components/ProjectList";
 import { useEffect, useState } from "react";
+import React from "react";
+
+import Menu from "../Components/Menu";
 
 interface parts {
   name: string;
@@ -26,14 +29,13 @@ const Notice = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  background-color: #fff088;
+  background-color: #1361e7;
   margin: 1.875rem 18.75rem 1.875rem 18.75rem;
   display: flex;
-
   border-radius: 1.25rem;
   font-size: 3.125rem;
   font-weight: 800;
-  color: ${(props) => props.theme.textColor};
+  color: white;
 `;
 
 const DotBox = styled.div`
@@ -136,20 +138,20 @@ function Home() {
   //   select.splice(index, 1);
   //   console.log(select);
   // };
-  useEffect(() => {
-    const eventSource = new EventSource(
-      "http://localhost:8080/api/v1/notifications/subscribe"
-    );
+  // useEffect(() => {
+  //   const eventSource = new EventSource(
+  //     "http://localhost:8080/api/v1/notifications/subscribe"
+  //   );
 
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setMessage(data.message);
-    };
+  //   eventSource.onmessage = (event) => {
+  //     const data = JSON.parse(event.data);
+  //     setMessage(data.message);
+  //   };
 
-    return () => {
-      eventSource.close();
-    };
-  });
+  //   return () => {
+  //     eventSource.close();
+  //   };
+  // });
 
   useEffect(() => {
     switch (part) {
@@ -173,7 +175,6 @@ function Home() {
       <Header />
       <Notice>
         <p>공 지 사 항</p>
-        <p>{message}</p>
       </Notice>
       <DotBox>
         <Dot />
@@ -206,6 +207,7 @@ function Home() {
         </Select>
       </Filter> */}
       <ProjectList />
+
       <Footer />
     </>
   );

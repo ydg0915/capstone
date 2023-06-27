@@ -10,6 +10,8 @@ import {
   showErrorMessage,
 } from "../_actions/user_action";
 import { ErrorMessage } from "./Login";
+import React from "react";
+
 import { RootState } from "../_reducers";
 
 const Container = styled.div`
@@ -102,7 +104,7 @@ function Join() {
         console.log(res);
         dispatch(showErrorMessage("회원가입 성공"));
         history.push("/login");
-        setLoginStatus(false);  
+        setLoginStatus(false);
       })
       .catch((error) => {
         console.log(error);

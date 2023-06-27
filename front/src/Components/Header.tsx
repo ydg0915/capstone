@@ -1,28 +1,32 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../_reducers";
 import LogoutButton from "./LogoutBtn";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBell,
+  faCircleUser,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
+import React from "react";
+import Menu from "./Menu";
 
 const Nav = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 
   width: 100%;
   margin-bottom: 0.25rem;
 
-  padding: 1.875rem 5%;
+  padding: 1.875rem 150px 1.875rem 150px;
   font-size: 1rem;
   font-weight: 600;
   color: ${(props) => props.theme.textColor};
   box-shadow: 0px 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
-  span {
-    margin-right: 21.875rem;
-  }
+
   button {
     border: none;
     background-color: white;
@@ -34,7 +38,7 @@ const Nav = styled.div`
 
 const SearchForm = styled.form`
   display: flex;
-  width: 30%;
+  width: 33%;
   height: 2.5rem;
   padding: 0px 2%;
   border: 0.125rem solid rgba(0, 0, 0, 0.3);
@@ -65,12 +69,25 @@ const SearchBtn = styled.button`
 
 const NavRoute = styled.nav`
   display: flex;
+  width: 33%;
   justify-content: end;
   align-items: center;
   opacity: 0.6;
   span {
     margin-right: 1.563rem;
   }
+  svg {
+    width: 30px;
+    height: 30px;
+    margin-right: 20px;
+  }
+`;
+
+const Notifi = styled.span`
+  cursor: pointer;
+  font-size: 20px;
+  position: relative;
+  color: black;
 `;
 
 const NotificationCount = styled.div`
@@ -106,8 +123,6 @@ const NotificationBox = styled.div`
   }
 `;
 
-const MiniNotifiBox = styled.div``;
-
 function Header() {
   interface Notification {
     url: string;
@@ -115,14 +130,15 @@ function Header() {
     read: boolean;
     content: string;
   }
-  const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
+
+  const isLoginString = localStorage.getItem("isLogin");
+  const [isLogin, setIsLogin] = useState<boolean>();
   const [searchContent, setSearchContent] = useState("");
   const accessToken = localStorage.getItem("accessToken");
   const [countNotification, setCountNotification] = useState(0);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [openNotification, setOpenNotification] = useState(false);
 
-  const history = useHistory();
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -138,25 +154,28 @@ function Header() {
   };
 
   useEffect(() => {
-    if (isLogin === true) {
-      axios
-        .get("http://localhost:8080/api/v1/notifications", config)
-        .then((res) => {
-          setNotifications(res.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      axios
-        .get("http://localhost:8080/api/v1/notifications/count", config)
-        .then((res) => {
-          setCountNotification(res.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  }, [notifications]);
+    setIsLogin(isLoginString === "true");
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/v1/notifications", config)
+      .then((res) => {
+        setNotifications(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    axios
+      .get("http://localhost:8080/api/v1/notifications/count", config)
+      .then((res) => {
+        setCountNotification(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    console.log(isLogin);
+  }, [countNotification]);
 
   const search = () => {
     axios({
@@ -184,9 +203,21 @@ function Header() {
 
   return (
     <Nav>
-      <Link to={"/"}>
-        <span>로고</span>
-      </Link>
+      <div style={{ width: "33%" }}>
+        <Menu />
+        <Link to={"/"}>
+          <span
+            style={{
+              width: "30%",
+              marginLeft: "50px",
+              fontSize: "30px",
+              color: "#1361e7",
+            }}
+          >
+            Synergy
+          </span>
+        </Link>
+      </div>
 
       <SearchForm onSubmit={search}>
         <SearchInput
@@ -208,28 +239,8 @@ function Header() {
 
       {isLogin === true ? (
         <NavRoute>
-          <Link to={"/chat"}>
-            <span>채팅</span>
-          </Link>
-          <Link to={"/createproject"}>
-            <span>프로젝트 생성</span>
-          </Link>
-          <span
-            style={{
-              cursor: "pointer",
-              fontSize: "20px",
-              position: "relative",
-              color: "black",
-            }}
-            onClick={NotifiStateClick}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="1em"
-              viewBox="0 0 448 512"
-            >
-              <path d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z" />
-            </svg>
+          <Notifi onClick={NotifiStateClick}>
+            <FontAwesomeIcon icon={faBell} style={{ color: "#1361e7" }} />
 
             {countNotification === 0 ? null : (
               <NotificationCount>{countNotification}</NotificationCount>
@@ -249,11 +260,17 @@ function Header() {
                 ))}
               </NotificationBox>
             )}
-          </span>
+          </Notifi>
           <Link to={"/profile"}>
-            <span>프로필</span>
+            <FontAwesomeIcon
+              icon={faCircleUser}
+              style={{ color: "#1361e7", marginRight: "50px" }}
+            />
           </Link>
-          <LogoutButton></LogoutButton>
+          <div style={{ display: "flex" }}>
+            <LogoutButton />
+            <FontAwesomeIcon icon={faRightFromBracket} />
+          </div>
         </NavRoute>
       ) : (
         <NavRoute>

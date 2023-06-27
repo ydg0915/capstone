@@ -1,7 +1,9 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 import Header from "../Components/Header";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import React from "react";
+
 import { useEffect, useState } from "react";
 
 const Wrapper = styled.div`
