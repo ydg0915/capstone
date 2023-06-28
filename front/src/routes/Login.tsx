@@ -12,6 +12,9 @@ import {
 } from "../_actions/user_action";
 import { useHistory } from "react-router-dom";
 import { RootState, store } from "../_reducers";
+import { EventSourcePolyfill } from 'event-source-polyfill';
+
+const EventSource = EventSourcePolyfill;
 
 const Container = styled.div`
   width: 100%;
@@ -161,6 +164,60 @@ function Login() {
 
   useEffect(() => {
     if (isLogin === true) {
+      const eventSource = new EventSource(`c`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    });
+
+    eventSource.addEventListener("sse", function (event) {
+        console.log(event.data);
+
+        let data;
+        try {
+          data = JSON.parse(event.data);
+
+          (async () => {
+            // 브라우저 알림
+            const showNotification = () => {
+                
+                const notification = new Notification('새로운 알림이 도착했습니다.', {
+                    body: data.content
+                });
+                
+                setTimeout(() => {
+                    notification.close();
+                }, 10 * 1000);
+                
+                notification.addEventListener('click', () => {
+                    window.open(data.url, '_blank');
+                });
+            }
+
+            // 브라우저 알림 허용 권한
+            let granted = false;
+
+            if (Notification.permission === 'granted') {
+                granted = true;
+            } else if (Notification.permission !== 'denied') {
+                let permission = await Notification.requestPermission();
+                granted = permission === 'granted';
+            }
+
+            // 알림 보여주기
+            if (granted) {
+                showNotification();
+            }
+        })();
+        } catch (error) {
+          ;
+        }
+    })
+    
+    eventSource.addEventListener("error", function(event) {
+      eventSource.close();
+    });
+
       history.push("/");
     }
   }, [isLogin]);
