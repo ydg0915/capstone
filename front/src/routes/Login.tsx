@@ -60,9 +60,12 @@ const InputId = styled.input`
 const Btn = styled.input`
   width: 100%;
   height: 3.125rem;
-  background-color: black;
+  background-color: #7d92e9;
+  outline: none;
   color: white;
+  border: 0 solid black;
   font-size: 1.063rem;
+  font-weight: 600;
   text-align: center;
   margin-top: 1.875rem;
   border-radius: 0.313rem;

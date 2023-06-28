@@ -4,8 +4,6 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import ListPagenation from "./Paging";
 import React from "react";
-import LoadingComponent from "./Loading";
-import { createContext } from "vm";
 import StackMapping from "./StackMapping";
 
 const Toggle = styled.label`
@@ -95,7 +93,7 @@ const Project = styled.div`
   height: 18.75rem;
   border: 3px solid #c2dedc;
   border-radius: 3.125rem;
-  padding: 1.875rem;
+  padding: 1.3em;
   padding-bottom: 0px;
   color: rgba(0, 0, 0, 0.5);
 `;
@@ -126,13 +124,16 @@ const Range = styled.div`
   height: auto;
   background-color: #7d92e9;
   padding: 0.438rem 0.5rem;
-  font-size: 0.75rem;
+  font-size: 0.5rem;
   color: white;
-  margin-right: 0.938rem;
+  margin-right: 0.5rem;
   border-radius: 1.25rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  &:last-child {
+    margin-right: 0px;
+  }
 `;
 
 const Stack = styled.div`
@@ -155,14 +156,17 @@ const Title = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: auto;
+  width: 100%;
   height: 7.5rem;
-  border-radius: 1.563rem;
-  color: black;
+  border-radius: 0.8rem;
+  color: white;
+  line-height: 50px;
   padding: 0.625rem;
   font-weight: 600;
   font-size: 1.563rem;
   text-align: center;
+  border: 3px solid whitesmoke;
+  background-color: #9580c9;
 `;
 
 const User = styled.div`
@@ -201,7 +205,7 @@ const ProjectDetail = styled.div`
   }
 `;
 
-function ProjectList() {
+function ProjectList({ projects }) {
   interface Project {
     id: number;
     position: string[];
@@ -215,7 +219,7 @@ function ProjectList() {
     view: number;
   }
 
-  const [projects, setProjects] = useState<Project[]>([]);
+  // const [projects, setProjects] = useState<Project[]>([]);
   const [isChecked, setIsChecked] = useState(true);
   const [size, setSize] = useState(15);
   const [startPage, setStartPage] = useState(1);
@@ -230,72 +234,6 @@ function ProjectList() {
 
   const sort = "DESC";
 
-  const fetchData = async (pageNumber): Promise<any> => {
-    try {
-      if (isChecked === true) {
-        const res = await axios.get(
-          `http://localhost:8080/api/v1/posts/recruiting`,
-          {
-            params: {
-              page: pageNumber,
-              size,
-              sort,
-            },
-          }
-        );
-        const projectData = res.data.data;
-        setProjects(projectData);
-        // setTimeout(() => {
-        //   setIsLoading(false);
-        // }, 1000);
-        return projectData;
-      } else {
-        const res = await axios.get(`http://localhost:8080/api/v1/posts`, {
-          params: {
-            page: pageNumber,
-            size,
-            sort,
-          },
-        });
-        const projectData = res.data.data;
-        setProjects(projectData);
-        // setTimeout(() => {
-        //   setIsLoading(false);
-        // }, 1000);
-        return projectData;
-      }
-    } catch (error) {
-      console.log(error);
-      return [];
-    }
-  };
-
-  async function loadAllData() {
-    let allData = [];
-    let newData = await fetchData(pageNumber);
-
-    while (newData.length !== 0) {
-      allData = allData.concat(newData);
-      pageNumber++;
-      newData = await fetchData(pageNumber);
-    }
-    setCounts(allData.length);
-  }
-
-  useEffect(() => {
-    const fetchDataAndLoadData = async () => {
-      try {
-        await loadAllData();
-        await fetchData(startPage - 1);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchDataAndLoadData();
-    window.scrollTo(0, 0);
-  }, [isChecked, startPage]);
-
   return (
     <>
       <Toggle>
@@ -309,7 +247,7 @@ function ProjectList() {
       </Toggle>
       <ProjectBox>
         {projects.map((project) => (
-          <Link key={project.id} to={`/${project.id}`}>
+          <Link key={project.id} to={`/posts/${project.id}`}>
             <Project>
               <Detail>
                 <TagBox>

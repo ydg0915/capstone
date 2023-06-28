@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import LogoutButton from "./LogoutBtn";
@@ -54,6 +54,20 @@ const Menu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isLoginString = localStorage.getItem("isLogin");
   const isLogin = isLoginString === "true";
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  const handleOutsideClick = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -67,7 +81,7 @@ const Menu = () => {
           style={{ float: "left", fontSize: "25px" }}
         />
         {isOpen === false ? null : (
-          <MenuContainer>
+          <MenuContainer ref={menuRef}>
             <XBox>
               <FontAwesomeIcon
                 onClick={toggleMenu}

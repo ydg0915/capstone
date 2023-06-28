@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import LogoutButton from "./LogoutBtn";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,6 +12,7 @@ import {
 import React from "react";
 import Menu from "./Menu";
 import HandleUser from "./HandleUser";
+import { useHistory } from "react-router-dom";
 
 const Nav = styled.div`
   display: flex;
@@ -70,6 +71,9 @@ const NavRoute = styled.nav`
   width: 33%;
   justify-content: end;
   align-items: center;
+  span {
+    margin-right: 20px;
+  }
 
   svg {
     width: 30px;
@@ -104,20 +108,24 @@ const NotificationBox = styled.div`
   align-items: center;
   justify-content: center;
   position: absolute;
-  background-color: gray;
-  border: 2px solid whitesmoke;
-  color: black;
+  background-color: #7d92e9;
+  border: 3px solid whitesmoke;
+  color: white;
   border-radius: 20px;
   top: 50px;
   font-size: 16px;
+  z-index: 999;
   width: 250px;
   padding: 20px 0px;
   span {
+    text-decoration: none;
     margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid wheat;
   }
 `;
 
-function Header() {
+function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
   interface Notification {
     url: string;
     id: number;
@@ -138,10 +146,27 @@ function Header() {
   const [countNotification, setCountNotification] = useState(0);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [openNotification, setOpenNotification] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [searchData, setSearchData] = useState([]);
+  const history = useHistory();
+  const handleOutsideClick = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setOpenNotification(false);
+    }
+  };
+  const redirectClick = () => {
+    history.go(0);
+  };
 
   const obje = localStorage.getItem("user");
   const user: User = obje ? JSON.parse(obje) : null;
 
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -180,18 +205,22 @@ function Header() {
     console.log(isLogin);
   }, [countNotification]);
 
-  const search = () => {
-    axios({
-      method: "get",
-      url: `http://localhost:8080/api/v1/posts/search`,
-      params: { content: searchContent },
-    })
-      .then((res) => {
-        console.log(res.data.data);
+  const searchClick = (event) => {
+    event.preventDefault();
+    if (onSearch) {
+      axios({
+        method: "get",
+        url: `http://localhost:8080/api/v1/posts/search`,
+        params: { query: searchContent },
       })
-      .catch((error) => {
-        console.log(error);
-      });
+        .then((res) => {
+          const searchData = res.data.data;
+          onSearch(searchData);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const handleNotifi = (notificationId) => {
@@ -223,14 +252,14 @@ function Header() {
         </Link>
       </div>
 
-      <SearchForm onSubmit={search}>
+      <SearchForm>
         <SearchInput
           onChange={searchChange}
           value={searchContent}
           type="text"
           placeholder="검색"
         ></SearchInput>
-        <SearchBtn type="submit">
+        <SearchBtn onClick={searchClick}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="1em"
@@ -253,13 +282,14 @@ function Header() {
               <NotificationCount>{countNotification}</NotificationCount>
             )}
             {openNotification === false ? null : (
-              <NotificationBox>
+              <NotificationBox ref={menuRef}>
                 {notifications.map((notification) => (
                   <span
                     key={notification.id}
                     onClick={() => handleNotifi(notification.id)}
                     style={{
-                      textDecoration: notification.read ? "none" : "underline",
+                      color: notification.read ? "black" : "white",
+                      opacity: notification.read ? "0.3" : "1",
                     }}
                   >
                     {notification.content}
@@ -269,7 +299,6 @@ function Header() {
             )}
           </Notifi>
           <HandleUser />
-          <span>{user.username}님</span>
         </NavRoute>
       ) : (
         <NavRoute>

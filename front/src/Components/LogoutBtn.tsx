@@ -15,7 +15,7 @@ function LogoutButton() {
       dispatch(logoutUser(accessToken));
       setLoginStatus(false);
       localStorage.clear();
-      history.go(0);
+      history.push("/");
     } catch (error) {
       console.log(error);
     }
