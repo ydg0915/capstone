@@ -13,10 +13,13 @@ export const store = createStore(
   rootReducer,
   compose(
     applyMiddleware(thunk),
-    (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
-      (window as any).__REDUX_DEVTOOLS_EXTENSION__()
+    (typeof window !== 'undefined' && window.navigator.userAgent.includes('Chrome')
+      ? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+      : compose
+    )
   )
 );
+
 
 export default rootReducer;
 export type RootState = ReturnType<typeof store.getState>;
