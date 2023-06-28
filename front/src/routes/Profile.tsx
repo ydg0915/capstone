@@ -5,43 +5,48 @@ import axios from "axios";
 import React from "react";
 
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100vh;
-  padding: 6.25rem;
+  height: auto;
+  padding: 100px 150px 100px 150px;
   display: flex;
   background-color: whitesmoke;
 `;
 
 const ProfileBox = styled.div`
-  width: 43.75rem;
-  height: 31.25rem;
+  width: 350px;
+  height: 550px;
   border: none;
   border-radius: 1.875rem;
-  box-shadow: 0px 0.188rem 0.188rem rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   font-size: 1.2rem;
   background-color: white;
-  span {
-    margin-bottom: 1.875rem;
-  }
 `;
 
 const Chat = styled.div`
   display: flex;
+
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 15px;
   font-weight: 600;
   border-radius: 0.625rem;
   background-color: #fee500;
-  padding: 0.625rem 1.25rem;
+  padding: 6px 15px;
   color: black;
   margin-right: 1.25rem;
+  span {
+    line-height: 1.5;
+    vertical-align: middle;
+    text-align: center;
+  }
   svg {
     margin-right: 0.313rem;
   }
@@ -50,12 +55,12 @@ const EditProfile = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 15px;
   font-weight: 600;
   border-radius: 0.625rem;
-  background-color: whitesmoke;
+  background-color: #1361e7;
   padding: 0.625rem 1.25rem;
-  color: black;
+  color: white;
   svg {
     margin-right: 0.313rem;
   }
@@ -77,9 +82,7 @@ const ProduceBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-top: 0.625rem;
-  height: auto;
+  justify-content: end;
   padding: 1.25rem;
   border-top: 0.125rem solid gray;
   font-weight: 600;
@@ -89,37 +92,55 @@ const ProduceBox = styled.div`
   }
 `;
 
-const EtcBox = styled.div`
+const RightBox = styled.div`
   width: 60%;
-  height: 100%;
-  background-color: white;
+  height: 800px;
   border-radius: 1.875rem;
-  border: 0.188rem solid white;
-  margin-left: 1.875rem;
+  margin-left: 150px;
   display: flex;
   flex-direction: column;
-  padding: 0.625rem;
+  justify-content: space-between;
+`;
+
+const EtcBox = styled.div`
+  width: 100%;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
+
+  height: 400px;
+  font-size: 25px;
+  font-weight: 600;
+  border-radius: 1.875rem;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: white;
+  justify-content: space-between;
+  margin-bottom: 100px;
 `;
 
 const TopDiv = styled.div`
   width: 100%;
-  height: 50%;
-  border-bottom: 0.125rem solid black;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
+
+  height: 400px;
   display: flex;
   padding: 1.25rem;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: start;
+  border-radius: 1.875rem;
+  margin-bottom: 30px;
+  background-color: white;
 `;
 
 const StackBox = styled.div`
-  border-right: 0.125rem solid black;
-  width: 50%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: start;
   span {
     margin-bottom: 1.875rem;
     &:first-child {
-      font-size: 1.6rem;
+      font-size: 20px;
     }
   }
   ul {
@@ -141,16 +162,14 @@ const StackBox = styled.div`
 
 const HopePro = styled.div`
   font-weight: 600;
-  padding-left: 1.875rem;
-  width: 50%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: start;
   align-items: start;
   span {
     &:first-child {
-      font-size: 1.6rem;
+      font-size: 20px;
+
       margin-bottom: 1.25rem;
     }
   }
@@ -167,20 +186,6 @@ const HopePro = styled.div`
   }
   align-items: center;
 `;
-const CircleStyle = styled.div`
-  width: 0.938rem;
-  height: 0.938rem;
-  border-radius: 0.469rem;
-  background-color: yellowgreen;
-  margin-right: 0.625rem;
-`;
-
-const CircleBox = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.25rem;
-`;
-
 function Profile() {
   interface User {
     username: string;
@@ -215,8 +220,12 @@ function Profile() {
       <Wrapper>
         <ProfileBox>
           <Subbox>
+            <FontAwesomeIcon
+              icon={faCircleUser}
+              style={{ color: "#1361e7", fontSize: "80px", marginTop: "50px" }}
+            />
             <p>{user?.username}</p>
-            <p style={{ marginBottom: "50px" }}>{user?.email}</p>
+            <p style={{ marginBottom: "20px" }}>{user?.email}</p>
             <div style={{ display: "flex" }}>
               <Link to={"/chat"}>
                 <Chat>
@@ -227,7 +236,7 @@ function Profile() {
                   >
                     <path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4l0 0 0 0 0 0 0 0 .3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z" />
                   </svg>
-                  1대1 채팅
+                  <span>1대1 채팅</span>
                 </Chat>
               </Link>
               <Link to={"/editProfile"}>
@@ -240,7 +249,7 @@ function Profile() {
             <p>{user?.introduction}</p>
           </ProduceBox>
         </ProfileBox>
-        <EtcBox>
+        <RightBox>
           <TopDiv>
             <StackBox>
               <span>선호하는 기술</span>
@@ -249,16 +258,8 @@ function Profile() {
               <span>프로젝트 목록</span>
             </HopePro>
           </TopDiv>
-          <div
-            style={{
-              padding: "1.25rem",
-              fontWeight: "600",
-              fontSize: "1.7rem",
-            }}
-          >
-            Github Contribution
-          </div>
-        </EtcBox>
+          <EtcBox>Github Contribution</EtcBox>
+        </RightBox>
       </Wrapper>
     </>
   );

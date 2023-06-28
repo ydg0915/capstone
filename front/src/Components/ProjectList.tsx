@@ -4,9 +4,12 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import ListPagenation from "./Paging";
 import React from "react";
+import LoadingComponent from "./Loading";
+import { createContext } from "vm";
+import StackMapping from "./StackMapping";
 
 const Toggle = styled.label`
-  margin: 1.875rem 18.75rem 1.875rem 18.75rem;
+  margin: 50px 150px 0px 1130px;
   display: flex;
   align-items: center;
   justify-content: end;
@@ -32,7 +35,7 @@ const Toggle = styled.label`
     height: 1em;
     border-radius: 50%;
     transform: scale(0.8);
-    background-color: gray;
+    background-color: #9ac5f4;
     transition: left 250ms linear;
   }
   [type="checkbox"]:checked::before {
@@ -41,8 +44,8 @@ const Toggle = styled.label`
   }
 
   [type="checkbox"]:checked {
-    background-color: tomato;
-    border-color: tomato;
+    background-color: #1361e7;
+    border-color: #1361e7;
   }
   [type="checkbox"]:disabled {
     border-color: lightgray;
@@ -61,7 +64,7 @@ const Toggle = styled.label`
 
   [type="checkbox"]:focus-visible {
     outline-offset: max(2px, 0.1em);
-    outline: max(2px, 0.1em) solid tomato;
+    outline: max(2px, 0.1em) solid #1361e7;
   }
 
   [type="checkbox"]:enabled:hover {
@@ -80,7 +83,7 @@ const ProjectBox = styled.div`
   grid-auto-rows: minmax(0, 1fr);
   row-gap: 5rem;
   column-gap: 1.875rem;
-  margin: 6.25rem 10%;
+  margin: 2rem 10% 4rem 10%;
 `;
 
 const Project = styled.div`
@@ -136,9 +139,16 @@ const Stack = styled.div`
   display: flex;
   width: auto;
   align-items: center;
-  span {
-    margin-right: 0.625rem;
-  }
+`;
+
+const StackImage = styled.div`
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  border: 2px solid #7d92e9;
 `;
 
 const Title = styled.div`
@@ -182,9 +192,12 @@ const UserDetail = styled.div`
 const ProjectDetail = styled.div`
   display: flex;
   justify-content: space-between;
-
+  align-items: center;
+  line-height: 50px;
+  line-height: 1.5;
   span {
     margin-right: 0.625rem;
+    vertical-align: middle;
   }
 `;
 
@@ -204,10 +217,11 @@ function ProjectList() {
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [isChecked, setIsChecked] = useState(true);
-  const [size, setSize] = useState(15); // 한 페이지에 보여줄 데이터의 개수
-  const [startPage, setStartPage] = useState(1); // 페이지 초기 값은 1페이지
-  const [counts, setCounts] = useState(0); // 데이터의 총 개수를 setCounts 에 저장해서 사용
-  const [blockNum, setBlockNum] = useState(0); // 한 페이지에 보여 줄 페이지네이션의 개수를 block으로 지정하는 state. 초기 값은 0
+  const [size, setSize] = useState(15);
+  const [startPage, setStartPage] = useState(1);
+  const [counts, setCounts] = useState(0);
+  const [blockNum, setBlockNum] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   let pageNumber = 0;
 
   const btnClick = () => {
@@ -231,6 +245,9 @@ function ProjectList() {
         );
         const projectData = res.data.data;
         setProjects(projectData);
+        // setTimeout(() => {
+        //   setIsLoading(false);
+        // }, 1000);
         return projectData;
       } else {
         const res = await axios.get(`http://localhost:8080/api/v1/posts`, {
@@ -242,6 +259,9 @@ function ProjectList() {
         });
         const projectData = res.data.data;
         setProjects(projectData);
+        // setTimeout(() => {
+        //   setIsLoading(false);
+        // }, 1000);
         return projectData;
       }
     } catch (error) {
@@ -302,7 +322,7 @@ function ProjectList() {
                 </TagBox>
                 <Stack>
                   {project.techStack.map((stack, index) => (
-                    <span key={index}>{stack}</span>
+                    <StackMapping key={index} stack={stack} />
                   ))}
                 </Stack>
               </Detail>

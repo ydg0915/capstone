@@ -5,13 +5,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 
 const Wrapper = styled.div`
   padding: 3.125rem 12.5rem 9.375rem 18.75rem;
 `;
 
 const Title = styled.div`
-  margin-top: 3.125rem;
   display: flex;
   align-items: center;
   border-bottom: 0.125rem solid rgba(0, 0, 0, 0.1);
@@ -51,18 +52,22 @@ const InfoSelect = styled.div`
     margin-bottom: 1.25rem;
   }
   select {
-    width: 50%;
+    width: 80%;
+    border-radius: 5px;
+    opacity: 0.8;
+    font-weight: 600;
     padding: 0.625rem 0.938rem;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    border: 0.063rem solid #999;
+    border: 2px solid #7d92e9;
   }
 
   input {
-    width: 50%;
+    border-radius: 5px;
+    width: 80%;
     padding: 0.625rem 0.938rem;
-    border: 0.063rem solid #999;
+    border: 2px solid #7d92e9;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -205,7 +210,11 @@ function CreateProject() {
         <Info>
           <InfoSelect>
             <h1>모집 인원</h1>
-            <select value={recruitmentSize} onChange={recruitmentSizeChange}>
+            <select onChange={recruitmentSizeChange}>
+              <FontAwesomeIcon icon={faAngleDown} />
+              <option value="" disabled selected>
+                인원 미정 ~ 5명
+              </option>
               <option>0</option>
               <option>1</option>
               <option>2</option>
@@ -231,7 +240,6 @@ function CreateProject() {
               <option>DATABASE</option>
               <option>DEVOPS</option>
               <option>ANDROID</option>
-              <option>DEVOPS</option>
               <option>IOS</option>
               <option>DESIGNER</option>
               <option>AI</option>
@@ -239,7 +247,10 @@ function CreateProject() {
           </InfoSelect>
           <InfoSelect>
             <h1>예상기간</h1>
-            <select value={expectedDuration} onChange={expectedDurationChange}>
+            <select onChange={expectedDurationChange}>
+              <option value="" disabled selected>
+                예상 기간 1~4개월
+              </option>
               <option>0</option>
               <option>1</option>
               <option>2</option>

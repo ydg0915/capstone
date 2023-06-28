@@ -22,9 +22,9 @@ function LogoutButton() {
   };
 
   return (
-    <span style={{ cursor: "pointer" }} onClick={handleLogout}>
+    <div style={{ cursor: "pointer" }} onClick={handleLogout}>
       로그아웃
-    </span>
+    </div>
   );
 }
 

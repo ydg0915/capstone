@@ -4,6 +4,8 @@ import styled from "styled-components";
 import axios from "axios";
 import React from "react";
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 
 const Container = styled.div`
   padding: 6.25rem 300px 12.5rem 300px;
@@ -245,6 +247,7 @@ function Project() {
         );
         const projectData = postRes.data.data;
         setProject(projectData);
+        console.log(project);
 
         const commentRes = await axios.get(
           `http://localhost:8080/api/v1/posts/${postId}/comments`
@@ -266,39 +269,45 @@ function Project() {
 
   const completeBtn = (event) => {
     event.preventDefault();
-    axios
-      .patch(
-        `http://localhost:8080/api/v1/posts/${postId}/complete`,
-        postId,
-        config
-      )
-      .then((res) => {
-        console.log(res.data);
-        history.push("/");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const confirmed = window.confirm("모집을 마감하시겠습니까?");
+    if (confirmed) {
+      axios
+        .patch(
+          `http://localhost:8080/api/v1/posts/${postId}/complete`,
+          postId,
+          config
+        )
+        .then((res) => {
+          console.log(res.data);
+          history.push("/");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const deletePostBtn = (event) => {
     event.preventDefault();
-    axios
-      .delete(`http://localhost:8080/api/v1/posts/${postId}`, {
-        params: {
-          postId: postId,
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        history.push("/");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const confirmed = window.confirm("모집 글을 삭제하시겠습니까?");
+    if (confirmed) {
+      axios
+        .delete(`http://localhost:8080/api/v1/posts/${postId}`, {
+          params: {
+            postId: postId,
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          history.push("/");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const contentChange = (event) => {
@@ -359,71 +368,83 @@ function Project() {
   };
 
   const editComment = (commentId) => {
-    axios({
-      method: "patch",
-      url: `http://localhost:8080/api/v1/posts/${postId}/comments/${commentId}`,
-      params: { content: editedContent },
-      headers: config.headers,
-    }).then(async (res) => {
-      const commentRes = await axios.get(
-        `http://localhost:8080/api/v1/posts/${postId}/comments`
-      );
-      setComments(commentRes.data.data);
-      setEditedContent("");
-      setIsEditMode(false);
-    });
-  };
-  const editReple = (replyId) => {
-    axios({
-      method: "patch",
-      url: `http://localhost:8080/api/v1/posts/${postId}/comments/replies/${replyId}`,
-      params: { content: editedContent },
-      headers: config.headers,
-    })
-      .then(async (res) => {
+    const confirmed = window.confirm("댓글을 수정하시겠습니까?");
+    if (confirmed) {
+      axios({
+        method: "patch",
+        url: `http://localhost:8080/api/v1/posts/${postId}/comments/${commentId}`,
+        params: { content: editedContent },
+        headers: config.headers,
+      }).then(async (res) => {
         const commentRes = await axios.get(
           `http://localhost:8080/api/v1/posts/${postId}/comments`
         );
         setComments(commentRes.data.data);
         setEditedContent("");
-        setIsRepleEditMode(false);
-      })
-      .catch((error) => {
-        console.log(error);
+        setIsEditMode(false);
       });
+    }
+  };
+  const editReple = (replyId) => {
+    const confirmed = window.confirm("답글을 수정하시겠습니까?");
+    if (confirmed) {
+      axios({
+        method: "patch",
+        url: `http://localhost:8080/api/v1/posts/${postId}/comments/replies/${replyId}`,
+        params: { content: editedContent },
+        headers: config.headers,
+      })
+        .then(async (res) => {
+          const commentRes = await axios.get(
+            `http://localhost:8080/api/v1/posts/${postId}/comments`
+          );
+          setComments(commentRes.data.data);
+          setEditedContent("");
+          setIsRepleEditMode(false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const deleteComment = (commentId) => {
-    axios({
-      method: "delete",
-      url: `http://localhost:8080/api/v1/posts/${postId}/comments/${commentId}`,
-      headers: config.headers,
-    }).then(async (res) => {
-      const commentRes = await axios.get(
-        `http://localhost:8080/api/v1/posts/${postId}/comments`
-      );
-      setComments(commentRes.data.data);
-      const ex = commentRes.data.data.find(
-        (comment) => comment.id === commentId
-      );
-      console.log(ex);
-      setContent("");
-    });
+    const confirmed = window.confirm("댓글을 삭제하시겠습니까?");
+    if (confirmed) {
+      axios({
+        method: "delete",
+        url: `http://localhost:8080/api/v1/posts/${postId}/comments/${commentId}`,
+        headers: config.headers,
+      }).then(async (res) => {
+        const commentRes = await axios.get(
+          `http://localhost:8080/api/v1/posts/${postId}/comments`
+        );
+        setComments(commentRes.data.data);
+        const ex = commentRes.data.data.find(
+          (comment) => comment.id === commentId
+        );
+        console.log(ex);
+        setContent("");
+      });
+    }
   };
 
   const deleteReple = (repleId) => {
-    axios({
-      method: "delete",
-      url: `http://localhost:8080/api/v1/posts/${postId}/comments/replies/${repleId}`,
-      headers: config.headers,
-    }).then(async (res) => {
-      const commentRes = await axios.get(
-        `http://localhost:8080/api/v1/posts/${postId}/comments`
-      );
-      setComments(commentRes.data.data);
-      setContent("");
-      console.log(res);
-    });
+    const confirmed = window.confirm("답글을 삭제하시겠습니까?");
+    if (confirmed) {
+      axios({
+        method: "delete",
+        url: `http://localhost:8080/api/v1/posts/${postId}/comments/replies/${repleId}`,
+        headers: config.headers,
+      }).then(async (res) => {
+        const commentRes = await axios.get(
+          `http://localhost:8080/api/v1/posts/${postId}/comments`
+        );
+        setComments(commentRes.data.data);
+        setContent("");
+        console.log(res);
+      });
+    }
   };
 
   const createReple = (commentId) => {
@@ -516,7 +537,16 @@ function Project() {
                   onClick={() => handleCommentClick(comment.id)}
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <div>{comment.username}</div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <FontAwesomeIcon
+                      icon={faCircleUser}
+                      style={{
+                        color: "#1361e7",
+                        marginRight: "10px",
+                      }}
+                    />
+                    <div>{comment.username}</div>
+                  </div>
                   {userId === comment.userId ? (
                     <div style={{ fontSize: "14px" }}>
                       {isrepleMode && comment.id === selectedCommentId ? (
