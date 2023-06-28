@@ -11,21 +11,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import Menu from "./Menu";
+import HandleUser from "./HandleUser";
 
 const Nav = styled.div`
   display: flex;
   align-items: center;
+  vertical-align: middle;
   justify-content: space-between;
   position: relative;
-
   width: 100%;
-  margin-bottom: 0.25rem;
-
   padding: 1.875rem 150px 1.875rem 150px;
   font-size: 1rem;
   font-weight: 600;
   color: ${(props) => props.theme.textColor};
-  box-shadow: 0px 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
 
   button {
     border: none;
@@ -38,10 +36,10 @@ const Nav = styled.div`
 
 const SearchForm = styled.form`
   display: flex;
-  width: 33%;
+  width: 40%;
   height: 2.5rem;
   padding: 0px 2%;
-  border: 0.125rem solid rgba(0, 0, 0, 0.3);
+  border: 0.125rem solid #1361e7;
   outline: none;
   border-radius: 3.125rem;
   align-items: center;
@@ -72,14 +70,10 @@ const NavRoute = styled.nav`
   width: 33%;
   justify-content: end;
   align-items: center;
-  opacity: 0.6;
-  span {
-    margin-right: 1.563rem;
-  }
+
   svg {
     width: 30px;
     height: 30px;
-    margin-right: 20px;
   }
 `;
 
@@ -130,6 +124,12 @@ function Header() {
     read: boolean;
     content: string;
   }
+  interface User {
+    username: string;
+    email: string;
+    id: number;
+    introduction: string;
+  }
 
   const isLoginString = localStorage.getItem("isLogin");
   const [isLogin, setIsLogin] = useState<boolean>();
@@ -138,6 +138,9 @@ function Header() {
   const [countNotification, setCountNotification] = useState(0);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [openNotification, setOpenNotification] = useState(false);
+
+  const obje = localStorage.getItem("user");
+  const user: User = obje ? JSON.parse(obje) : null;
 
   const config = {
     headers: {
@@ -209,9 +212,10 @@ function Header() {
           <span
             style={{
               width: "30%",
-              marginLeft: "50px",
+              marginLeft: "150px",
               fontSize: "30px",
               color: "#1361e7",
+              lineHeight: "3px",
             }}
           >
             Synergy
@@ -240,7 +244,10 @@ function Header() {
       {isLogin === true ? (
         <NavRoute>
           <Notifi onClick={NotifiStateClick}>
-            <FontAwesomeIcon icon={faBell} style={{ color: "#1361e7" }} />
+            <FontAwesomeIcon
+              icon={faBell}
+              style={{ color: "#1361e7", width: "25px", marginRight: "40px" }}
+            />
 
             {countNotification === 0 ? null : (
               <NotificationCount>{countNotification}</NotificationCount>
@@ -261,16 +268,8 @@ function Header() {
               </NotificationBox>
             )}
           </Notifi>
-          <Link to={"/profile"}>
-            <FontAwesomeIcon
-              icon={faCircleUser}
-              style={{ color: "#1361e7", marginRight: "50px" }}
-            />
-          </Link>
-          <div style={{ display: "flex" }}>
-            <LogoutButton />
-            <FontAwesomeIcon icon={faRightFromBracket} />
-          </div>
+          <HandleUser />
+          <span>{user.username}님</span>
         </NavRoute>
       ) : (
         <NavRoute>

@@ -2,10 +2,14 @@ import styled from "styled-components";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import ProjectList from "../Components/ProjectList";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import React from "react";
 
-import Menu from "../Components/Menu";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleUp, faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { LoadingContext } from "../Components/LoadingContext";
+import LoadingComponent from "../Components/Loading";
+import Slider from "../Components/Notice";
 
 interface parts {
   name: string;
@@ -22,22 +26,6 @@ const parts = [
   },
 ];
 
-const Notice = styled.div`
-  width: auto;
-  height: 21.875rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  background-color: #1361e7;
-  margin: 1.875rem 18.75rem 1.875rem 18.75rem;
-  display: flex;
-  border-radius: 1.25rem;
-  font-size: 3.125rem;
-  font-weight: 800;
-  color: white;
-`;
-
 const DotBox = styled.div`
   display: flex;
   width: 100%;
@@ -51,6 +39,60 @@ const Dot = styled.div`
   height: 0.625rem;
   border-radius: 50%;
   background-color: gray;
+`;
+
+const ScrollUp = styled.div`
+  width: 70px;
+  height: 70px;
+  border-radius: 35px;
+  border: 4px solid #9ac5f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  color: #9ac5f4;
+  cursor: pointer;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 999;
+  transition: transform 0.3s ease;
+  span {
+    font-size: 16px;
+  }
+`;
+const Notice = styled.div`
+  width: auto;
+  height: 18rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: #9ac5f4;
+  margin: 0px 0px 1.875rem 0px;
+  display: flex;
+  font-size: 3.125rem;
+  font-weight: 800;
+  color: white;
+`;
+const Notice22 = styled.div`
+  width: auto;
+  height: 18rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: black;
+  margin: 0px 0px 1.875rem 0px;
+  display: flex;
+  font-size: 3.125rem;
+  font-weight: 800;
+  color: white;
+`;
+const NoticeBox = styled.div`
+  display: flex;
+  overflow: hidden;
 `;
 
 // const Filter = styled.div`
@@ -126,7 +168,21 @@ function Home() {
   const [stack, setStack] = useState<any[]>([]);
   const [select, setSelect] = useState<any[]>([]);
   const [message, setMessage] = useState("");
+  const ee = ["1", "2", "3", "4"];
+  const loading = useContext(LoadingContext);
 
+  const scrollUp = () => {
+    const scrollToTop = () => {
+      const currentPosition = window.scrollY;
+      if (currentPosition > 0) {
+        const distance = Math.max(40, currentPosition * 0.2);
+        window.scrollTo(0, currentPosition - distance);
+        requestAnimationFrame(scrollToTop);
+      }
+    };
+
+    scrollToTop();
+  };
   // const partClick = (event) => {
   //   setPart(event.target.innerText);
   // };
@@ -170,15 +226,44 @@ function Home() {
     }
   }, [part]);
 
+  const NoticeSlider = () => {
+    const notices = [Notice, Notice22];
+
+    return <Slider notices={notices} />;
+  };
+
   return (
     <>
-      <Header />
-      <Notice>
-        <p>공 지 사 항</p>
-      </Notice>
-      <DotBox>
-        <Dot />
-      </DotBox>
+      {loading ? (
+        <LoadingComponent />
+      ) : (
+        <div style={{ position: "relative" }}>
+          <Header />
+          <Notice>
+            <p>
+              공지사항 넘어가기, 프로젝트 생성 페이지 좀 더 디테일 하게 +글쓰기
+              에디터 미완성
+            </p>
+          </Notice>
+          {/* <NoticeBox>
+            <Notice>
+              <p>22222</p>
+            </Notice>
+          </NoticeBox> */}
+
+          <DotBox>
+            <Dot />
+          </DotBox>
+          <ProjectList />
+          <ScrollUp onClick={scrollUp}>
+            <FontAwesomeIcon icon={faAngleUp} />
+            <span>Top</span>
+          </ScrollUp>
+          <Footer />
+        </div>
+      )}
+
+      {/* <NoticeBoard notices={ee} /> */}
       {/* <Filter>
         <Part>
           <span onClick={partClick}>프론트엔드</span>
@@ -206,9 +291,6 @@ function Home() {
           ))}
         </Select>
       </Filter> */}
-      <ProjectList />
-
-      <Footer />
     </>
   );
 }

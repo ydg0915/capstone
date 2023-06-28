@@ -8,18 +8,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
   faBars,
+  faRightFromBracket,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
 const MenuContainer = styled.div`
   background-color: #f1f1f1;
   width: 200px;
-  height: 100vh;
+  border-radius: 10px;
   padding: 10px;
   display: "block";
-  position: fixed;
-  left: 0px;
-  top: 0px;
+  position: absolute;
+  left: 20px;
+  top: 50px;
 `;
 const XBox = styled.div`
   width: 100%;
@@ -29,6 +30,7 @@ const XBox = styled.div`
 const MenuItem = styled.a`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   color: #333;
   text-decoration: none;
   padding: 8px 16px;
@@ -44,8 +46,8 @@ const Button = styled.button`
   padding: 8px 16px;
   float: left;
   position: absolute;
-  left: 20px;
-  top: 25px;
+  left: 150px;
+  top: 30px;
 `;
 
 const Menu = () => {
@@ -62,50 +64,58 @@ const Menu = () => {
       <Button onClick={toggleMenu}>
         <FontAwesomeIcon
           icon={faBars}
-          style={{ float: "left", fontSize: "30px" }}
+          style={{ float: "left", fontSize: "25px" }}
         />
-      </Button>
-      {isOpen === false ? null : (
-        <MenuContainer>
-          <XBox>
-            <FontAwesomeIcon
-              onClick={toggleMenu}
-              icon={faXmark}
-              style={{
-                float: "right",
-                cursor: "pointer",
-                fontSize: "30px",
-                display: "block",
-              }}
-            />
-          </XBox>
-          <MenuItem href="#">
-            <Link to={"/chat"}>
-              <span>채팅</span>
-            </Link>
-            <FontAwesomeIcon icon={faArrowRight} />
-          </MenuItem>
-          <MenuItem href="#">
-            <Link to={"/createproject"}>
-              <span>프로젝트 생성</span>
-            </Link>
-            <FontAwesomeIcon icon={faArrowRight} />
-          </MenuItem>
-          <MenuItem href="#">
+        {isOpen === false ? null : (
+          <MenuContainer>
+            <XBox>
+              <FontAwesomeIcon
+                onClick={toggleMenu}
+                icon={faXmark}
+                style={{
+                  float: "right",
+                  cursor: "pointer",
+                  fontSize: "30px",
+                  display: "block",
+                }}
+              />
+            </XBox>
             {isLogin === true ? (
               <>
-                <LogoutButton />
-                <FontAwesomeIcon icon={faArrowRight} />
+                <MenuItem>
+                  <Link to={"/chat"}>
+                    <span>채팅</span>
+                  </Link>
+                  <FontAwesomeIcon icon={faArrowRight} />
+                </MenuItem>
+                <MenuItem>
+                  <Link to={"/createproject"}>
+                    <span>프로젝트 생성</span>
+                  </Link>
+                  <FontAwesomeIcon icon={faArrowRight} />
+                </MenuItem>
               </>
+            ) : null}
+
+            {isLogin === true ? (
+              <MenuItem>
+                <LogoutButton />
+                <FontAwesomeIcon
+                  style={{ width: "20px" }}
+                  icon={faRightFromBracket}
+                />
+              </MenuItem>
             ) : (
-              <Link to={"/login"}>
-                <span>로그인</span>
-                <FontAwesomeIcon icon={faArrowRight} />
-              </Link>
+              <MenuItem>
+                <Link to={"/login"}>
+                  <span>로그인</span>
+                  <FontAwesomeIcon icon={faArrowRight} />
+                </Link>
+              </MenuItem>
             )}
-          </MenuItem>
-        </MenuContainer>
-      )}
+          </MenuContainer>
+        )}
+      </Button>
     </>
   );
 };
