@@ -7,6 +7,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
+import { useHistory } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -193,6 +194,7 @@ function Profile() {
     id: number;
     introduction: string;
   }
+  const history = useHistory();
   const [user, setUser] = useState<User | null>(null);
   const accessToken = localStorage.getItem("accessToken");
 
@@ -203,15 +205,17 @@ function Profile() {
   };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/v1/users/me", config)
-      .then((res) => {
-        const userData = res.data.data;
-        setUser(userData);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      axios
+        .get("http://localhost:8080/api/v1/users/me", config)
+        .then((res) => {
+          const userData = res.data.data;
+          setUser(userData);
+        })
+        .catch((error) => {
+          console.log(error);
+          window.alert("로그인이 필요한 페이지입니다.");
+          history.push("/login");
+        });
   }, [accessToken]);
 
   return (

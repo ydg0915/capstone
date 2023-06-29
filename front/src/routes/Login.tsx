@@ -164,11 +164,19 @@ function Login() {
 
   useEffect(() => {
     if (isLogin === true) {
+<<<<<<< HEAD
       const eventSource = new EventSource(`c`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
+=======
+      const eventSource = new EventSource(`http://localhost:8080/api/v1/notifications/subscribe`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    });
+>>>>>>> 3aaa46202468d2612c902b58c5c94157bd876203
 
       eventSource.addEventListener("sse", function (event) {
         console.log(event.data);
