@@ -10,6 +10,7 @@ import { faAngleUp, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { LoadingContext } from "../Components/LoadingContext";
 import LoadingComponent from "../Components/Loading";
 import Slider from "../Components/Notice";
+import axios from "axios";
 
 interface parts {
   name: string;
@@ -226,11 +227,97 @@ function Home() {
     }
   }, [part]);
 
-  const NoticeSlider = () => {
-    const notices = [Notice, Notice22];
+  interface Project {
+    id: number;
+    position: string[];
+    recruitmentPeriod: string;
+    techStack: string[];
+    title: string;
+    content: string;
+    totalCommentsAndReplies: number;
+    userId: number;
+    username: string;
+    view: number;
+  }
 
-    return <Slider notices={notices} />;
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isChecked, setIsChecked] = useState(true);
+  const [size, setSize] = useState(15);
+  const [startPage, setStartPage] = useState(1);
+  const [counts, setCounts] = useState(0);
+  const [blockNum, setBlockNum] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  let pageNumber = 0;
+  const sort = "DESC";
+
+  const fetchData = async (pageNumber): Promise<any> => {
+    try {
+      if (isChecked === true) {
+        const res = await axios.get(
+          `http://localhost:8080/api/v1/posts/recruiting`,
+          {
+            params: {
+              page: pageNumber,
+              size,
+              sort,
+            },
+          }
+        );
+        const projectData = res.data.data;
+        setProjects(projectData);
+        // setTimeout(() => {
+        //   setIsLoading(false);
+        // }, 1000);
+        return projectData;
+      } else {
+        const res = await axios.get(`http://localhost:8080/api/v1/posts`, {
+          params: {
+            page: pageNumber,
+            size,
+            sort,
+          },
+        });
+        const projectData = res.data.data;
+        setProjects(projectData);
+        // setTimeout(() => {
+        //   setIsLoading(false);
+        // }, 1000);
+        return projectData;
+      }
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
   };
+  const handleSearch = (searchResults: any) => {
+    setProjects(searchResults);
+  };
+
+  async function loadAllData() {
+    let allData = [];
+    let newData = await fetchData(pageNumber);
+
+    while (newData.length !== 0) {
+      allData = allData.concat(newData);
+      pageNumber++;
+      newData = await fetchData(pageNumber);
+    }
+    setCounts(allData.length);
+  }
+
+  useEffect(() => {
+    const fetchDataAndLoadData = async () => {
+      try {
+        await loadAllData();
+        await fetchData(startPage - 1);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchDataAndLoadData();
+    window.scrollTo(0, 0);
+  }, [isChecked, startPage]);
 
   return (
     <>
@@ -238,11 +325,12 @@ function Home() {
         <LoadingComponent />
       ) : (
         <div style={{ position: "relative" }}>
-          <Header />
+          <Header onSearch={handleSearch} />
           <Notice>
             <p>
-              공지사항 넘어가기, 프로젝트 생성 페이지 좀 더 디테일 하게 +글쓰기
-              에디터 미완성
+              공지사항, 검색
+              {/*  넘어가기, 프로젝트 생성 페이지 좀 더 디테일 하게 +글쓰기
+              에디터 미완성 */}
             </p>
           </Notice>
           {/* <NoticeBox>
@@ -254,7 +342,7 @@ function Home() {
           <DotBox>
             <Dot />
           </DotBox>
-          <ProjectList />
+          <ProjectList projects={projects} />
           <ScrollUp onClick={scrollUp}>
             <FontAwesomeIcon icon={faAngleUp} />
             <span>Top</span>
