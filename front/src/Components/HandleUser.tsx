@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import LogoutButton from "./LogoutBtn";
@@ -22,7 +22,7 @@ const MenuContainer = styled.div`
   border-radius: 10px;
   position: absolute;
   top: 40px;
-  left: 20px;
+  right: 20px;
   box-shadow: 0px 0.188rem 0.188rem rgba(0, 0, 0, 0.2);
 `;
 const MenuItem = styled.a`
@@ -51,6 +51,18 @@ const HandleUser = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isLoginString = localStorage.getItem("isLogin");
   const isLogin = isLoginString === "true";
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const handleOutsideClick = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -64,14 +76,14 @@ const HandleUser = () => {
           style={{ color: "#1361e7", marginRight: "10px" }}
         />
         {isOpen === false ? null : (
-          <MenuContainer>
+          <MenuContainer ref={menuRef}>
             <MenuItem>
               <Link to={"/profile"}>
                 <span>마이 페이지</span>
               </Link>
             </MenuItem>
             <MenuItem>
-                <LogoutButton />
+              <LogoutButton />
               <FontAwesomeIcon
                 style={{ width: "20px", marginLeft: "20px" }}
                 icon={faRightFromBracket}

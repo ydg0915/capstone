@@ -33,7 +33,9 @@ const Writer = styled.div`
 `;
 
 const DetailList = styled.div`
-  margin-top: 6.25rem;
+  border-top: 0.125rem solid rgba(0, 0, 0, 0.2);
+  margin-top: 3.125rem;
+  padding-top: 3.125rem;
   width: 100%;
   height: auto;
   display: grid;
@@ -600,7 +602,13 @@ function Project() {
                 <div>{comment.content}</div>
                 {comment.replyInfos.map((reple) => (
                   <Comments>
-                    <CommentBox style={{ marginLeft: "50px", opacity: "1" }}>
+                    <CommentBox
+                      style={{
+                        marginLeft: "50px",
+                        opacity: "1",
+                        borderTop: "1px solid  rgba(0, 0, 0, 0.1)",
+                      }}
+                    >
                       <div
                         onClick={() => handleCommentClick(reple.id)}
                         style={{
@@ -608,7 +616,17 @@ function Project() {
                           justifyContent: "space-between",
                         }}
                       >
-                        <div>{reple.username}</div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <FontAwesomeIcon
+                            icon={faCircleUser}
+                            style={{
+                              color: "#1361e7",
+                              marginRight: "10px",
+                            }}
+                          />
+                          <div>{reple.username}</div>
+                        </div>
+
                         {userId === reple.userId ? (
                           <div style={{ fontSize: "14px" }}>
                             {isEditMode && reple.id === selectedCommentId ? (
