@@ -2,8 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import LogoutButton from "./LogoutBtn";
-import { useSelector } from "react-redux";
-import { RootState } from "../_reducers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,

@@ -9,17 +9,7 @@ const rootReducer = combineReducers({
   errorReducer,
 });
 
-export const store = createStore(
-  rootReducer,
-  compose(
-    applyMiddleware(thunk),
-    (typeof window !== 'undefined' && window.navigator.userAgent.includes('Chrome')
-      ? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-      : compose
-    )
-  )
-);
-
+export const store = createStore(rootReducer, applyMiddleware(thunk));
 
 export default rootReducer;
 export type RootState = ReturnType<typeof store.getState>;

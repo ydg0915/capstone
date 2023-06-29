@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleUp, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { LoadingContext } from "../Components/LoadingContext";
 import LoadingComponent from "../Components/Loading";
-import Slider from "../Components/Notice";
 import axios from "axios";
 
 interface parts {
@@ -76,6 +75,74 @@ const Notice = styled.div`
   font-size: 3.125rem;
   font-weight: 800;
   color: white;
+`;
+
+const Toggle = styled.label`
+  margin: 50px 150px 0px 1130px;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: 600;
+
+  [type="checkbox"] {
+    appearance: none;
+    position: relative;
+    border: max(2px, 0.1em) solid gray;
+    border-radius: 1.25em;
+    width: 2.25em;
+    height: 1.25em;
+    margin-right: 10px;
+  }
+  [type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    transform: scale(0.8);
+    background-color: #9ac5f4;
+    transition: left 250ms linear;
+  }
+  [type="checkbox"]:checked::before {
+    background-color: white;
+    left: 1em;
+  }
+
+  [type="checkbox"]:checked {
+    background-color: #1361e7;
+    border-color: #1361e7;
+  }
+  [type="checkbox"]:disabled {
+    border-color: lightgray;
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  [type="checkbox"]:disabled:before {
+    background-color: lightgray;
+  }
+
+  [type="checkbox"]:disabled + span {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  [type="checkbox"]:focus-visible {
+    outline-offset: max(2px, 0.1em);
+    outline: max(2px, 0.1em) solid #1361e7;
+  }
+
+  [type="checkbox"]:enabled:hover {
+    box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
+  }
+  .span {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
 `;
 const Notice22 = styled.div`
   width: auto;
@@ -289,6 +356,7 @@ function Home() {
       return [];
     }
   };
+
   const handleSearch = (searchResults: any) => {
     setProjects(searchResults);
   };
@@ -303,7 +371,11 @@ function Home() {
       newData = await fetchData(pageNumber);
     }
     setCounts(allData.length);
+    console.log(allData);
   }
+  const btnClick = () => {
+    setIsChecked((prevState) => !prevState);
+  };
 
   useEffect(() => {
     const fetchDataAndLoadData = async () => {
@@ -328,7 +400,7 @@ function Home() {
           <Header onSearch={handleSearch} />
           <Notice>
             <p>
-              공지사항, 검색
+              공지사항
               {/*  넘어가기, 프로젝트 생성 페이지 좀 더 디테일 하게 +글쓰기
               에디터 미완성 */}
             </p>
@@ -342,7 +414,16 @@ function Home() {
           <DotBox>
             <Dot />
           </DotBox>
-          <ProjectList projects={projects} />
+          <Toggle>
+            <input
+              checked={isChecked}
+              onClick={btnClick}
+              role="switch"
+              type="checkbox"
+            />
+            <span>모집 중인 글만 보기</span>
+          </Toggle>
+          <ProjectList projectss={projects} />
           <ScrollUp onClick={scrollUp}>
             <FontAwesomeIcon icon={faAngleUp} />
             <span>Top</span>

@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import LogoutButton from "./LogoutBtn";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -35,7 +34,7 @@ const Nav = styled.div`
   }
 `;
 
-const SearchForm = styled.form`
+const SearchForm = styled.div`
   display: flex;
   width: 40%;
   height: 2.5rem;
@@ -154,10 +153,6 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
       setOpenNotification(false);
     }
   };
-  const redirectClick = () => {
-    history.go(0);
-  };
-
   const obje = localStorage.getItem("user");
   const user: User = obje ? JSON.parse(obje) : null;
 
@@ -171,6 +166,10 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
+  };
+
+  const homeClick = () => {
+    history.push("/");
   };
 
   const searchChange = (event) => {
@@ -202,26 +201,31 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
       .catch((error) => {
         console.log(error);
       });
-    console.log(isLogin);
   }, [countNotification]);
 
-  const searchClick = (event) => {
-    event.preventDefault();
-    if (onSearch) {
-      axios({
-        method: "get",
-        url: `http://localhost:8080/api/v1/posts/search`,
-        params: { query: searchContent },
-      })
-        .then((res) => {
-          const searchData = res.data.data;
-          onSearch(searchData);
+  useEffect(() => {
+    const delay = 500;
+
+    const timer = setTimeout(() => {
+      // 검색을 수행하는 로직
+      if (onSearch) {
+        axios({
+          method: "get",
+          url: `http://localhost:8080/api/v1/posts/search`,
+          params: { query: searchContent },
         })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
+          .then((res) => {
+            const searchData = res.data.data;
+            onSearch(searchData);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }, delay);
+
+    return () => clearTimeout(timer); // 컴포넌트가 언마운트되거나 업데이트되기 전에 타이머를 해제합니다.
+  }, [searchContent]);
 
   const handleNotifi = (notificationId) => {
     axios({
@@ -239,6 +243,7 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
         <Menu />
         <Link to={"/"}>
           <span
+            onClick={homeClick}
             style={{
               width: "30%",
               marginLeft: "150px",
@@ -259,7 +264,7 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
           type="text"
           placeholder="검색"
         ></SearchInput>
-        <SearchBtn onClick={searchClick}>
+        <SearchBtn>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="1em"

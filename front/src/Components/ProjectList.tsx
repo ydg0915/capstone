@@ -6,74 +6,6 @@ import ListPagenation from "./Paging";
 import React from "react";
 import StackMapping from "./StackMapping";
 
-const Toggle = styled.label`
-  margin: 50px 150px 0px 1130px;
-  display: flex;
-  align-items: center;
-  justify-content: end;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-size: 1.25rem;
-  font-weight: 600;
-
-  [type="checkbox"] {
-    appearance: none;
-    position: relative;
-    border: max(2px, 0.1em) solid gray;
-    border-radius: 1.25em;
-    width: 2.25em;
-    height: 1.25em;
-    margin-right: 10px;
-  }
-  [type="checkbox"]::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    transform: scale(0.8);
-    background-color: #9ac5f4;
-    transition: left 250ms linear;
-  }
-  [type="checkbox"]:checked::before {
-    background-color: white;
-    left: 1em;
-  }
-
-  [type="checkbox"]:checked {
-    background-color: #1361e7;
-    border-color: #1361e7;
-  }
-  [type="checkbox"]:disabled {
-    border-color: lightgray;
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  [type="checkbox"]:disabled:before {
-    background-color: lightgray;
-  }
-
-  [type="checkbox"]:disabled + span {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  [type="checkbox"]:focus-visible {
-    outline-offset: max(2px, 0.1em);
-    outline: max(2px, 0.1em) solid #1361e7;
-  }
-
-  [type="checkbox"]:enabled:hover {
-    box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
-  }
-  .span {
-    font-size: 1.5rem;
-    font-weight: 600;
-  }
-`;
-
 const ProjectBox = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -205,7 +137,7 @@ const ProjectDetail = styled.div`
   }
 `;
 
-function ProjectList({ projects }) {
+function ProjectList({ projectss }) {
   interface Project {
     id: number;
     position: string[];
@@ -219,35 +151,24 @@ function ProjectList({ projects }) {
     view: number;
   }
 
-  // const [projects, setProjects] = useState<Project[]>([]);
-  const [isChecked, setIsChecked] = useState(true);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [size, setSize] = useState(15);
   const [startPage, setStartPage] = useState(1);
   const [counts, setCounts] = useState(0);
   const [blockNum, setBlockNum] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  let pageNumber = 0;
-
-  const btnClick = () => {
-    setIsChecked((prevState) => !prevState);
-  };
-
-  const sort = "DESC";
+  useEffect(() => {
+    setProjects(projectss);
+    console.log(projectss);
+    setCounts(projectss.length);
+    console.log(projectss.length);
+  }, [projectss]);
 
   return (
     <>
-      <Toggle>
-        <input
-          checked={isChecked}
-          onClick={btnClick}
-          role="switch"
-          type="checkbox"
-        />
-        <span>모집 중인 글만 보기</span>
-      </Toggle>
       <ProjectBox>
         {projects.map((project) => (
-          <Link key={project.id} to={`/posts/${project.id}`}>
+          <Link key={project.id} to={`/${project.id}`}>
             <Project>
               <Detail>
                 <TagBox>
