@@ -40,15 +40,15 @@ function Router() {
           <Login />
         </Route>
         <Route path="/join">
-          <Join />
+          <Join />0
         </Route>
         <Route path="/editProfile">
           <EditProfile />
         </Route>
-        <Route path="/:projectId/editProject">
+        <Route path="/posts/:projectId/editProject">
           <EditProject />
         </Route>
-        <Route path="/:projectId">
+        <Route path="/posts/:projectId">
           <Project />
         </Route>
         <Route path="/">

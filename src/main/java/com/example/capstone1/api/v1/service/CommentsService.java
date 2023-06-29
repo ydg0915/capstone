@@ -88,7 +88,7 @@ public class CommentsService {
 
         NotificationRequestDto.Send send = NotificationRequestDto.Send.builder()
                 .content("새로운 댓글이 달렸습니다.")
-                .url("예시 url")
+                .url("http://localhost:3000/posts/" + postId)
                 .receiver(post.getUser())
                 .build();
 
