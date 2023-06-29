@@ -309,7 +309,7 @@ function ProjectList() {
       </Toggle>
       <ProjectBox>
         {projects.map((project) => (
-          <Link key={project.id} to={`/${project.id}`}>
+          <Link key={project.id} to={`/posts/${project.id}`}>
             <Project>
               <Detail>
                 <TagBox>

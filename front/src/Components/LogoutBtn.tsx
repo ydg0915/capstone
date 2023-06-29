@@ -12,7 +12,7 @@ function LogoutButton() {
 
   const handleLogout = async () => {
     try {
-      dispatch(logoutUser(accessToken));
+      await dispatch(logoutUser(accessToken));
       setLoginStatus(false);
       localStorage.clear();
       history.go(0);

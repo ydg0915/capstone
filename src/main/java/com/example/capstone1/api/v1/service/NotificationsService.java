@@ -36,6 +36,7 @@ public class NotificationsService {
 
     public SseEmitter subscribe(String lastEventId) {
         String username = SecurityUtil.getCurrentUsername();
+        log.info(username);
         Users user = (Users) customUserDetailsService.loadUserByUsername(username);
         Long userId = user.getId();
         String emitterId = makeTimeIncludeId(userId);

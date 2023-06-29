@@ -71,9 +71,7 @@ const HandleUser = () => {
               </Link>
             </MenuItem>
             <MenuItem>
-              <Link to={"/logout"}>
                 <LogoutButton />
-              </Link>
               <FontAwesomeIcon
                 style={{ width: "20px", marginLeft: "20px" }}
                 icon={faRightFromBracket}
