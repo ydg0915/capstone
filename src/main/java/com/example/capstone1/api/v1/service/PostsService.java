@@ -2,7 +2,9 @@ package com.example.capstone1.api.v1.service;
 
 import com.example.capstone1.api.entity.Posts;
 import com.example.capstone1.api.entity.Users;
+import com.example.capstone1.api.exception.BusinessLogicException;
 import com.example.capstone1.api.exception.CustomException;
+import com.example.capstone1.api.exception.ExceptionCode;
 import com.example.capstone1.api.mapper.PostsMapper;
 import com.example.capstone1.api.security.SecurityUtil;
 import com.example.capstone1.api.v1.dto.request.PostRequestDto;
@@ -150,4 +152,19 @@ public class PostsService {
     public void updateView(Long postId) {
         postsRepository.updateView(postId);
     }
+
+
+    public Posts findPost(Long PostId) { //포스트 Id로 포스트 반환
+        Posts posts = verifiedHotel(PostId);
+        return posts;
+    }
+
+
+
+    public Posts verifiedHotel(Long PostId) {
+        Optional<Posts> post = postsRepository.findById(PostId);
+        return post.orElseThrow(() -> new BusinessLogicException(ExceptionCode.POST_NOT_FOUND));
+
+    }
+
 }

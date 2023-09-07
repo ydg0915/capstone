@@ -40,8 +40,9 @@ dependencies {
 	implementation('io.swagger:swagger-annotations:1.6.8')
 	implementation('io.swagger:swagger-models:1.6.8')
 
-	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+	implementation 'org.mapstruct:mapstruct:1.5.1.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.1.Final'
+
 }
 
 tasks.named('test') {
