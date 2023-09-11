@@ -76,7 +76,7 @@ public class Posts extends BaseTime {
     @OneToMany(mappedBy = "post", cascade = ALL, orphanRemoval = true)
     private List<Comments> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "posts", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<BookMark> bookMarks = new ArrayList<>();
 
     @ColumnDefault("FALSE")

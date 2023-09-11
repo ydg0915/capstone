@@ -4,7 +4,9 @@ import lombok.Getter;
 
 public enum ExceptionCode {
     POST_NOT_FOUND(404, "Post not found"),
-    BOOKMARK_NOT_FOUND(404, "BookMark not found");
+    BOOKMARK_NOT_FOUND(404, "BookMark not found"),
+    FOLLOW_NOT_FOUND(404, "Follow not found");
+
 
     @Getter
     private double status;

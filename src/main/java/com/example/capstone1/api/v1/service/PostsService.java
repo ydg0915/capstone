@@ -1,5 +1,6 @@
 package com.example.capstone1.api.v1.service;
 
+import com.example.capstone1.api.bookMark.entity.BookMark;
 import com.example.capstone1.api.entity.Posts;
 import com.example.capstone1.api.entity.Users;
 import com.example.capstone1.api.exception.BusinessLogicException;
@@ -19,10 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.example.capstone1.api.exception.ErrorCode.*;
 
@@ -159,6 +157,22 @@ public class PostsService {
         return posts;
     }
 
+    //북마크아이디에 속해있는 포스트 아이디를 받아서 리스트로 반환
+    public List<Posts> findListPost(List<BookMark> bookMark){
+        List<Posts> posts = new ArrayList<>();
+
+        //post 정보 하나씩 가져와서 리스트에 넣기
+        for (int i = 0; i < bookMark.size(); i++) {
+            long postId = bookMark.get(i).getPosts().getId();
+            Optional<Posts> optionalPosts = postsRepository.findById(postId);
+
+            Posts posts1 = optionalPosts.orElseThrow(() -> new NoSuchElementException("Posts 객체를 찾을 수 없습니다."));
+
+            posts.add(posts1);
+        }
+
+        return posts;
+    }
 
 
     public Posts verifiedHotel(Long PostId) {
@@ -166,5 +180,6 @@ public class PostsService {
         return post.orElseThrow(() -> new BusinessLogicException(ExceptionCode.POST_NOT_FOUND));
 
     }
+
 
 }

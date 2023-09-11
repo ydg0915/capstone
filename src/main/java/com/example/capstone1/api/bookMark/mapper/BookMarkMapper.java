@@ -10,16 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface bookMarkMapper {
+public interface BookMarkMapper {
 
-    BookMarkResponseDto.Response BookMarkToBookMarkResponseDto(BookMark bookMark, Long PostId, String UserLoginId);
+    BookMarkResponseDto.Response BookMarkToBookMarkResponseDto(Long id, Long PostId, String title);
 
     default List<BookMarkResponseDto.ListResponse> BookMarkToResponse(List<BookMark> bookMark, List<Posts> posts){
         List<BookMarkResponseDto.ListResponse> response = new ArrayList<>();
-        for(int i=0;i< response.size();i++){
+        for(int i=0;i<bookMark.size();i++){
             BookMarkResponseDto.ListResponse re = new BookMarkResponseDto.ListResponse();
+            re.setId(bookMark.get(i).getId());
             re.setPostsId(posts.get(i).getId());
             re.setTitle(posts.get(i).getTitle());
+            re.setName(bookMark.get(i).getUsers().getUsername());
             response.add(re);
         }
         return response;

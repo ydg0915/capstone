@@ -62,9 +62,6 @@ public class Users extends BaseTime implements UserDetails {
         return password;
     }
 
-    @OneToMany(mappedBy = "users", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<BookMark> bookMarks = new ArrayList<>();
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -84,5 +81,8 @@ public class Users extends BaseTime implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @OneToMany(mappedBy = "users", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<BookMark> bookMarks = new ArrayList<>();
 
 }
