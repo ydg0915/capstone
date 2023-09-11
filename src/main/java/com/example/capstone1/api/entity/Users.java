@@ -1,5 +1,7 @@
 package com.example.capstone1.api.entity;
 
+import com.example.capstone1.api.bookMark.entity.BookMark;
+import com.example.capstone1.api.follow.entity.Follow;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,11 +24,11 @@ public class Users extends BaseTime implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; //index
 
     @Column(nullable = false)
     @Size(min = 4, max = 12)
-    private String username;
+    private String username; //user Id
 
     @Column(nullable = false)
     private String password;
@@ -80,5 +82,11 @@ public class Users extends BaseTime implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @OneToMany(mappedBy = "users", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<BookMark> bookMarks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "users", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Follow> follows = new ArrayList<>();
 
 }

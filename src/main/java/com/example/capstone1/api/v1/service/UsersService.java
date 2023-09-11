@@ -186,4 +186,12 @@ public class UsersService {
             return userInfos;
         }
     }
+
+    //loginId로 유저 찾기
+    public Users getUsers(String UsersLoginId){
+        Optional<Users> users = usersRepository.findByUsername(UsersLoginId);
+        Users users1 = users.get();
+        return users1;
+
+    }
 }
