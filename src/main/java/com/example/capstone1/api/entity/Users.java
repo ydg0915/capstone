@@ -1,6 +1,7 @@
 package com.example.capstone1.api.entity;
 
 import com.example.capstone1.api.bookMark.entity.BookMark;
+import com.example.capstone1.api.follow.entity.Follow;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -84,5 +85,8 @@ public class Users extends BaseTime implements UserDetails {
 
     @OneToMany(mappedBy = "users", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<BookMark> bookMarks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "users", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Follow> follows = new ArrayList<>();
 
 }

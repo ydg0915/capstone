@@ -18,6 +18,7 @@ import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,11 +36,23 @@ public class BookMarkService {
 
         String username = SecurityUtil.getCurrentUsername();
 
+
         //유저 찾기
         Optional<Users> users = usersRepository.findByUsername(username);
         Users users1 = users.get();
+
+        //중복확인
+        List<BookMark> bookMarkList = bookMarkRepository.findBookMarkByUsersId(users1.getId());
+        for (BookMark bookMark : bookMarkList) {
+            if (bookMark.getPosts().getId().equals(postId)) {
+                throw new BusinessLogicException(ExceptionCode.BOOKMARK_ALREADY_EXISTS);
+            }
+        }
+
         //포스트 찾기
         Posts posts = postsService.findPost(postId);
+
+
 
         //북마크 생성
         BookMark bookMark1=createB(users1, posts);
@@ -82,12 +95,13 @@ public class BookMarkService {
     //Delete
     public void deleteBookMark(long bookMarkId){
         String username = SecurityUtil.getCurrentUsername();
-        bookMarkRepository.deleteBookMarkById(bookMarkId);
+        BookMark bookMark = verifiedBookMark(bookMarkId);
+        bookMarkRepository.delete(bookMark);
     }
 
 
     // 멤버 검증
-    public BookMark verifiedBookMark(int bookMarkId) {
+    public BookMark verifiedBookMark(long bookMarkId) {
         Optional<BookMark> bookMark = bookMarkRepository.findById(bookMarkId);
         return bookMark.orElseThrow(() -> new BusinessLogicException(ExceptionCode.BOOKMARK_NOT_FOUND));
 

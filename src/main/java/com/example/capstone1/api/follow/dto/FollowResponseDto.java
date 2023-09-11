@@ -15,8 +15,8 @@ public class FollowResponseDto {
     @AllArgsConstructor
     public static class Response{
         private Long id; //팔로우 식별아이디
-        private String User;
-        private String UserName;
+        private String userid; //팔로우 한 사람
+        private String username;//팔로우 된 사람
 
     }
 
@@ -26,8 +26,8 @@ public class FollowResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ListResponse {
-        private int id; //팔로우 식별아이디
-        private String UserId; //유저아이디
-        private String UserName; //유저 이름
+        private Long id; //팔로우 식별아이디
+        private String userid; //팔로우 한 사람
+        private String username;//팔로우 된 사람
     }
 }

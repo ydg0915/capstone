@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-/*
+import java.util.List;
+
 @RestController
 @RequestMapping("/follow")
 @Validated
@@ -26,30 +27,25 @@ public class FollowController {
 
     // Create
     @PostMapping
-    public ResponseEntity postFollow(@Valid @RequestBody FollowRequestDto.Post post) {
-        Follow follow = followService.createFollow(followMapper.FollowRequestDtoPostToFollow(post), post.getCommentId());
-        FollowResponseDto.Response response = followMapper.FollowToFollowResponseDto(follow);
-
+    public ResponseEntity postFollow(@Positive @RequestParam long UserId) { //팔로우 할 유저 로그인 아이디를 입력으로 받는다.
+        FollowResponseDto.Response response = followService.createFollow(UserId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // Read
-    @GetMapping("/{follow-id}")
-    public ResponseEntity getFollow(@Positive @PathVariable("follow-id") int followId) {
-        Follow follow=followService.findFollow(followId);
-        FollowResponseDto.Response response = followMapper.FollowToFollowResponseDto((follow));
+    @GetMapping()
+    public ResponseEntity getFollow() {
+        List<FollowResponseDto.ListResponse> response=followService.findListFollow();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
     // Delete
-    @DeleteMapping("/{follow-id}")
-    public ResponseEntity deleteMember(@Positive @PathVariable("follow-id") int followId) {
+    @DeleteMapping("/{followId}")
+    public ResponseEntity deleteMember(@Positive @PathVariable("followId") int followId) {
         followService.deleteFollow(followId);
-
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 
 
- */
