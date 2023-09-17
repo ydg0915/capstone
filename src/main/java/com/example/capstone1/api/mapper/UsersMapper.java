@@ -18,4 +18,5 @@ public interface UsersMapper {
 
     UserResponseDto.UserInfo toUserInfo(Users user);
     UserResponseDto.UserInfoForSearching toUserInfoForSearching(Users user);
+    UserResponseDto.UserInfoForForgetting toUserInfoForForgetting(Users user);
 }

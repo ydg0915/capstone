@@ -7,7 +7,6 @@ import com.example.capstone1.api.v1.service.UsersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -69,6 +68,18 @@ public class UsersController {
     public ResponseEntity<?> searchUsers(String query) {
         List<UserResponseDto.UserInfoForSearching> userInfos = usersService.searchUsers(query);
         return response.success(userInfos, "회원 목록 조회에 성공했습니다.");
+    }
+
+    @GetMapping("/forgot-username")
+    public ResponseEntity<?> findUsername(String email) {
+        UserResponseDto.UserInfoForForgetting userInfo = usersService.findUsername(email);
+        return response.success(userInfo, "아이디 찾기에 성공했습니다.");
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> resetPassword(String email) {
+        usersService.resetPassword(email);
+        return response.success("비밀번호 재설정에 성공했습니다.");
     }
 
     @GetMapping("/authority")

@@ -12,6 +12,8 @@ import com.example.capstone1.api.v1.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -40,6 +42,7 @@ public class UsersService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RedisTemplate redisTemplate;
+    private final JavaMailSender javaMailSender;
 
     public void signUp(UserRequestDto.SignUp signUp) {
         if (usersRepository.existsByUsername(signUp.getUsername())) {
@@ -188,10 +191,55 @@ public class UsersService {
     }
 
     //loginId로 유저 찾기
-    public Users getUsers(String UsersLoginId){
+    public Users getUsers(String UsersLoginId) {
         Optional<Users> users = usersRepository.findByUsername(UsersLoginId);
         Users users1 = users.get();
         return users1;
+    }
 
+    public UserResponseDto.UserInfoForForgetting findUsername(String email) {
+        Optional<Users> optionalUser = usersRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new CustomException(USER_NOT_FOUND);
+        }
+
+        Users user = optionalUser.get();
+
+        UserResponseDto.UserInfoForForgetting userInfo = UsersMapper.INSTANCE.toUserInfoForForgetting(user);
+
+        return userInfo;
+    }
+
+    public void resetPassword(String email) {
+        Optional<Users> optionalUser = usersRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new CustomException(USER_NOT_FOUND);
+        }
+
+        Users user = optionalUser.get();
+
+        String newPassword = getTempPassword();
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("[Synergy] 임시 비밀번호 발급 안내");
+        message.setText("안녕하세요. 회원님의 임시 비밀번호는 " + newPassword + " 입니다.");
+        javaMailSender.send(message);
+    }
+
+    public String getTempPassword(){
+        char[] charSet = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+                'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+
+        String str = "";
+
+        int idx = 0;
+        for (int i = 0; i < 10; i++) {
+            idx = (int) (charSet.length * Math.random());
+            str += charSet[idx];
+        }
+        return str;
     }
 }
