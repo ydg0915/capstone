@@ -162,6 +162,16 @@ public class UsersService {
         usersRepository.save(user);
     }
 
+    public void deleteMyUser(UserRequestDto.Delete delete) {
+        String username = SecurityUtil.getCurrentUsername();
+        Users user = (Users) customUserDetailsService.loadUserByUsername(username);
+
+        if (!passwordEncoder.matches(delete.getPassword(), user.getPassword())) {
+            throw new CustomException(MISMATCH_PASSWORD);
+        }
+        usersRepository.delete(user);
+    }
+
     public UserResponseDto.UserInfo getUserInfoById(Long userId) {
         Optional<Users> optionalUser = usersRepository.findById(userId);
         if (optionalUser.isEmpty()) {

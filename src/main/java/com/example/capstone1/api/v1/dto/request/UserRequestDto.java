@@ -51,13 +51,7 @@ public class UserRequestDto {
 
     @Getter
     @Setter
-    public static class Reset {
-        @NotEmpty(message = "이메일은 필수 입력값입니다.")
-        @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "이메일 형식에 맞지 않습니다.")
-        private String email;
-
-        @NotEmpty(message = "아이디는 필수 입력값입니다.")
-        @Pattern(regexp = "^[a-z0-9_-]{4,12}$", message = "아이디 형식에 맞지 않습니다.")
-        private String username;
+    public static class Delete {
+        private String password;
     }
 }

@@ -28,7 +28,7 @@ public class UsersController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid UserRequestDto.Login login) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserRequestDto.Login login) {
         UserResponseDto.TokenInfo tokenInfo = usersService.login(login);
         return response.success(tokenInfo, "로그인에 성공했습니다.");
     }
@@ -56,6 +56,12 @@ public class UsersController {
     public ResponseEntity<?> updateMyUserInfo(@Valid @RequestBody UserRequestDto.Update update) {
         usersService.updateMyUserInfo(update);
         return response.success("회원 정보가 변경되었습니다.");
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMyUser(@RequestBody UserRequestDto.Delete delete) {
+        usersService.deleteMyUser(delete);
+        return response.success("회원 탈퇴에 성공했습니다.");
     }
 
     @GetMapping("/{userId}")
