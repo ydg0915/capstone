@@ -5,33 +5,37 @@ import React from "react";
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  hideErrorMessage,
-  loginUser,
-  setLoginStatus,
-} from "../_actions/user_action";
-import { useHistory } from "react-router-dom";
-import { EventSourcePolyfill } from "event-source-polyfill";
+import { hideErrorMessage, loginUser } from "../_actions/user_action";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { RootState, store } from "../_reducers";
-
-const EventSource = EventSourcePolyfill;
 
 const Container = styled.div`
   width: 100%;
   height: 90vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: #f9fafb;
 `;
 
 const Box = styled.div`
   width: 37.5rem;
-  height: 43.75rem;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 6.25rem 6.25rem;
+  padding: 100px 6.25rem;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+`;
+
+const JoinString = styled.span`
+  font-size: 17px;
+  font-weight: 800;
 `;
 const Title = styled.h1`
   font-size: 1.875rem;
@@ -79,52 +83,6 @@ export const ErrorMessage = styled.span`
   font-size: 0.875rem;
   margin-top: 1.25rem;
 `;
-
-// const SocialBox = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   width: 100%;
-//   margin-top: 3.75rem;
-// `;
-
-// const GoogleLogin = styled.div`
-//   width: 25rem;
-//   height: 3.125rem;
-//   background-color: whitesmoke;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   font-size: 1.25rem;
-//   font-weight: 600;
-//   border-radius: 0.313rem;
-//   svg {
-//     margin-right: 0.625rem;
-//   }
-// `;
-// const KakaoLogin = styled.div`
-//   width: 25rem;
-//   height: 3.125rem;
-//   background-color: #fee500;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   border-radius: 0.313rem;
-//   margin-top: 0.75rem;
-//   font-size: 1.25rem;
-//   font-weight: 600;
-//   svg {
-//     margin-right: 0.625rem;
-//   }
-// `;
-// const Wrapper = styled.div`
-//   width: 25rem;
-//   height: 3.125rem;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-// `;
-
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -133,11 +91,8 @@ function Login() {
   let errorMessage = useSelector(
     (state: RootState) => state.errorReducer.errorMessage
   );
+  const formData = { username, password };
   const history = useHistory();
-
-  const formData = new FormData();
-  formData.append("username", username);
-  formData.append("password", password);
 
   const usernameChange = (event) => {
     setUsername(event.target.value);
@@ -147,11 +102,16 @@ function Login() {
     setPassword(event.target.value);
   };
 
-  const btnPrevent = (event) => {
+  const btnPrevent = async (event) => {
     event.preventDefault();
-    store.dispatch(loginUser(formData));
-    setLoginStatus(true);
+    await store.dispatch(loginUser(formData));
   };
+
+  useEffect(() => {
+    if (isLogin) {
+      history.push("/");
+    }
+  }, [isLogin]);
 
   useEffect(() => {
     if (errorMessage) {
@@ -161,75 +121,6 @@ function Login() {
       return () => clearTimeout(timeout);
     }
   }, [errorMessage, dispatch]);
-
-  useEffect(() => {
-    if (isLogin === true) {
-<<<<<<< HEAD
-      const eventSource = new EventSource(`c`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
-=======
-      const eventSource = new EventSource(`http://localhost:8080/api/v1/notifications/subscribe`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-      },
-    });
->>>>>>> 3aaa46202468d2612c902b58c5c94157bd876203
-
-      eventSource.addEventListener("sse", function (event) {
-        console.log(event.data);
-
-        let data;
-        try {
-          data = JSON.parse(event.data);
-
-          (async () => {
-            // 브라우저 알림
-            const showNotification = () => {
-              const notification = new Notification(
-                "새로운 알림이 도착했습니다.",
-                {
-                  body: data.content,
-                }
-              );
-
-              setTimeout(() => {
-                notification.close();
-              }, 10 * 1000);
-
-              notification.addEventListener("click", () => {
-                window.open(data.url, "_blank");
-              });
-            };
-
-            // 브라우저 알림 허용 권한
-            let granted = false;
-
-            if (Notification.permission === "granted") {
-              granted = true;
-            } else if (Notification.permission !== "denied") {
-              let permission = await Notification.requestPermission();
-              granted = permission === "granted";
-            }
-
-            // 알림 보여주기
-            if (granted) {
-              showNotification();
-            }
-          })();
-        } catch (error) {}
-      });
-
-      eventSource.addEventListener("error", function (event) {
-        eventSource.close();
-      });
-
-      history.push("/");
-    }
-  }, [isLogin]);
-
   return (
     <>
       <Header />
@@ -254,6 +145,9 @@ function Login() {
             <Btn type="submit" value={"로그인"}></Btn>
           </FormBox>
         </Box>
+        <Link to={"/join"}>
+          <JoinString>회원가입</JoinString>
+        </Link>
       </Container>
     </>
   );

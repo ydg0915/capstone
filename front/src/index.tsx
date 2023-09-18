@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import Reset from "./styles/Reset";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./theme";
 import { Provider } from "react-redux";
@@ -12,6 +13,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <Provider store={store}>
+    <Reset />
     <ThemeProvider theme={theme}>
       <App />
     </ThemeProvider>

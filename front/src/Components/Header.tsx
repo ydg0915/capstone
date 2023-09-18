@@ -12,6 +12,8 @@ import React from "react";
 import Menu from "./Menu";
 import HandleUser from "./HandleUser";
 import { useHistory } from "react-router-dom";
+import { RootState, store } from "../_reducers";
+import { useSelector } from "react-redux";
 
 const Nav = styled.div`
   display: flex;
@@ -19,12 +21,18 @@ const Nav = styled.div`
   vertical-align: middle;
   justify-content: space-between;
   position: relative;
+
   width: 100%;
-  padding: 1.875rem 150px 1.875rem 150px;
+  height: 80px;
+  padding: 0px 150px 0px 50px;
   font-size: 1rem;
   font-weight: 600;
   color: ${(props) => props.theme.textColor};
-
+  box-shadow: 2px 1px 5px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  backdrop-filter: blur(6px);
   button {
     border: none;
     background-color: white;
@@ -49,6 +57,7 @@ const SearchInput = styled.input`
   height: 100%;
   outline: none;
   border: none;
+  background-color: inherit;
   &::placeholder {
     font-size: 0.75rem;
     color: black;
@@ -59,7 +68,8 @@ const SearchInput = styled.input`
 const SearchBtn = styled.button`
   border: none;
   outline: none;
-  background-color: white;
+
+  background-color: rgba(0, 0, 0, 0);
   font-size: 1rem;
   opacity: 0.5;
   cursor: pointer;
@@ -72,6 +82,7 @@ const NavRoute = styled.nav`
   align-items: center;
   span {
     margin-right: 20px;
+    font-size: 17px;
   }
 
   svg {
@@ -85,43 +96,51 @@ const Notifi = styled.span`
   font-size: 20px;
   position: relative;
   color: black;
+  svg {
+    width: 25px;
+    margin-right: 40px;
+  }
 `;
 
 const NotificationCount = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3px 8px;
-  border-radius: 10px;
-  background-color: red;
+  padding: 3px 6px;
+  border-radius: 50%;
+  background-color: #7d92e9;
   color: white;
   font-size: 14px;
   position: absolute;
-  top: -15px;
+  top: -12px;
   left: 10px;
 `;
 
 const NotificationBox = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   position: absolute;
-  background-color: #7d92e9;
-  border: 3px solid whitesmoke;
-  color: white;
+  background-color: white;
+  border: 1px solid #dadce0;
   border-radius: 20px;
   top: 50px;
   font-size: 16px;
   z-index: 999;
   width: 250px;
-  padding: 20px 0px;
+  padding: 20px;
   span {
+    color: rgba(0, 0, 0, 1);
+
     text-decoration: none;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid wheat;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #dadce0;
   }
+`;
+const NotifiString = styled.div`
+  font-size: 23px;
+  margin-bottom: 20px;
 `;
 
 function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
@@ -138,15 +157,13 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
     introduction: string;
   }
 
-  const isLoginString = localStorage.getItem("isLogin");
-  const [isLogin, setIsLogin] = useState<boolean>();
+  const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
   const [searchContent, setSearchContent] = useState("");
   const accessToken = localStorage.getItem("accessToken");
   const [countNotification, setCountNotification] = useState(0);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [openNotification, setOpenNotification] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const [searchData, setSearchData] = useState([]);
   const history = useHistory();
   const handleOutsideClick = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -181,14 +198,11 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
   };
 
   useEffect(() => {
-    setIsLogin(isLoginString === "true");
-  }, []);
-
-  useEffect(() => {
     axios
       .get("http://localhost:8080/api/v1/notifications", config)
       .then((res) => {
         setNotifications(res.data.data);
+        console.log(notifications);
       })
       .catch((error) => {
         console.log(error);
@@ -207,7 +221,6 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
     const delay = 500;
 
     const timer = setTimeout(() => {
-      // 검색을 수행하는 로직
       if (onSearch) {
         axios({
           method: "get",
@@ -224,7 +237,7 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
       }
     }, delay);
 
-    return () => clearTimeout(timer); // 컴포넌트가 언마운트되거나 업데이트되기 전에 타이머를 해제합니다.
+    return () => clearTimeout(timer);
   }, [searchContent]);
 
   const handleNotifi = (notificationId) => {
@@ -240,20 +253,19 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
   return (
     <Nav>
       <div style={{ width: "33%" }}>
-        <Menu />
+        {/* <Menu /> */}
         <Link to={"/"}>
-          <span
+          <a
             onClick={homeClick}
             style={{
               width: "30%",
-              marginLeft: "150px",
               fontSize: "30px",
               color: "#1361e7",
               lineHeight: "3px",
             }}
           >
             Synergy
-          </span>
+          </a>
         </Link>
       </div>
 
@@ -278,23 +290,26 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
       {isLogin === true ? (
         <NavRoute>
           <Notifi onClick={NotifiStateClick}>
-            <FontAwesomeIcon
-              icon={faBell}
-              style={{ color: "#1361e7", width: "25px", marginRight: "40px" }}
-            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="1em"
+              viewBox="0 0 448 512"
+            >
+              <path d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z" />
+            </svg>
 
             {countNotification === 0 ? null : (
               <NotificationCount>{countNotification}</NotificationCount>
             )}
             {openNotification === false ? null : (
               <NotificationBox ref={menuRef}>
+                <NotifiString>알림</NotifiString>
                 {notifications.map((notification) => (
                   <span
                     key={notification.id}
                     onClick={() => handleNotifi(notification.id)}
                     style={{
-                      color: notification.read ? "black" : "white",
-                      opacity: notification.read ? "0.3" : "1",
+                      display: notification.read ? "none" : "",
                     }}
                   >
                     {notification.content}

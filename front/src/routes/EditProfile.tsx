@@ -55,7 +55,7 @@ const InputId = styled.input`
 const Btn = styled.input`
   width: 100%;
   height: 3.125rem;
-  background-color: black;
+  background-color: #9ac5f4;
   color: white;
   font-size: 1.063rem;
   text-align: center;

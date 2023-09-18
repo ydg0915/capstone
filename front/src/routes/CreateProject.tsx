@@ -7,9 +7,19 @@ import { useHistory } from "react-router-dom";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import SideNav from "../Components/SideNav";
 
+const Container = styled.div`
+  display: flex;
+  background-color: #f8f9fa;
+`;
 const Wrapper = styled.div`
-  padding: 3.125rem 12.5rem 9.375rem 18.75rem;
+  width: 70%;
+  margin: 50px 5% 100px 3%;
+  padding: 3%;
+  background-color: white;
+  border: 2px solid #dadce0;
+  border-radius: 10px;
 `;
 
 const Title = styled.div`
@@ -81,7 +91,9 @@ const Description = styled.div`
   margin-top: 6.25rem;
   margin-bottom: 6.25rem;
   input {
+    border-radius: 5px;
     padding: 0.625rem 0.625rem;
+    border: 2px solid #7d92e9;
   }
   input:focus {
     outline: none;
@@ -107,14 +119,16 @@ const BtnDiv = styled.form`
   button {
     margin-right: 1.25rem;
     background-color: teal;
-    border-radius: 0.938rem;
+    border-radius: 5px;
     border: 0;
     color: white;
     font-weight: 600;
     padding: 0.313rem 1.25rem;
     &.submit {
+      cursor: pointer;
       background-color: #7d92e9;
-      border-radius: 1.25rem;
+      border-radius: 5px;
+
       border: 0;
       color: white;
       padding: 0.313rem 1.25rem;
@@ -202,136 +216,138 @@ function CreateProject() {
   return (
     <>
       <Header />
-      <Wrapper>
-        <Title>
-          <div>1</div>
-          <h1>프로젝트 기본정보</h1>
-        </Title>
-        <Info>
-          <InfoSelect>
-            <h1>모집 인원</h1>
-            <select onChange={recruitmentSizeChange}>
-              <FontAwesomeIcon icon={faAngleDown} />
-              <option value="" disabled selected>
-                인원 미정 ~ 5명
-              </option>
-              <option>0</option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-            </select>
-          </InfoSelect>
-          <InfoSelect>
-            <h1>모집 마감일</h1>
+      <Container>
+        <SideNav />
+        <Wrapper>
+          <Title>
+            <div>1</div>
+            <h1>프로젝트 기본정보</h1>
+          </Title>
+          <Info>
+            <InfoSelect>
+              <h1>모집 인원</h1>
+              <select onChange={recruitmentSizeChange}>
+                <FontAwesomeIcon icon={faAngleDown} />
+                <option value="" disabled selected>
+                  인원 미정 ~ 5명
+                </option>
+                <option>0</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </InfoSelect>
+            <InfoSelect>
+              <h1>모집 마감일</h1>
+              <input
+                value={recruitmentPeriod}
+                onChange={recruitmentPeriodChange}
+                type="date"
+                placeholder="날짜 선택"
+              ></input>
+            </InfoSelect>
+            <InfoSelect>
+              <h1>모집 분야</h1>
+              <select
+                multiple={true}
+                value={position}
+                onChange={positionChange}
+              >
+                <option>FRONTEND</option>
+                <option>BACKEND</option>
+                <option>DATABASE</option>
+                <option>DEVOPS</option>
+                <option>ANDROID</option>
+                <option>IOS</option>
+                <option>DESIGNER</option>
+                <option>AI</option>
+              </select>
+            </InfoSelect>
+            <InfoSelect>
+              <h1>예상기간</h1>
+              <select onChange={expectedDurationChange}>
+                <option value="" disabled selected>
+                  예상 기간 1~4개월
+                </option>
+                <option>0</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+              </select>
+            </InfoSelect>
+            <InfoSelect>
+              <h1>사용 스택</h1>
+              <select
+                multiple={true}
+                value={techStack}
+                onChange={techStackChange}
+              >
+                <option>JAVA</option>
+                <option>JavaScript</option>
+                <option>React</option>
+                <option>VUE</option>
+                <option>Python</option>
+                <option>Angular</option>
+                <option>NodeJS</option>
+                <option>SpringBoot</option>
+                <option>Django</option>
+                <option>RubyOnRails</option>
+                <option>PHP</option>
+                <option>Laravel</option>
+                <option>ASPNET</option>
+                <option>ExpressJS</option>
+                <option>MySQL</option>
+                <option>MongoDB</option>
+                <option>PostgreSQL</option>
+                <option>Docker</option>
+                <option>Kubernetes</option>
+                <option>Jenkins</option>
+                <option>Swift</option>
+                <option>AWS</option>
+                <option>Kotlin</option>
+                <option>Git</option>
+                <option>CSharp</option>
+                <option>Unity</option>
+                <option>TensorFlow</option>
+              </select>
+            </InfoSelect>
+            <InfoSelect>
+              <h1>연락 방법</h1>
+              <select>
+                <option>1대1 채팅</option>
+                <option>카카오톡 오픈채팅</option>
+              </select>
+            </InfoSelect>
+          </Info>
+          <Title>
+            <div>2</div>
+            <h1>프로젝트 소개</h1>
+          </Title>
+          <Description>
             <input
-              value={recruitmentPeriod}
-              onChange={recruitmentPeriodChange}
-              type="date"
-              placeholder="날짜 선택"
-            ></input>
-          </InfoSelect>
-          <InfoSelect>
-            <h1>모집 분야</h1>
-            <select multiple={true} value={position} onChange={positionChange}>
-              <option>FRONTEND</option>
-              <option>BACKEND</option>
-              <option>DATABASE</option>
-              <option>DEVOPS</option>
-              <option>ANDROID</option>
-              <option>IOS</option>
-              <option>DESIGNER</option>
-              <option>AI</option>
-            </select>
-          </InfoSelect>
-          <InfoSelect>
-            <h1>예상기간</h1>
-            <select onChange={expectedDurationChange}>
-              <option value="" disabled selected>
-                예상 기간 1~4개월
-              </option>
-              <option>0</option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-            </select>
-          </InfoSelect>
-          <InfoSelect>
-            <h1>사용 스택</h1>
-            <select
-              multiple={true}
-              value={techStack}
-              onChange={techStackChange}
-            >
-              <option>JAVA</option>
-              <option>JavaScript</option>
-              <option>React</option>
-              <option>VUE</option>
-              <option>Python</option>
-              <option>Angular</option>
-              <option>NodeJS</option>
-              <option>SpringBoot</option>
-              <option>Django</option>
-              <option>RubyOnRails</option>
-              <option>PHP</option>
-              <option>Laravel</option>
-              <option>ASPNET</option>
-              <option>ExpressJS</option>
-              <option>MySQL</option>
-              <option>MongoDB</option>
-              <option>PostgreSQL</option>
-              <option>Docker</option>
-              <option>Kubernetes</option>
-              <option>Jenkins</option>
-              <option>Swift</option>
-              <option>AWS</option>
-              <option>Kotlin</option>
-              <option>Git</option>
-              <option>CSharp</option>
-              <option>Unity</option>
-              <option>TensorFlow</option>
-            </select>
-          </InfoSelect>
-          <InfoSelect>
-            <h1>연락 방법</h1>
-            <select>
-              <option>1대1 채팅</option>
-              <option>카카오톡 오픈채팅</option>
-            </select>
-          </InfoSelect>
-        </Info>
-        <Title>
-          <div>2</div>
-          <h1>프로젝트 소개</h1>
-        </Title>
-        <Description>
-          <input
-            onChange={titleChange}
-            type="text"
-            placeholder="제목을 입력해주세요"
-          />
-          <input
-            onChange={contentChange}
-            type="text"
-            placeholder="프로젝트를 소개해주세요"
-          />
-        </Description>
-        <BtnDiv>
-          <Link to={"/"}>
-            <button>취소</button>
-          </Link>
-          <button
-            onClick={btnPrevent}
-            className="submit"
-            style={{ cursor: "pointer" }}
-            type="submit"
-          >
-            글 등록
-          </button>
-        </BtnDiv>
-      </Wrapper>
+              onChange={titleChange}
+              type="text"
+              placeholder="제목을 입력해주세요"
+            />
+            <input
+              onChange={contentChange}
+              type="text"
+              placeholder="프로젝트를 소개해주세요"
+            />
+          </Description>
+          <BtnDiv>
+            <Link to={"/"}>
+              <button>취소</button>
+            </Link>
+            <button onClick={btnPrevent} className="submit" type="submit">
+              글 등록
+            </button>
+          </BtnDiv>
+        </Wrapper>
+      </Container>
     </>
   );
 }

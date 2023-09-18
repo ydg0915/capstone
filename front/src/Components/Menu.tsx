@@ -11,7 +11,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const MenuContainer = styled.div`
-  background-color: #f1f1f1;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   width: 200px;
   border-radius: 10px;
   padding: 10px;
@@ -21,7 +22,7 @@ const MenuContainer = styled.div`
   top: 50px;
 `;
 const XBox = styled.div`
-  width: 100%;
+  width: auto;
   height: 25px;
 `;
 
@@ -34,6 +35,7 @@ const MenuItem = styled.a`
   padding: 8px 16px;
   transition: background-color 0.3s ease;
   margin-top: 10px;
+  border-radius: 5px;
 
   &:hover {
     background-color: #ddd;
@@ -94,18 +96,18 @@ const Menu = () => {
             </XBox>
             {isLogin === true ? (
               <>
-                <MenuItem>
-                  <Link to={"/chat"}>
+                <Link to={"/chat"}>
+                  <MenuItem>
                     <span>채팅</span>
-                  </Link>
-                  <FontAwesomeIcon icon={faArrowRight} />
-                </MenuItem>
-                <MenuItem>
-                  <Link to={"/createproject"}>
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </MenuItem>
+                </Link>
+                <Link to={"/createproject"}>
+                  <MenuItem>
                     <span>프로젝트 생성</span>
-                  </Link>
-                  <FontAwesomeIcon icon={faArrowRight} />
-                </MenuItem>
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </MenuItem>
+                </Link>
               </>
             ) : null}
 
@@ -118,12 +120,12 @@ const Menu = () => {
                 />
               </MenuItem>
             ) : (
-              <MenuItem>
-                <Link to={"/login"}>
+              <Link to={"/login"}>
+                <MenuItem>
                   <span>로그인</span>
                   <FontAwesomeIcon icon={faArrowRight} />
-                </Link>
-              </MenuItem>
+                </MenuItem>
+              </Link>
             )}
           </MenuContainer>
         )}

@@ -5,6 +5,22 @@ import styled from "styled-components";
 import ListPagenation from "./Paging";
 import React from "react";
 import StackMapping from "./StackMapping";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBoltLightning,
+  faComment,
+  faEye,
+  faFire,
+} from "@fortawesome/free-solid-svg-icons";
+
+const ProjectString = styled.div`
+  padding: 0px 5%;
+  font-size: 25px;
+  font-weight: 600;
+  span {
+    margin-right: 5px;
+  }
+`;
 
 const ProjectBox = styled.div`
   display: grid;
@@ -13,7 +29,7 @@ const ProjectBox = styled.div`
   grid-auto-rows: minmax(0, 1fr);
   row-gap: 5rem;
   column-gap: 1.875rem;
-  margin: 2rem 10% 4rem 10%;
+  margin: 2rem 5% 4rem 5%;
 `;
 
 const Project = styled.div`
@@ -24,7 +40,8 @@ const Project = styled.div`
   width: 100%;
   height: 18.75rem;
   border: 3px solid #c2dedc;
-  border-radius: 3.125rem;
+  border-radius: 15px;
+  background-color: white;
   padding: 1.3em;
   padding-bottom: 0px;
   color: rgba(0, 0, 0, 0.5);
@@ -54,12 +71,13 @@ const Tag = styled.div`
 const Range = styled.div`
   width: auto;
   height: auto;
-  background-color: #7d92e9;
-  padding: 0.438rem 0.5rem;
-  font-size: 0.5rem;
-  color: white;
+  background-color: #a0f1d0;
+  padding: 6px 0.5rem;
+  font-size: 8px;
+  color: rgba(0, 0, 0, 1);
+  font-weight: 600;
   margin-right: 0.5rem;
-  border-radius: 1.25rem;
+  border-radius: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -74,16 +92,6 @@ const Stack = styled.div`
   align-items: center;
 `;
 
-const StackImage = styled.div`
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 15px;
-  border: 2px solid #7d92e9;
-`;
-
 const Title = styled.div`
   display: flex;
   align-items: center;
@@ -91,14 +99,24 @@ const Title = styled.div`
   width: 100%;
   height: 7.5rem;
   border-radius: 0.8rem;
-  color: white;
+  color: rgba(0, 0, 0, 1);
   line-height: 50px;
   padding: 0.625rem;
   font-weight: 600;
   font-size: 1.563rem;
   text-align: center;
-  border: 3px solid whitesmoke;
-  background-color: #9580c9;
+`;
+const Writer = styled.div`
+  width: 1.563rem;
+  height: 1.563rem;
+  margin-right: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 14px;
+  border-radius: 50%;
+  background-color: #a0f1d0;
 `;
 
 const User = styled.div`
@@ -156,16 +174,21 @@ function ProjectList({ projectss }) {
   const [startPage, setStartPage] = useState(1);
   const [counts, setCounts] = useState(0);
   const [blockNum, setBlockNum] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     setProjects(projectss);
-    console.log(projectss);
     setCounts(projectss.length);
-    console.log(projectss.length);
   }, [projectss]);
-
+  console.log(projects);
   return (
     <>
+      <ProjectString>
+        <span>프로젝트 찾기</span>
+
+        <FontAwesomeIcon
+          icon={faBoltLightning}
+          style={{ color: "yellowgreen", marginLeft: "10px" }}
+        />
+      </ProjectString>
       <ProjectBox>
         {projects.map((project) => (
           <Link key={project.id} to={`/${project.id}`}>
@@ -188,14 +211,18 @@ function ProjectList({ projectss }) {
               <Title>{project.title}</Title>
               <User>
                 <UserDetail>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path d="M399 384.2C376.9 345.8 335.4 320 288 320H224c-47.4 0-88.9 25.8-111 64.2c35.2 39.2 86.2 63.8 143 63.8s107.8-24.7 143-63.8zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 16a72 72 0 1 0 0-144 72 72 0 1 0 0 144z" />
-                  </svg>
+                  <Writer>{project.username[0]}</Writer>
+
                   <span>{project.username}</span>
                 </UserDetail>
                 <ProjectDetail>
-                  <span>조회 수 {project.view}</span>
-                  <span>댓글 수 {project.totalCommentsAndReplies}</span>
+                  <span>
+                    <FontAwesomeIcon icon={faEye} /> {project.view}
+                  </span>
+                  <span>
+                    <FontAwesomeIcon icon={faComment} />{" "}
+                    {project.totalCommentsAndReplies}
+                  </span>
                 </ProjectDetail>
               </User>
             </Project>

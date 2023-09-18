@@ -2,18 +2,19 @@ import styled from "styled-components";
 import React from "react";
 
 const StackImage = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 16px;
-  border: 2px solid #7d92e9;
+  border-radius: 18px;
   margin-left: 15px;
+  border: 2px solid #7d92e9;
+  padding: 10px;
   img {
     width: 25px;
     height: 25px;
-    border-radius: 12px;
+    border-radius: 12.5px;
   }
 `;
 

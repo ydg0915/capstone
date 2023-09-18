@@ -15,7 +15,12 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "noImplicitAny": false,
+    "noImplicitAny": false
   },
-  "include": ["src/**/*.tsx", "src/**/*.ts", "src/**/*.d.ts"]
+  "include": [
+    "src/**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/styles/Reset.ts"
+  ]
 }

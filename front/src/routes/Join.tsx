@@ -4,11 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  hideErrorMessage,
-  setLoginStatus,
-  showErrorMessage,
-} from "../_actions/user_action";
+import { hideErrorMessage, showErrorMessage } from "../_actions/user_action";
 import { ErrorMessage } from "./Login";
 import React from "react";
 
@@ -20,16 +16,20 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #f9fafb;
 `;
 
 const Box = styled.div`
   width: 37.5rem;
-  height: 43.75rem;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 6.25rem 6.25rem;
+  padding: 100px 6.25rem;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
 `;
 const Title = styled.h1`
   font-size: 1.875rem;
@@ -107,7 +107,6 @@ function Join() {
         console.log(res);
         dispatch(showErrorMessage("회원가입 성공"));
         history.push("/login");
-        setLoginStatus(false);
       })
       .catch((error) => {
         console.log(error);

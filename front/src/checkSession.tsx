@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./_reducers";
-import { setLoginStatus } from "./_actions/user_action";
 
 export function useCheckSession() {
   const [accessToken, setAccessToken] = useState("");
@@ -41,14 +40,12 @@ export function useCheckSession() {
 
   const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
   const storedUser = localStorage.getItem("user");
-  const Login = localStorage.getItem("isLogin");
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (accessToken && storedUser) {
-      setLoginStatus(true);
-    } else {
-      console.log("로그인되지 않은 상태입니다.");
-    }
-  }, [isLogin, accessToken, refreshToken]);
 }
+//   useEffect(() => {
+//     if (accessToken && storedUser) {
+//       setLoginStatus(true);
+//     } else {
+//       console.log("로그인되지 않은 상태입니다.");
+//     }
+//   }, [isLogin, accessToken, refreshToken]);
+// }

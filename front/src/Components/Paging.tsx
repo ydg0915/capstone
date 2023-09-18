@@ -1,10 +1,3 @@
-import {
-  faAngleLeft,
-  faAngleRight,
-  faAnglesLeft,
-  faAnglesRight,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
 const ListPagenation = ({
@@ -68,23 +61,6 @@ const ListPagenation = ({
 
   return (
     <div className="ListPagenationWrapper">
-      <button
-        className="moveToFirstPage"
-        onClick={() => {
-          firstPage();
-        }}
-      >
-        <FontAwesomeIcon icon={faAnglesLeft} />
-      </button>
-      <button
-        className="moveToPreviousPage"
-        onClick={() => {
-          prevPage();
-        }}
-        disabled={page === 1}
-      >
-        <FontAwesomeIcon icon={faAngleLeft} />
-      </button>
       <div className="pageBtnWrapper">
         {pArr.map((n: number) => (
           <button
@@ -99,24 +75,6 @@ const ListPagenation = ({
           </button>
         ))}
       </div>
-      <button
-        className="moveToNextPage"
-        onClick={() => {
-          nextPage();
-        }}
-        disabled={page === totalPage}
-      >
-        <FontAwesomeIcon icon={faAngleRight} />
-      </button>
-      <button
-        className="moveToLastPage"
-        onClick={() => {
-          lastPage();
-        }}
-      >
-        <FontAwesomeIcon icon={faAnglesRight} />
-      </button>
-
       <style>
         {`
           .ListPagenationWrapper {
@@ -125,26 +83,7 @@ const ListPagenation = ({
             justify-content: center;
             width: 100%;
             height: 37px;
-          }
-
-          .moveToPreviousPage,
-          .moveToNextPage {
-            color: #5a5a5a;
-            background-color: white;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-          }
-
-          .moveToFirstPage,
-          .moveToLastPage {
-            width: 115px;
-            height: 37px;
-            margin: 0 0 0 0;
-            border: none;
-            color: black;
-            cursor: pointer;
-            background-color: white;
+            margin-bottom:100px;
           }
 
           .pageBtn {
@@ -161,14 +100,14 @@ const ListPagenation = ({
               cursor: pointer;
               color:black;
               opacity:0.4;
-              border-radius:15px;
+              border-radius:10px;
               transform: translateY(-2px);
             }
 
             &[disbled] {
-              background-color: #e2e2e2;
               cursor: revert;
               transform: revert;
+              background-color: white;
             }
 
             &[aria-current] {

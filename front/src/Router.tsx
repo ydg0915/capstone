@@ -1,4 +1,4 @@
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Home from "./routes/Home";
 import Chat from "./routes/Chat";
 import CreateProject from "./routes/CreateProject";
@@ -40,15 +40,15 @@ function Router() {
           <Login />
         </Route>
         <Route path="/join">
-          <Join />0
+          <Join />
         </Route>
         <Route path="/editProfile">
           <EditProfile />
         </Route>
-        <Route path="/posts/:projectId/editProject">
+        <Route path="/:projectId/editProject">
           <EditProject />
         </Route>
-        <Route path="/posts/:projectId">
+        <Route path="/:projectId">
           <Project />
         </Route>
         <Route path="/">

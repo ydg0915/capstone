@@ -10,6 +10,7 @@ import { faAngleUp, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { LoadingContext } from "../Components/LoadingContext";
 import LoadingComponent from "../Components/Loading";
 import axios from "axios";
+import SideNav from "../Components/SideNav";
 
 interface parts {
   name: string;
@@ -25,6 +26,15 @@ const parts = [
     stack: ["Kotlin", "Java", "Swift", "Flutter", "ReactNative"],
   },
 ];
+
+const Container = styled.div`
+  position: relative;
+  background-color: #f8f9fa;
+`;
+
+const FlexBox = styled.div`
+  display: flex;
+`;
 
 const DotBox = styled.div`
   display: flex;
@@ -62,23 +72,41 @@ const ScrollUp = styled.div`
     font-size: 16px;
   }
 `;
-const Notice = styled.div`
+
+const Wrapper = styled.div`
+  width: 86%;
+`;
+const NoticeBox = styled.div`
   width: auto;
-  height: 18rem;
+  height: 350px;
+  align-items: flex-start;
+  background-color: #a0f1d0;
+  margin: 0px 0px 1.875rem 0px;
+  padding: 30px;
+  padding-left: 50px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  background-color: #9ac5f4;
-  margin: 0px 0px 1.875rem 0px;
-  display: flex;
-  font-size: 3.125rem;
+  justify-content: space-between;
+  font-size: 35px;
   font-weight: 800;
-  color: white;
+  background-image: url(https://squeezegrowth.com/wp-content/uploads/2022/09/ID-2268-297-tools-to-create-interactive-infographics-2048x956.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right;
+`;
+const Notice = styled.div`
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #17e2db;
+  font-size: 18px;
+  color: #586672;
+`;
+const NoticeString = styled.span`
+  line-height: 1.5;
 `;
 
 const Toggle = styled.label`
-  margin: 50px 150px 0px 1130px;
+  margin: 50px 180px 0px 72%;
   display: flex;
   align-items: center;
   justify-content: end;
@@ -86,7 +114,6 @@ const Toggle = styled.label`
   cursor: pointer;
   font-size: 1.25rem;
   font-weight: 600;
-
   [type="checkbox"] {
     appearance: none;
     position: relative;
@@ -141,28 +168,9 @@ const Toggle = styled.label`
   }
   .span {
     font-size: 1.5rem;
-    font-weight: 600;
+    font-weight: 800;
   }
 `;
-const Notice22 = styled.div`
-  width: auto;
-  height: 18rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  background-color: black;
-  margin: 0px 0px 1.875rem 0px;
-  display: flex;
-  font-size: 3.125rem;
-  font-weight: 800;
-  color: white;
-`;
-const NoticeBox = styled.div`
-  display: flex;
-  overflow: hidden;
-`;
-
 // const Filter = styled.div`
 //   width: auto;
 //   height: 21.875rem;
@@ -357,6 +365,10 @@ function Home() {
     }
   };
 
+  useEffect(() => {
+    setIsChecked(false);
+  }, []);
+
   const handleSearch = (searchResults: any) => {
     setProjects(searchResults);
   };
@@ -371,7 +383,6 @@ function Home() {
       newData = await fetchData(pageNumber);
     }
     setCounts(allData.length);
-    console.log(allData);
   }
   const btnClick = () => {
     setIsChecked((prevState) => !prevState);
@@ -393,44 +404,44 @@ function Home() {
 
   return (
     <>
-      {loading ? (
-        <LoadingComponent />
-      ) : (
-        <div style={{ position: "relative" }}>
-          <Header onSearch={handleSearch} />
-          <Notice>
-            <p>
-              공지사항
-              {/*  넘어가기, 프로젝트 생성 페이지 좀 더 디테일 하게 +글쓰기
-              에디터 미완성 */}
-            </p>
-          </Notice>
-          {/* <NoticeBox>
-            <Notice>
-              <p>22222</p>
-            </Notice>
-          </NoticeBox> */}
+      <Container>
+        <Header onSearch={handleSearch} />
+        <FlexBox>
+          <SideNav />
+          <Wrapper>
+            <NoticeBox>
+              <Notice>안내 사항</Notice>
+              <NoticeString>
+                IT관련 프로젝트
+                <br /> 매칭 사이트 Synergy입니다
+                {/* 프로젝트 생성 페이지 좀 더 디테일 하게 +글쓰기
+              에디터 미완성 댓글 닉네임 바뀌는거 수정삭제 권한, 프로필 수정, 체크세션
+              검색 시 새 창으로, 프로젝트 창 마감 삭제 수정, 프로필 수정창 확인
+              로딩 창 구현, */}
+              </NoticeString>
+            </NoticeBox>
 
-          <DotBox>
-            <Dot />
-          </DotBox>
-          <Toggle>
-            <input
-              checked={isChecked}
-              onClick={btnClick}
-              role="switch"
-              type="checkbox"
-            />
-            <span>모집 중인 글만 보기</span>
-          </Toggle>
-          <ProjectList projectss={projects} />
-          <ScrollUp onClick={scrollUp}>
-            <FontAwesomeIcon icon={faAngleUp} />
-            <span>Top</span>
-          </ScrollUp>
-          <Footer />
-        </div>
-      )}
+            <DotBox>
+              <Dot />
+            </DotBox>
+
+            <Toggle>
+              <input
+                checked={isChecked}
+                onClick={btnClick}
+                role="switch"
+                type="checkbox"
+              />
+              <span>모집 중인 글만 보기</span>
+            </Toggle>
+            <ProjectList projectss={projects} />
+            <ScrollUp onClick={scrollUp}>
+              <FontAwesomeIcon icon={faAngleUp} />
+              <span>Top</span>
+            </ScrollUp>
+          </Wrapper>
+        </FlexBox>
+      </Container>
 
       {/* <NoticeBoard notices={ee} /> */}
       {/* <Filter>
