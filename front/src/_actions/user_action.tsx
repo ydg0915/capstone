@@ -3,8 +3,10 @@ import {
   HIDE_ERROR_MESSAGE,
   LOGIN_USER,
   LOGOUT_USER,
+  SET_PROJECTS,
   SHOW_ERROR_MESSAGE,
 } from "./types";
+import { Dispatch } from "redux";
 
 export const loginUser = (formData) => {
   return async (dispatch) => {
@@ -86,5 +88,70 @@ export const showErrorMessage = (message) => {
 export const hideErrorMessage = () => {
   return {
     type: HIDE_ERROR_MESSAGE,
+  };
+};
+
+export const deleteUser = (formData) => {
+  return async (dispatch) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.delete(
+        "http://localhost:8080/api/v1/users/me",
+        {
+          headers: {
+            Authorization: config.headers.Authorization,
+          },
+          data: {
+            formData,
+          },
+        }
+      );
+      dispatch({ type: "DELETE_USER_SUCCESS", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "DELETE_USER_FAILURE" });
+    }
+  };
+};
+
+export const setProjectss = (projects) => ({
+  type: SET_PROJECTS,
+  payload: projects,
+});
+
+export const againLogin = () => {
+  const accessToken = localStorage.getItem("accessToken");
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  return async (dispatch) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/v1/users/userTest",
+        config
+      );
+      console.log(response.status);
+      if (response.status === 200) {
+        dispatch({
+          type: LOGIN_USER,
+          payload: true,
+        });
+      } else {
+        const response = await axios.post(
+          "http://localhost:8080/api/v1/users/reissue",
+          config
+        );
+        console.log(response);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 };

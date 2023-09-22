@@ -5,7 +5,11 @@ import React from "react";
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { hideErrorMessage, loginUser } from "../_actions/user_action";
+import {
+  deleteUser,
+  hideErrorMessage,
+  loginUser,
+} from "../_actions/user_action";
 import { Link, Redirect, useHistory } from "react-router-dom";
 import { RootState, store } from "../_reducers";
 
@@ -33,13 +37,15 @@ const Box = styled.div`
   margin-bottom: 20px;
 `;
 
-const JoinString = styled.span`
-  font-size: 17px;
-  font-weight: 800;
-`;
 const Title = styled.h1`
   font-size: 1.875rem;
   font-weight: 600;
+`;
+
+const Sub = styled.span`
+  font-size: 15px;
+  color: #838486;
+  margin-top: 55px;
 `;
 
 const FormBox = styled.form`
@@ -83,92 +89,77 @@ export const ErrorMessage = styled.span`
   font-size: 0.875rem;
   margin-top: 1.25rem;
 `;
-
-const FindId = styled.span`
-  margin-right: 20px;
+const IdFinded = styled.span`
+  color: blue;
+  margin: 0px 10px 0px 10px;
+  font-weight: 600;
+`;
+const InvisibleString = styled.span`
   font-weight: 600;
 `;
 
-const RouteBox = styled.div`
-  display: flex;
-`;
-
-function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+function FindId() {
+  const [email, setEmail] = useState("");
   const dispatch = useDispatch();
-  const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
-  let errorMessage = useSelector(
-    (state: RootState) => state.errorReducer.errorMessage
-  );
-  const formData = { username, password };
-  const history = useHistory();
+  const [findedId, setFindedId] = useState({ username: "" });
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const usernameChange = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const passwordChange = (event) => {
-    setPassword(event.target.value);
+  const emailChange = (event) => {
+    setEmail(event.target.value);
   };
 
   const btnPrevent = async (event) => {
     event.preventDefault();
-    await store.dispatch(loginUser(formData));
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/v1/users/forgot-username",
+        {
+          params: { email: email },
+        }
+      );
+      setFindedId(response.data.data);
+    } catch (error: any) {
+      setErrorMessage(
+        error.response?.data?.message?.split(",")[0] || "오류가 발생했습니다"
+      );
+    }
   };
 
-  useEffect(() => {
-    if (isLogin) {
-      history.push("/");
-    }
-  }, [isLogin]);
-
-  useEffect(() => {
-    if (errorMessage) {
-      const timeout = setTimeout(() => {
-        dispatch(hideErrorMessage());
-      }, 3000);
-      return () => clearTimeout(timeout);
-    }
-  }, [errorMessage, dispatch]);
   return (
     <>
       <Header />
       <Container>
         <Box>
-          <Title>로그인</Title>
+          <Title>아이디 찾기</Title>
+          <Sub>아이디를 찾기 위해 이메일을 입력해주세요</Sub>
           <FormBox onSubmit={btnPrevent}>
             <InputId
-              onChange={usernameChange}
-              className={`${errorMessage ? "error" : ""}`}
-              type="text"
-              placeholder="아이디"
-              value={username}
+              onChange={emailChange}
+              type="email"
+              placeholder="이메일"
+              value={email}
             ></InputId>
-            <InputId
-              onChange={passwordChange}
-              type="password"
-              placeholder="비밀번호"
-              value={password}
-            ></InputId>
-            <ErrorMessage>{errorMessage}</ErrorMessage>
-            <Btn type="submit" value={"로그인"}></Btn>
+
+            {findedId.username ? (
+              <></>
+            ) : (
+              <ErrorMessage>{errorMessage}</ErrorMessage>
+            )}
+            <Btn type="submit" value={"아이디 찾기"}></Btn>
+            <div style={{ display: "flex", marginTop: "20px" }}>
+              {findedId.username && (
+                <>
+                  <InvisibleString>찾으신 아이디는 </InvisibleString>
+                  <IdFinded>{findedId.username}</IdFinded>
+                  <InvisibleString>입니다</InvisibleString>
+                </>
+              )}
+            </div>
           </FormBox>
         </Box>
-        <RouteBox>
-          <Link to={"/findid"}>
-            <FindId>아이디 찾기</FindId>
-          </Link>
-          <Link to={"/findpassword"}>
-            <FindId>비밀번호 찾기</FindId>
-          </Link>
-          <Link to={"/join"}>
-            <JoinString>회원가입</JoinString>
-          </Link>
-        </RouteBox>
       </Container>
     </>
   );
 }
 
-export default Login;
+export default FindId;

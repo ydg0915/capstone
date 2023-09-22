@@ -113,6 +113,16 @@ const ProejctBox = styled.div`
   border: 1px solid #dadce0;
 `;
 
+const DeleteUser = styled.div`
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  font-size: 15px;
+  color: red;
+  padding: 5%;
+  cursor: pointer;
+`;
+
 function Profile() {
   interface User {
     username: string;
@@ -160,10 +170,11 @@ function Profile() {
                   <span>{user?.email}</span>
                 </UserInfo>
                 <EditProfile>
-                  {" "}
-                  <FontAwesomeIcon icon={faPencil} /> 수정
+                  <Link to={"/editprofile"}>
+                    {" "}
+                    <FontAwesomeIcon icon={faPencil} /> 수정
+                  </Link>
                 </EditProfile>
-                <hr />
               </Info>
               <EtcBox>
                 <span>닉네임</span>
@@ -173,6 +184,9 @@ function Profile() {
                 <span>자기소개</span>
                 <span>{user?.introduction}</span>
               </EtcBox>
+              <Link to={"/deleteuser"}>
+                <DeleteUser>회원 탈퇴</DeleteUser>
+              </Link>
             </InfoBox>
           </MyInfo>
           <MyProject>

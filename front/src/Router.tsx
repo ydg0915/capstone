@@ -11,6 +11,9 @@ import { useLocation } from "react-router-dom";
 import EditProfile from "./routes/EditProfile";
 import EditProject from "./routes/EditProject";
 import React from "react";
+import DeleteUser from "./routes/DeleteUser";
+import FindId from "./routes/FindId";
+import FindPassword from "./routes/FindPassword";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -27,6 +30,15 @@ function Router() {
     <BrowserRouter>
       <ScrollToTop />
       <Switch>
+        <Route path="/findpassword">
+          <FindPassword />
+        </Route>
+        <Route path="/findid">
+          <FindId />
+        </Route>
+        <Route path="/deleteuser">
+          <DeleteUser />
+        </Route>
         <Route path="/profile">
           <Profile />
         </Route>

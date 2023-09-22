@@ -11,6 +11,8 @@ import { LoadingContext } from "../Components/LoadingContext";
 import LoadingComponent from "../Components/Loading";
 import axios from "axios";
 import SideNav from "../Components/SideNav";
+import { useDispatch } from "react-redux";
+import { setProjectss } from "../_actions/user_action";
 
 interface parts {
   name: string;
@@ -315,6 +317,8 @@ function Home() {
     view: number;
   }
 
+  const dispatch = useDispatch();
+
   const [projects, setProjects] = useState<Project[]>([]);
   const [isChecked, setIsChecked] = useState(true);
   const [size, setSize] = useState(15);
@@ -340,6 +344,7 @@ function Home() {
         );
         const projectData = res.data.data;
         setProjects(projectData);
+        dispatch(setProjectss(projectData));
         // setTimeout(() => {
         //   setIsLoading(false);
         // }, 1000);
@@ -354,6 +359,7 @@ function Home() {
         });
         const projectData = res.data.data;
         setProjects(projectData);
+        dispatch(setProjectss(projectData));
         // setTimeout(() => {
         //   setIsLoading(false);
         // }, 1000);
@@ -402,6 +408,9 @@ function Home() {
     window.scrollTo(0, 0);
   }, [isChecked, startPage]);
 
+  // useEffect(() => {
+  //   dispatch(setProjectss(projects));
+  // }, [projects]);
   return (
     <>
       <Container>
@@ -414,10 +423,9 @@ function Home() {
               <NoticeString>
                 IT관련 프로젝트
                 <br /> 매칭 사이트 Synergy입니다
-                {/* 프로젝트 생성 페이지 좀 더 디테일 하게 +글쓰기
-              에디터 미완성 댓글 닉네임 바뀌는거 수정삭제 권한, 프로필 수정, 체크세션
-              검색 시 새 창으로, 프로젝트 창 마감 삭제 수정, 프로필 수정창 확인
-              로딩 창 구현, */}
+                {/* +글쓰기 에디터,댓글 닉네임 바뀌는거,
+              검색바를 프로젝트리스트로, 회원탈퇴 비찿 오류 해결, 
+              북마크 팔로우 구현,채팅창, 로딩 창 구현(헤더 까지 수정), */}
               </NoticeString>
             </NoticeBox>
 
@@ -428,7 +436,7 @@ function Home() {
             <Toggle>
               <input
                 checked={isChecked}
-                onClick={btnClick}
+                onChange={btnClick}
                 role="switch"
                 type="checkbox"
               />

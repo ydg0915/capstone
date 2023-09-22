@@ -58,6 +58,7 @@ const Btn = styled.input`
   background-color: #9ac5f4;
   color: white;
   font-size: 1.063rem;
+  border: none;
   text-align: center;
   margin-top: 1.875rem;
   border-radius: 0.313rem;

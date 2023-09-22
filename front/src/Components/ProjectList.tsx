@@ -10,8 +10,8 @@ import {
   faBoltLightning,
   faComment,
   faEye,
-  faFire,
 } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
 
 const ProjectString = styled.div`
   padding: 0px 5%;
@@ -29,7 +29,7 @@ const ProjectBox = styled.div`
   grid-auto-rows: minmax(0, 1fr);
   row-gap: 5rem;
   column-gap: 1.875rem;
-  margin: 2rem 5% 4rem 5%;
+  margin: 3% 2% 3% 2%;
 `;
 
 const Project = styled.div`
@@ -178,7 +178,7 @@ function ProjectList({ projectss }) {
     setProjects(projectss);
     setCounts(projectss.length);
   }, [projectss]);
-  console.log(projects);
+
   return (
     <>
       <ProjectString>
@@ -212,7 +212,6 @@ function ProjectList({ projectss }) {
               <User>
                 <UserDetail>
                   <Writer>{project.username[0]}</Writer>
-
                   <span>{project.username}</span>
                 </UserDetail>
                 <ProjectDetail>

@@ -8,15 +8,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import SideNav from "../Components/SideNav";
 import { Writer } from "../Components/HandleUser";
+import { useSelector } from "react-redux";
+import { RootState } from "../_reducers";
 
 const Wrapper = styled.div`
   display: flex;
   background-color: #f8f9fa;
 `;
 
+const BigContainer = styled.div`
+  width: 70%;
+  display: flex;
+`;
+
 const Container = styled.div`
-  width: 55%;
-  margin: 50px 5% 100px 3%;
+  width: 100%;
+  margin: 50px 8% 100px 3%;
   padding: 3%;
   background-color: white;
   border: 2px solid #dadce0;
@@ -201,6 +208,19 @@ const CommentBox = styled.div`
   }
 `;
 
+const RecentProject = styled.div`
+  display: flex;
+  position: sticky;
+  top: 130px;
+  flex-direction: column;
+  justify-content: space-around;
+  background-color: white;
+  width: 350px;
+  height: 400px;
+  border: 2px solid #dadce0;
+  border-radius: 10px;
+`;
+
 function Project() {
   interface Project {
     id: number;
@@ -254,6 +274,10 @@ function Project() {
   const userId = user ? user.id : null;
   const accessToken = localStorage.getItem("accessToken");
 
+  const projects = useSelector(
+    (state: RootState) => state.userReducer.projects
+  );
+  console.log(projects);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -476,321 +500,346 @@ function Project() {
       setIsRepleMode(false);
     });
   };
-  console.log(project);
-
   return (
     <>
       <Header />
       <Wrapper>
         <SideNav />
-        <Container>
-          <Title>{project?.title}</Title>
-          <WriterBox>
-            <User>
-              <Writer>{user.data.username[0]}</Writer>
-              <span>
-                {project?.username}
-                {/* {project?.date}  //timestamp 가져오기}  */}
-              </span>
-            </User>
-            {project?.userId === user.data.id ? (
-              <BtnDiv>
-                <button onClick={completeBtn} className="submit" type="submit">
-                  마감
-                </button>
-                <Link to={`${postId}/editProject`}>
-                  <button>수정</button>
-                </Link>
-                <button
-                  onClick={deletePostBtn}
-                  className="submit"
-                  type="submit"
-                >
-                  삭제
-                </button>
-              </BtnDiv>
-            ) : (
-              <></>
-            )}
-          </WriterBox>
-
-          <DetailList>
-            <Detail>
-              <h1>마감일</h1>
-              <span> {project?.recruitmentPeriod}</span>
-            </Detail>
-            <Detail>
-              <h1>모집 분야</h1>
-              <ul>
-                {project?.position.map((position, index) => (
-                  <li key={index}>{position}</li>
-                ))}
-              </ul>
-            </Detail>
-            <Detail>
-              <h1>사용 스택</h1>
-              <span>
-                {project?.techStack.map((stack, index) => (
-                  <span key={index}>{stack}</span>
-                ))}
-              </span>
-            </Detail>
-            <Detail>
-              <h1>연락 방법</h1>
-              <span>
-                1대1 채팅{" "}
-                <Link to={"/chat"}>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z" />
-                  </svg>
-                </Link>
-              </span>
-            </Detail>
-          </DetailList>
-          <Description>
-            <h1>프로젝트 소개</h1>
-            <span>{project?.content}</span>
-          </Description>
-          <Comment>
-            <div>
-              <span>댓글</span>
-              <span>{project?.totalCommentsAndReplies} Comment</span>
-            </div>
-            <Comments>
-              {comments.map((comment) => (
-                <CommentBox key={comment.id}>
-                  <div
-                    onClick={() => handleCommentClick(comment.id)}
-                    style={{ display: "flex", justifyContent: "space-between" }}
+        <BigContainer>
+          <Container>
+            <Title>{project?.title}</Title>
+            <WriterBox>
+              <User>
+                <Writer>{project?.username[0]}</Writer>
+                <span>
+                  {project?.username}
+                  {/* {project?.date}  //timestamp 가져오기}  */}
+                </span>
+              </User>
+              {project?.userId === user.data.id ? (
+                <BtnDiv>
+                  <button
+                    onClick={completeBtn}
+                    className="submit"
+                    type="submit"
                   >
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <FontAwesomeIcon
-                        icon={faCircleUser}
-                        style={{
-                          color: "#1361e7",
-                          marginRight: "10px",
-                        }}
-                      />
-                      <div>{comment.username}</div>
-                    </div>
-                    {userId === comment.userId ? (
-                      <div style={{ fontSize: "14px" }}>
-                        {isrepleMode && comment.id === selectedCommentId ? (
+                    마감
+                  </button>
+                  <Link to={`${postId}/editProject`}>
+                    <button>수정</button>
+                  </Link>
+                  <button
+                    onClick={deletePostBtn}
+                    className="submit"
+                    type="submit"
+                  >
+                    삭제
+                  </button>
+                </BtnDiv>
+              ) : (
+                <></>
+              )}
+            </WriterBox>
+
+            <DetailList>
+              <Detail>
+                <h1>마감일</h1>
+                <span> {project?.recruitmentPeriod}</span>
+              </Detail>
+              <Detail>
+                <h1>모집 분야</h1>
+                <ul>
+                  {project?.position.map((position, index) => (
+                    <li key={index}>{position}</li>
+                  ))}
+                </ul>
+              </Detail>
+              <Detail>
+                <h1>사용 스택</h1>
+                <span>
+                  {project?.techStack.map((stack, index) => (
+                    <span key={index}>{stack}</span>
+                  ))}
+                </span>
+              </Detail>
+              <Detail>
+                <h1>연락 방법</h1>
+                <span>
+                  1대1 채팅{" "}
+                  <Link to={"/chat"}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                    >
+                      <path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z" />
+                    </svg>
+                  </Link>
+                </span>
+              </Detail>
+            </DetailList>
+            <Description>
+              <h1>프로젝트 소개</h1>
+              <span>{project?.content}</span>
+            </Description>
+            <Comment>
+              <div>
+                <span>댓글</span>
+                <span>{project?.totalCommentsAndReplies} Comment</span>
+              </div>
+              <Comments>
+                {comments.map((comment) => (
+                  <CommentBox key={comment.id}>
+                    <div
+                      onClick={() => handleCommentClick(comment.id)}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <FontAwesomeIcon
+                          icon={faCircleUser}
+                          style={{
+                            color: "#1361e7",
+                            marginRight: "10px",
+                          }}
+                        />
+                        <div>{comment?.username}</div>
+                      </div>
+                      {userId === comment.userId ? (
+                        <div style={{ fontSize: "14px" }}>
+                          {isrepleMode && comment.id === selectedCommentId ? (
+                            <span
+                              onClick={() => repleClick()}
+                              style={{ cursor: "pointer", marginRight: "20px" }}
+                            >
+                              취소
+                            </span>
+                          ) : (
+                            <span
+                              onClick={() => repleClick()}
+                              style={{ cursor: "pointer", marginRight: "20px" }}
+                            >
+                              답글 쓰기
+                            </span>
+                          )}
+                          {isEditMode && comment.id === selectedCommentId ? (
+                            <span
+                              onClick={exitEditClick}
+                              style={{ cursor: "pointer" }}
+                            >
+                              취소
+                            </span>
+                          ) : (
+                            <span
+                              onClick={() => editCommentClick(comment.content)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              수정
+                            </span>
+                          )}
                           <span
-                            onClick={() => repleClick()}
-                            style={{ cursor: "pointer", marginRight: "20px" }}
+                            onClick={() => deleteComment(comment.id)}
+                            style={{ cursor: "pointer" }}
                           >
-                            취소
+                            삭제
                           </span>
-                        ) : (
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: "14px" }}>
                           <span
                             onClick={() => repleClick()}
-                            style={{ cursor: "pointer", marginRight: "20px" }}
+                            style={{ cursor: "pointer" }}
                           >
                             답글 쓰기
                           </span>
-                        )}
-                        {isEditMode && comment.id === selectedCommentId ? (
-                          <span
-                            onClick={exitEditClick}
-                            style={{ cursor: "pointer" }}
-                          >
-                            취소
-                          </span>
-                        ) : (
-                          <span
-                            onClick={() => editCommentClick(comment.content)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            수정
-                          </span>
-                        )}
-                        <span
-                          onClick={() => deleteComment(comment.id)}
-                          style={{ cursor: "pointer" }}
-                        >
-                          삭제
-                        </span>
-                      </div>
-                    ) : (
-                      <div style={{ fontSize: "14px" }}>
-                        <span
-                          onClick={() => repleClick()}
-                          style={{ cursor: "pointer" }}
-                        >
-                          답글 쓰기
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div>{comment.content}</div>
-                  {comment.replyInfos.map((reple) => (
-                    <Comments>
-                      <CommentBox
-                        style={{
-                          marginLeft: "50px",
-                          opacity: "1",
-                          borderTop: "1px solid  rgba(0, 0, 0, 0.1)",
-                        }}
-                      >
-                        <div
-                          onClick={() => handleCommentClick(reple.id)}
+                        </div>
+                      )}
+                    </div>
+                    <div>{comment.content}</div>
+                    {comment.replyInfos.map((reple) => (
+                      <Comments>
+                        <CommentBox
                           style={{
-                            display: "flex",
-                            justifyContent: "space-between",
+                            marginLeft: "50px",
+                            opacity: "1",
+                            borderTop: "1px solid  rgba(0, 0, 0, 0.1)",
                           }}
                         >
                           <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faCircleUser}
-                              style={{
-                                color: "#1361e7",
-                                marginRight: "10px",
-                              }}
-                            />
-                            <div>{reple.username}</div>
-                          </div>
-
-                          {userId === reple.userId ? (
-                            <div style={{ fontSize: "14px" }}>
-                              {isEditMode && reple.id === selectedCommentId ? (
-                                <span style={{ cursor: "pointer" }}>취소</span>
-                              ) : (
-                                <span
-                                  onClick={() => editRepleClick(reple.content)}
-                                  style={{ cursor: "pointer" }}
-                                >
-                                  수정
-                                </span>
-                              )}
-                              <span
-                                onClick={() => deleteReple(reple.id)}
-                                style={{ cursor: "pointer" }}
-                              >
-                                삭제
-                              </span>
-                            </div>
-                          ) : null}
-                        </div>
-                        <div>{reple.content}</div>
-                        {isrepleEditMode && reple.id === selectedCommentId ? (
-                          <Content
                             onClick={() => handleCommentClick(reple.id)}
-                            key={reple.id}
-                            style={{ marginLeft: "50px" }}
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
                           >
                             <div
-                              style={{
-                                display: "flex",
-                                height: "100%",
-                                justifyContent: "space-between",
-                              }}
+                              style={{ display: "flex", alignItems: "center" }}
                             >
-                              <input
-                                onChange={editContentChange}
-                                value={editedContent}
-                                type="text"
+                              <FontAwesomeIcon
+                                icon={faCircleUser}
+                                style={{
+                                  color: "#1361e7",
+                                  marginRight: "10px",
+                                }}
                               />
-                              <button
-                                onClick={() => editReple(reple.id)}
-                                style={{ cursor: "pointer" }}
-                                type="submit"
-                              >
-                                수정
-                              </button>
+                              <div>{reple.username}</div>
                             </div>
-                          </Content>
-                        ) : null}
-                      </CommentBox>
-                    </Comments>
-                  ))}
-                  {isrepleMode && comment.id === selectedCommentId ? (
-                    <Content
-                      onClick={() => handleCommentClick(comment.id)}
-                      key={comment.id}
-                      style={{ marginLeft: "50px" }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          height: "100%",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <input
-                          onChange={repleContentChange}
-                          value={repleContent}
-                          type="text"
-                        />
-                        <button
-                          onClick={() => createReple(comment.id)}
-                          style={{ cursor: "pointer" }}
-                          type="submit"
-                        >
-                          답글
-                        </button>
-                      </div>
-                    </Content>
-                  ) : null}
 
-                  {isEditMode && comment.id === selectedCommentId ? (
-                    <Content>
-                      <div
-                        style={{
-                          display: "flex",
-                          height: "100%",
-                          justifyContent: "space-between",
-                        }}
+                            {userId === reple.userId ? (
+                              <div style={{ fontSize: "14px" }}>
+                                {isEditMode &&
+                                reple.id === selectedCommentId ? (
+                                  <span style={{ cursor: "pointer" }}>
+                                    취소
+                                  </span>
+                                ) : (
+                                  <span
+                                    onClick={() =>
+                                      editRepleClick(reple.content)
+                                    }
+                                    style={{ cursor: "pointer" }}
+                                  >
+                                    수정
+                                  </span>
+                                )}
+                                <span
+                                  onClick={() => deleteReple(reple.id)}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  삭제
+                                </span>
+                              </div>
+                            ) : null}
+                          </div>
+                          <div>{reple.content}</div>
+                          {isrepleEditMode && reple.id === selectedCommentId ? (
+                            <Content
+                              onClick={() => handleCommentClick(reple.id)}
+                              key={reple.id}
+                              style={{ marginLeft: "50px" }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  height: "100%",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <input
+                                  onChange={editContentChange}
+                                  value={editedContent}
+                                  type="text"
+                                />
+                                <button
+                                  onClick={() => editReple(reple.id)}
+                                  style={{ cursor: "pointer" }}
+                                  type="submit"
+                                >
+                                  수정
+                                </button>
+                              </div>
+                            </Content>
+                          ) : null}
+                        </CommentBox>
+                      </Comments>
+                    ))}
+                    {isrepleMode && comment.id === selectedCommentId ? (
+                      <Content
+                        onClick={() => handleCommentClick(comment.id)}
+                        key={comment.id}
+                        style={{ marginLeft: "50px" }}
                       >
-                        <input
-                          onChange={editContentChange}
-                          value={editedContent}
-                          type="text"
-                        />
-                        <button
-                          onClick={() => editComment(comment.id)}
-                          style={{ cursor: "pointer" }}
-                          type="submit"
+                        <div
+                          style={{
+                            display: "flex",
+                            height: "100%",
+                            justifyContent: "space-between",
+                          }}
                         >
-                          수정
-                        </button>
-                      </div>
-                    </Content>
-                  ) : null}
-                </CommentBox>
-              ))}
-            </Comments>
+                          <input
+                            onChange={repleContentChange}
+                            value={repleContent}
+                            type="text"
+                          />
+                          <button
+                            onClick={() => createReple(comment.id)}
+                            style={{ cursor: "pointer" }}
+                            type="submit"
+                          >
+                            답글
+                          </button>
+                        </div>
+                      </Content>
+                    ) : null}
 
-            <Content>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100%",
-                  justifyContent: "space-between",
-                }}
-              >
-                <input
-                  placeholder="댓글을 입력하세요"
-                  onChange={contentChange}
-                  value={content}
-                  type="text"
-                />
-                <button
-                  onClick={createComment}
-                  style={{ cursor: "pointer" }}
-                  type="submit"
+                    {isEditMode && comment.id === selectedCommentId ? (
+                      <Content>
+                        <div
+                          style={{
+                            display: "flex",
+                            height: "100%",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <input
+                            onChange={editContentChange}
+                            value={editedContent}
+                            type="text"
+                          />
+                          <button
+                            onClick={() => editComment(comment.id)}
+                            style={{ cursor: "pointer" }}
+                            type="submit"
+                          >
+                            수정
+                          </button>
+                        </div>
+                      </Content>
+                    ) : null}
+                  </CommentBox>
+                ))}
+              </Comments>
+
+              <Content>
+                <div
+                  style={{
+                    display: "flex",
+                    height: "100%",
+                    justifyContent: "space-between",
+                  }}
                 >
-                  등록
-                </button>
-              </div>
-            </Content>
-          </Comment>
-        </Container>
+                  <input
+                    placeholder="댓글을 입력하세요"
+                    onChange={contentChange}
+                    value={content}
+                    type="text"
+                  />
+                  <button
+                    onClick={createComment}
+                    style={{ cursor: "pointer" }}
+                    type="submit"
+                  >
+                    등록
+                  </button>
+                </div>
+              </Content>
+            </Comment>
+          </Container>
+          {/* <RecentProject>
+            <h1>최근에 올라온 모집 글</h1>
+            {projects.map((project) => (<>
+              <span>{project.username}</span>
+              </>
+            ))}
+          </RecentProject> */}
+        </BigContainer>
       </Wrapper>
     </>
   );
+}
+{
+  /* <Link key={project.id} to={`/${project.id}`}></Link> */
 }
 
 export default Project;
