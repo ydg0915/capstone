@@ -25,7 +25,7 @@ public class PostRequestDto {
         private String content;
 
         @NotNull
-        private int recruitmentSize;
+        private Integer recruitmentSize;
 
         @NotEmpty
         private List<Position> position;
@@ -38,6 +38,6 @@ public class PostRequestDto {
         private LocalDate recruitmentPeriod;
 
         @NotNull
-        private int expectedDuration;
+        private Integer expectedDuration;
     }
 }
