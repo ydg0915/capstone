@@ -28,6 +28,9 @@ const Container = styled.div`
   background-color: white;
   border: 2px solid #dadce0;
   border-radius: 10px;
+  input.miniinput {
+    width: 90%;
+  }
 `;
 
 const Title = styled.div`
@@ -291,6 +294,7 @@ function Project() {
           `http://localhost:8080/api/v1/posts/${postId}/comments`
         );
         setComments(commentRes.data.data);
+        console.log(comments);
       } catch (error) {
         console.log(error);
       }
@@ -606,7 +610,7 @@ function Project() {
                         />
                         <div>{comment?.username}</div>
                       </div>
-                      {userId === comment.userId ? (
+                      {user.data.id === comment.userId ? (
                         <div style={{ fontSize: "14px" }}>
                           {isrepleMode && comment.id === selectedCommentId ? (
                             <span
@@ -686,7 +690,7 @@ function Project() {
                               <div>{reple.username}</div>
                             </div>
 
-                            {userId === reple.userId ? (
+                            {user.data.id === reple.userId ? (
                               <div style={{ fontSize: "14px" }}>
                                 {isEditMode &&
                                 reple.id === selectedCommentId ? (
@@ -761,6 +765,7 @@ function Project() {
                             onChange={repleContentChange}
                             value={repleContent}
                             type="text"
+                            className="miniinput"
                           />
                           <button
                             onClick={() => createReple(comment.id)}

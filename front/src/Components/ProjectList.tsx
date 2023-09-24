@@ -10,6 +10,7 @@ import {
   faBoltLightning,
   faComment,
   faEye,
+  faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
 
@@ -30,6 +31,46 @@ const ProjectBox = styled.div`
   row-gap: 5rem;
   column-gap: 1.875rem;
   margin: 3% 2% 3% 2%;
+`;
+const Box = styled.div`
+  display: flex;
+  margin-top: 40px;
+  width: 100%;
+  justify-content: space-between;
+  padding-right: 5%;
+`;
+
+const SearchForm = styled.div`
+  display: flex;
+  width: 20%;
+  height: 2.5rem;
+  padding: 0px 2%;
+  border: 0.125rem solid #1361e7;
+  outline: none;
+  border-radius: 3.125rem;
+  align-items: center;
+`;
+const SearchInput = styled.input`
+  width: 100%;
+  height: 100%;
+  outline: none;
+  border: none;
+  background-color: inherit;
+  &::placeholder {
+    font-size: 0.75rem;
+    color: black;
+    opacity: 0.5;
+    font-weight: 600;
+  }
+`;
+const SearchBtn = styled.button`
+  border: none;
+  outline: none;
+
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 1rem;
+  opacity: 0.5;
+  cursor: pointer;
 `;
 
 const Project = styled.div`
@@ -154,41 +195,93 @@ const ProjectDetail = styled.div`
     vertical-align: middle;
   }
 `;
+interface Project {
+  id: number;
+  position: string[];
+  recruitmentPeriod: string;
+  techStack: string[];
+  title: string;
+  content: string;
+  totalCommentsAndReplies: number;
+  userId: number;
+  username: string;
+  view: number;
+}
 
-function ProjectList({ projectss }) {
-  interface Project {
-    id: number;
-    position: string[];
-    recruitmentPeriod: string;
-    techStack: string[];
-    title: string;
-    content: string;
-    totalCommentsAndReplies: number;
-    userId: number;
-    username: string;
-    view: number;
-  }
+interface ProjectListProps {
+  projectss: Project[];
+  onSearch?: (searchResults: any) => void;
+}
 
+function ProjectList({ projectss, onSearch }: ProjectListProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [size, setSize] = useState(15);
   const [startPage, setStartPage] = useState(1);
   const [counts, setCounts] = useState(0);
+  const [searchContent, setSearchContent] = useState("");
   const [blockNum, setBlockNum] = useState(0);
+
   useEffect(() => {
-    setProjects(projectss);
-    setCounts(projectss.length);
+    if (projectss.length >= 2 && projectss[0].id > projectss[1].id) {
+      setProjects([...projectss].reverse());
+    } else {
+      setProjects(projectss);
+      setCounts(projectss.length);
+    }
   }, [projectss]);
+
+  useEffect(() => {
+    const delay = 500;
+
+    const timer = setTimeout(() => {
+      if (onSearch) {
+        axios({
+          method: "get",
+          url: `http://localhost:8080/api/v1/posts/search`,
+          params: { query: searchContent },
+        })
+          .then((res) => {
+            const searchData = res.data.data;
+            onSearch(searchData);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [searchContent]);
+
+  const searchChange = (event) => {
+    setSearchContent(event.target.value);
+  };
 
   return (
     <>
-      <ProjectString>
-        <span>프로젝트 찾기</span>
+      <Box>
+        <ProjectString>
+          <span>프로젝트 찾기</span>
 
-        <FontAwesomeIcon
-          icon={faBoltLightning}
-          style={{ color: "yellowgreen", marginLeft: "10px" }}
-        />
-      </ProjectString>
+          <FontAwesomeIcon
+            icon={faBoltLightning}
+            style={{ color: "yellowgreen", marginLeft: "10px" }}
+          />
+        </ProjectString>
+
+        <SearchForm>
+          <SearchInput
+            onChange={searchChange}
+            value={searchContent}
+            type="text"
+            placeholder="검색"
+          ></SearchInput>
+          <SearchBtn>
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+          </SearchBtn>
+        </SearchForm>
+      </Box>
+
       <ProjectBox>
         {projects.map((project) => (
           <Link key={project.id} to={`/${project.id}`}>

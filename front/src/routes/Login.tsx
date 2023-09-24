@@ -35,7 +35,7 @@ const Box = styled.div`
 
 const JoinString = styled.span`
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 600;
 `;
 const Title = styled.h1`
   font-size: 1.875rem;

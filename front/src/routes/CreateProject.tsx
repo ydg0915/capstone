@@ -8,6 +8,8 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import SideNav from "../Components/SideNav";
+import MyEditor from "../Components/Editor";
+import Editor from "../Components/Editor";
 
 const Container = styled.div`
   display: flex;
@@ -106,9 +108,9 @@ const Description = styled.div`
     margin-bottom: 1.25rem;
     height: 2.5rem;
   }
-  input:last-child {
+  /* input:last-child {
     height: 18.75rem;
-  }
+  } */
 `;
 
 const BtnDiv = styled.form`
@@ -332,12 +334,13 @@ function CreateProject() {
               type="text"
               placeholder="제목을 입력해주세요"
             />
-            <input
+            {/* <input
               onChange={contentChange}
               type="text"
               placeholder="프로젝트를 소개해주세요"
-            />
+            /> */}
           </Description>
+          <MyEditor />
           <BtnDiv>
             <Link to={"/"}>
               <button>취소</button>

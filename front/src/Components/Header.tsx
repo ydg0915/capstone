@@ -43,39 +43,6 @@ const Nav = styled.div`
   }
 `;
 
-const SearchForm = styled.div`
-  display: flex;
-  width: 40%;
-  height: 2.5rem;
-  padding: 0px 2%;
-  border: 0.125rem solid #1361e7;
-  outline: none;
-  border-radius: 3.125rem;
-  align-items: center;
-`;
-const SearchInput = styled.input`
-  width: 100%;
-  height: 100%;
-  outline: none;
-  border: none;
-  background-color: inherit;
-  &::placeholder {
-    font-size: 0.75rem;
-    color: black;
-    opacity: 0.5;
-    font-weight: 600;
-  }
-`;
-const SearchBtn = styled.button`
-  border: none;
-  outline: none;
-
-  background-color: rgba(0, 0, 0, 0);
-  font-size: 1rem;
-  opacity: 0.5;
-  cursor: pointer;
-`;
-
 const NavRoute = styled.nav`
   display: flex;
   width: 33%;
@@ -144,7 +111,7 @@ const NotifiString = styled.div`
   margin-bottom: 20px;
 `;
 
-function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
+function Header() {
   interface Notification {
     url: string;
     id: number;
@@ -159,7 +126,6 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
   }
 
   const isLogin = useSelector((state: RootState) => state.userReducer.isLogin);
-  const [searchContent, setSearchContent] = useState("");
   const accessToken = localStorage.getItem("accessToken");
   const [countNotification, setCountNotification] = useState(0);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -180,6 +146,7 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
+
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -188,10 +155,6 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
 
   const homeClick = () => {
     history.push("/");
-  };
-
-  const searchChange = (event) => {
-    setSearchContent(event.target.value);
   };
 
   const NotifiStateClick = () => {
@@ -222,29 +185,6 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
     fetchData();
   }, [isLogin]);
 
-  useEffect(() => {
-    const delay = 500;
-
-    const timer = setTimeout(() => {
-      if (onSearch) {
-        axios({
-          method: "get",
-          url: `http://localhost:8080/api/v1/posts/search`,
-          params: { query: searchContent },
-        })
-          .then((res) => {
-            const searchData = res.data.data;
-            onSearch(searchData);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    }, delay);
-
-    return () => clearTimeout(timer);
-  }, [searchContent]);
-
   const handleNotifi = (notificationId) => {
     axios({
       method: "patch",
@@ -273,18 +213,6 @@ function Header({ onSearch }: { onSearch?: (searchResults: any) => void }) {
           </a>
         </Link>
       </div>
-
-      <SearchForm>
-        <SearchInput
-          onChange={searchChange}
-          value={searchContent}
-          type="text"
-          placeholder="검색"
-        ></SearchInput>
-        <SearchBtn>
-          <FontAwesomeIcon icon={faMagnifyingGlass} />
-        </SearchBtn>
-      </SearchForm>
 
       {isLogin === true ? (
         <NavRoute>

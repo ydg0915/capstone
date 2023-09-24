@@ -175,13 +175,13 @@ function EditProject() {
         setProject(projectData);
         console.log(projectData);
 
-        if (project) setTitle(project?.title);
-        if (project) setContent(project?.content);
-        if (project) setExpectedDuration(project?.expectedDuration);
-        if (project) setRecruitmentPeriod(project?.recruitmentPeriod);
-        if (project) setRecruitmentSize(project?.recruitmentSize);
-        if (project) setPosition(project?.position);
-        if (project) setTechStack(project?.techStack);
+        if (projectData) setTitle(projectData?.title);
+        if (projectData) setContent(projectData?.content);
+        if (projectData) setExpectedDuration(projectData?.expectedDuration);
+        if (projectData) setRecruitmentPeriod(projectData?.recruitmentPeriod);
+        if (projectData) setRecruitmentSize(projectData?.recruitmentSize);
+        if (projectData) setPosition(projectData?.position);
+        if (projectData) setTechStack(projectData?.techStack);
       } catch (error) {
         console.log(error);
       }

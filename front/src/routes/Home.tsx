@@ -108,7 +108,7 @@ const NoticeString = styled.span`
 `;
 
 const Toggle = styled.label`
-  margin: 50px 180px 0px 72%;
+  margin: 50px 5% 0px 79%;
   display: flex;
   align-items: center;
   justify-content: end;
@@ -348,6 +348,7 @@ function Home() {
         // setTimeout(() => {
         //   setIsLoading(false);
         // }, 1000);
+        console.log(projects);
         return projectData;
       } else {
         const res = await axios.get(`http://localhost:8080/api/v1/posts`, {
@@ -363,6 +364,7 @@ function Home() {
         // setTimeout(() => {
         //   setIsLoading(false);
         // }, 1000);
+        console.log(projects);
         return projectData;
       }
     } catch (error) {
@@ -385,11 +387,13 @@ function Home() {
 
     while (newData.length !== 0) {
       allData = allData.concat(newData);
+      console.log(allData);
       pageNumber++;
       newData = await fetchData(pageNumber);
     }
     setCounts(allData.length);
   }
+
   const btnClick = () => {
     setIsChecked((prevState) => !prevState);
   };
@@ -405,7 +409,6 @@ function Home() {
     };
 
     fetchDataAndLoadData();
-    window.scrollTo(0, 0);
   }, [isChecked, startPage]);
 
   // useEffect(() => {
@@ -414,7 +417,7 @@ function Home() {
   return (
     <>
       <Container>
-        <Header onSearch={handleSearch} />
+        <Header />
         <FlexBox>
           <SideNav />
           <Wrapper>
@@ -423,9 +426,9 @@ function Home() {
               <NoticeString>
                 IT관련 프로젝트
                 <br /> 매칭 사이트 Synergy입니다
-                {/* +글쓰기 에디터,댓글 닉네임 바뀌는거,
-              검색바를 프로젝트리스트로, 회원탈퇴 비찿 오류 해결, 
-              북마크 팔로우 구현,채팅창, 로딩 창 구현(헤더 까지 수정), */}
+                {/* 글쓰기 에디터,
+               회원탈퇴 비찿 오류 해결 북마크 팔로우 구현(서버오류), 
+               채팅창, 로딩 창 구현(헤더 까지 수정) */}
               </NoticeString>
             </NoticeBox>
 
@@ -442,7 +445,7 @@ function Home() {
               />
               <span>모집 중인 글만 보기</span>
             </Toggle>
-            <ProjectList projectss={projects} />
+            <ProjectList projectss={projects} onSearch={handleSearch} />
             <ScrollUp onClick={scrollUp}>
               <FontAwesomeIcon icon={faAngleUp} />
               <span>Top</span>
