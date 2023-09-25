@@ -57,6 +57,7 @@ const ScrollUp = styled.div`
   width: 70px;
   height: 70px;
   border-radius: 35px;
+  background-color: white;
   border: 4px solid #9ac5f4;
   display: flex;
   flex-direction: column;
@@ -348,7 +349,6 @@ function Home() {
         // setTimeout(() => {
         //   setIsLoading(false);
         // }, 1000);
-        console.log(projects);
         return projectData;
       } else {
         const res = await axios.get(`http://localhost:8080/api/v1/posts`, {
@@ -364,7 +364,6 @@ function Home() {
         // setTimeout(() => {
         //   setIsLoading(false);
         // }, 1000);
-        console.log(projects);
         return projectData;
       }
     } catch (error) {
@@ -387,7 +386,6 @@ function Home() {
 
     while (newData.length !== 0) {
       allData = allData.concat(newData);
-      console.log(allData);
       pageNumber++;
       newData = await fetchData(pageNumber);
     }
@@ -428,7 +426,7 @@ function Home() {
                 <br /> 매칭 사이트 Synergy입니다
                 {/* 글쓰기 에디터,
                회원탈퇴 비찿 오류 해결 북마크 팔로우 구현(서버오류), 
-               채팅창, 로딩 창 구현(헤더 까지 수정) */}
+               채팅창, 로딩 창 구현(헤더 까지 수정), 필터, 다른프로필 */}
               </NoticeString>
             </NoticeBox>
 

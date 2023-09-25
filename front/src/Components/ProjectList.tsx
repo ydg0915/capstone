@@ -220,14 +220,16 @@ function ProjectList({ projectss, onSearch }: ProjectListProps) {
   const [counts, setCounts] = useState(0);
   const [searchContent, setSearchContent] = useState("");
   const [blockNum, setBlockNum] = useState(0);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    if (projectss.length >= 2 && projectss[0].id > projectss[1].id) {
+    if (projectss.length >= 2 && projectss[0].id < projectss[1].id) {
       setProjects([...projectss].reverse());
     } else {
+      console.log(projects);
       setProjects(projectss);
       setCounts(projectss.length);
     }
+    setLoading(false);
   }, [projectss]);
 
   useEffect(() => {
@@ -281,46 +283,49 @@ function ProjectList({ projectss, onSearch }: ProjectListProps) {
           </SearchBtn>
         </SearchForm>
       </Box>
-
-      <ProjectBox>
-        {projects.map((project) => (
-          <Link key={project.id} to={`/${project.id}`}>
-            <Project>
-              <Detail>
-                <TagBox>
-                  <span>마감일 | {project.recruitmentPeriod}</span>
-                  <Tag>
-                    {project.position.map((ps, index) => (
-                      <Range key={index}>{ps}</Range>
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <ProjectBox>
+          {projects.map((project) => (
+            <Link key={project.id} to={`/${project.id}`}>
+              <Project>
+                <Detail>
+                  <TagBox>
+                    <span>마감일 | {project.recruitmentPeriod}</span>
+                    <Tag>
+                      {project.position.map((ps, index) => (
+                        <Range key={index}>{ps}</Range>
+                      ))}
+                    </Tag>
+                  </TagBox>
+                  <Stack>
+                    {project.techStack.map((stack, index) => (
+                      <StackMapping key={index} stack={stack} />
                     ))}
-                  </Tag>
-                </TagBox>
-                <Stack>
-                  {project.techStack.map((stack, index) => (
-                    <StackMapping key={index} stack={stack} />
-                  ))}
-                </Stack>
-              </Detail>
-              <Title>{project.title}</Title>
-              <User>
-                <UserDetail>
-                  <Writer>{project.username[0]}</Writer>
-                  <span>{project.username}</span>
-                </UserDetail>
-                <ProjectDetail>
-                  <span>
-                    <FontAwesomeIcon icon={faEye} /> {project.view}
-                  </span>
-                  <span>
-                    <FontAwesomeIcon icon={faComment} />{" "}
-                    {project.totalCommentsAndReplies}
-                  </span>
-                </ProjectDetail>
-              </User>
-            </Project>
-          </Link>
-        ))}
-      </ProjectBox>
+                  </Stack>
+                </Detail>
+                <Title>{project.title}</Title>
+                <User>
+                  <UserDetail>
+                    <Writer>{project.username[0]}</Writer>
+                    <span>{project.username}</span>
+                  </UserDetail>
+                  <ProjectDetail>
+                    <span>
+                      <FontAwesomeIcon icon={faEye} /> {project.view}
+                    </span>
+                    <span>
+                      <FontAwesomeIcon icon={faComment} />{" "}
+                      {project.totalCommentsAndReplies}
+                    </span>
+                  </ProjectDetail>
+                </User>
+              </Project>
+            </Link>
+          ))}
+        </ProjectBox>
+      )}
       <ListPagenation
         limit={size}
         page={startPage}

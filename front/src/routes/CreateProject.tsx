@@ -91,7 +91,7 @@ const Description = styled.div`
   flex-direction: column;
   width: 100%;
   margin-top: 6.25rem;
-  margin-bottom: 6.25rem;
+  margin-bottom: 30px;
   input {
     border-radius: 5px;
     padding: 0.625rem 0.625rem;
@@ -105,12 +105,8 @@ const Description = styled.div`
     opacity: 0.8;
   }
   input:first-child {
-    margin-bottom: 1.25rem;
     height: 2.5rem;
   }
-  /* input:last-child {
-    height: 18.75rem;
-  } */
 `;
 
 const BtnDiv = styled.form`
@@ -149,7 +145,7 @@ const BtnDiv = styled.form`
 
 function CreateProject() {
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [editorContent, setEditorContent] = useState("");
   const [expectedDuration, setExpectedDuration] = useState(0);
   const [recruitmentPeriod, setRecruitmentPeriod] = useState("");
   const [recruitmentSize, setRecruitmentSize] = useState(0);
@@ -161,9 +157,12 @@ function CreateProject() {
   const titleChange = (event) => {
     setTitle(event.target.value);
   };
-  const contentChange = (event) => {
-    setContent(event.target.value);
+
+  const editorChange = (content) => {
+    setEditorContent(content);
+    console.log(editorContent);
   };
+
   const expectedDurationChange = (event) => {
     setExpectedDuration(Number(event.target.value));
   };
@@ -182,7 +181,7 @@ function CreateProject() {
 
   const body = {
     title,
-    content,
+    content: editorContent,
     expectedDuration,
     recruitmentPeriod,
     recruitmentSize,
@@ -334,13 +333,8 @@ function CreateProject() {
               type="text"
               placeholder="제목을 입력해주세요"
             />
-            {/* <input
-              onChange={contentChange}
-              type="text"
-              placeholder="프로젝트를 소개해주세요"
-            /> */}
           </Description>
-          <MyEditor />
+          <MyEditor onContentChange={editorChange} />
           <BtnDiv>
             <Link to={"/"}>
               <button>취소</button>

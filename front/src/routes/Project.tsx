@@ -157,9 +157,6 @@ const Comment = styled.section`
   font-size: 1.875rem;
   font-weight: 600;
   margin-bottom: 20px;
-  div:first-child {
-    margin-bottom: 30px;
-  }
   span:last-child {
     margin-left: 1.25rem;
   }
@@ -183,7 +180,7 @@ const Comment = styled.section`
 `;
 
 export const Content = styled.div`
-  width: 100%;
+  width: 90%;
   height: 120px;
   padding: 10px;
   margin-top: 1.875rem;
@@ -192,6 +189,7 @@ export const Content = styled.div`
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  margin-left: 50px;
 `;
 
 const Comments = styled.div`
@@ -294,7 +292,6 @@ function Project() {
           `http://localhost:8080/api/v1/posts/${postId}/comments`
         );
         setComments(commentRes.data.data);
-        console.log(comments);
       } catch (error) {
         console.log(error);
       }
@@ -721,7 +718,6 @@ function Project() {
                             <Content
                               onClick={() => handleCommentClick(reple.id)}
                               key={reple.id}
-                              style={{ marginLeft: "50px" }}
                             >
                               <div
                                 style={{
@@ -752,7 +748,6 @@ function Project() {
                       <Content
                         onClick={() => handleCommentClick(comment.id)}
                         key={comment.id}
-                        style={{ marginLeft: "50px" }}
                       >
                         <div
                           style={{
@@ -765,7 +760,6 @@ function Project() {
                             onChange={repleContentChange}
                             value={repleContent}
                             type="text"
-                            className="miniinput"
                           />
                           <button
                             onClick={() => createReple(comment.id)}

@@ -21,11 +21,14 @@ const MyBlock = styled.div`
   }
 `;
 
-function MyEditor() {
+function MyEditor({ onContentChange }) {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   const onEditorStateChange = (editorState) => {
     setEditorState(editorState);
+
+    const content = editorState.getCurrentContent().getPlainText();
+    onContentChange(content);
   };
 
   return (
