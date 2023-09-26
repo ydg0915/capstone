@@ -1,18 +1,16 @@
-package com.example.capstone1.api.follow.controller;
+package com.example.capstone1.api.v1.controller;
 
 
-import com.example.capstone1.api.follow.dto.FollowRequestDto;
-import com.example.capstone1.api.follow.dto.FollowResponseDto;
-import com.example.capstone1.api.follow.entity.Follow;
-import com.example.capstone1.api.follow.mapper.FollowMapper;
-import com.example.capstone1.api.follow.service.FollowService;
+import com.example.capstone1.api.v1.dto.Response;
+import com.example.capstone1.api.v1.dto.response.FollowResponseDto;
+import com.example.capstone1.api.mapper.FollowMapper;
+import com.example.capstone1.api.v1.service.FollowService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
@@ -23,20 +21,20 @@ import java.util.List;
 public class FollowController {
 
     private final FollowService followService;
-    private final FollowMapper followMapper;
+    private final Response response;
 
     // Create
     @PostMapping
     public ResponseEntity postFollow(@Positive @RequestParam long UserId) { //팔로우 할 유저 로그인 아이디를 입력으로 받는다.
-        FollowResponseDto.Response response = followService.createFollow(UserId);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        FollowResponseDto.Response responses = followService.createFollow(UserId);
+        return response.success(responses, "팔로우 생성에 성공했습니다.");
     }
 
     // Read
     @GetMapping()
     public ResponseEntity getFollow() {
-        List<FollowResponseDto.ListResponse> response=followService.findListFollow();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        List<FollowResponseDto.ListResponse> responses=followService.findListFollow();
+        return response.success(responses, "팔로우 목록 조회에 성공했습니다.");
     }
 
 
@@ -44,7 +42,7 @@ public class FollowController {
     @DeleteMapping("/{followId}")
     public ResponseEntity deleteMember(@Positive @PathVariable("followId") int followId) {
         followService.deleteFollow(followId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return response.success("팔로우 삭제에 성공했습니다.");
     }
 }
 

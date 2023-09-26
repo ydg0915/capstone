@@ -1,12 +1,10 @@
-package com.example.capstone1.api.bookMark.repository;
+package com.example.capstone1.api.v1.repository;
 
 
-import com.example.capstone1.api.bookMark.entity.BookMark;
+import com.example.capstone1.api.entity.BookMark;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 public interface BookMarkRepository extends JpaRepository<BookMark, Long> {

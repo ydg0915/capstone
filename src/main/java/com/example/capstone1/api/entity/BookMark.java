@@ -1,4 +1,4 @@
-package com.example.capstone1.api.bookMark.entity;
+package com.example.capstone1.api.entity;
 
 import com.example.capstone1.api.entity.BaseTime;
 import com.example.capstone1.api.entity.Posts;

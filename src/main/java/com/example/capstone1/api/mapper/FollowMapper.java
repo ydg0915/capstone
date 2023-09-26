@@ -1,10 +1,8 @@
-package com.example.capstone1.api.follow.mapper;
+package com.example.capstone1.api.mapper;
 
 
-import com.example.capstone1.api.entity.Posts;
-import com.example.capstone1.api.follow.dto.FollowRequestDto;
-import com.example.capstone1.api.follow.dto.FollowResponseDto;
-import com.example.capstone1.api.follow.entity.Follow;
+import com.example.capstone1.api.v1.dto.response.FollowResponseDto;
+import com.example.capstone1.api.entity.Follow;
 import org.mapstruct.Mapper;
 
 import java.util.ArrayList;

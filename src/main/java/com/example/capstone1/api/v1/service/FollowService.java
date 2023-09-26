@@ -1,16 +1,15 @@
-package com.example.capstone1.api.follow.service;
+package com.example.capstone1.api.v1.service;
 
 
 import com.example.capstone1.api.entity.Users;
 import com.example.capstone1.api.exception.BusinessLogicException;
 import com.example.capstone1.api.exception.ExceptionCode;
-import com.example.capstone1.api.follow.dto.FollowResponseDto;
-import com.example.capstone1.api.follow.entity.Follow;
-import com.example.capstone1.api.follow.mapper.FollowMapper;
-import com.example.capstone1.api.follow.repository.FollowRepository;
+import com.example.capstone1.api.v1.dto.response.FollowResponseDto;
+import com.example.capstone1.api.entity.Follow;
+import com.example.capstone1.api.mapper.FollowMapper;
+import com.example.capstone1.api.v1.repository.FollowRepository;
 import com.example.capstone1.api.security.SecurityUtil;
 import com.example.capstone1.api.v1.repository.UsersRepository;
-import com.example.capstone1.api.v1.service.UsersService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

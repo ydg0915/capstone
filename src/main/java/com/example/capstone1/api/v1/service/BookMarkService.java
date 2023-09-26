@@ -1,24 +1,21 @@
-package com.example.capstone1.api.bookMark.service;
+package com.example.capstone1.api.v1.service;
 
 
-import com.example.capstone1.api.bookMark.dto.BookMarkResponseDto;
-import com.example.capstone1.api.bookMark.entity.BookMark;
-import com.example.capstone1.api.bookMark.mapper.BookMarkMapper;
-import com.example.capstone1.api.bookMark.repository.BookMarkRepository;
+import com.example.capstone1.api.v1.dto.response.BookMarkResponseDto;
+import com.example.capstone1.api.entity.BookMark;
+import com.example.capstone1.api.mapper.BookMarkMapper;
+import com.example.capstone1.api.v1.repository.BookMarkRepository;
 import com.example.capstone1.api.entity.Posts;
 import com.example.capstone1.api.entity.Users;
 import com.example.capstone1.api.exception.BusinessLogicException;
-import com.example.capstone1.api.exception.CustomException;
 import com.example.capstone1.api.exception.ExceptionCode;
 import com.example.capstone1.api.security.SecurityUtil;
 import com.example.capstone1.api.v1.repository.UsersRepository;
 import com.example.capstone1.api.v1.service.PostsService;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Book;
 import java.util.List;
 import java.util.Optional;
 

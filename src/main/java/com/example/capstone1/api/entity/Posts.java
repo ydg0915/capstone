@@ -1,6 +1,5 @@
 package com.example.capstone1.api.entity;
 
-import com.example.capstone1.api.bookMark.entity.BookMark;
 import com.example.capstone1.api.enums.Position;
 import com.example.capstone1.api.enums.TechStack;
 import com.example.capstone1.api.v1.dto.request.PostRequestDto;

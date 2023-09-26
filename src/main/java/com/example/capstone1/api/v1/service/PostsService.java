@@ -1,6 +1,6 @@
 package com.example.capstone1.api.v1.service;
 
-import com.example.capstone1.api.bookMark.entity.BookMark;
+import com.example.capstone1.api.entity.BookMark;
 import com.example.capstone1.api.entity.Posts;
 import com.example.capstone1.api.entity.Users;
 import com.example.capstone1.api.exception.BusinessLogicException;

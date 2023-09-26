@@ -1,8 +1,8 @@
-package com.example.capstone1.api.bookMark.mapper;
+package com.example.capstone1.api.mapper;
 
 
-import com.example.capstone1.api.bookMark.dto.BookMarkResponseDto;
-import com.example.capstone1.api.bookMark.entity.BookMark;
+import com.example.capstone1.api.v1.dto.response.BookMarkResponseDto;
+import com.example.capstone1.api.entity.BookMark;
 import com.example.capstone1.api.entity.Posts;
 import org.mapstruct.Mapper;
 

@@ -1,4 +1,4 @@
-package com.example.capstone1.api.bookMark.dto;
+package com.example.capstone1.api.v1.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

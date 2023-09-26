@@ -1,4 +1,4 @@
-package com.example.capstone1.api.follow.dto;
+package com.example.capstone1.api.v1.dto.response;
 
 import com.example.capstone1.api.entity.Users;
 import lombok.AllArgsConstructor;
