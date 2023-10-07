@@ -7,7 +7,6 @@ import com.example.capstone1.api.v1.service.UsersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +28,7 @@ public class UsersController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid UserRequestDto.Login login) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserRequestDto.Login login) {
         UserResponseDto.TokenInfo tokenInfo = usersService.login(login);
         return response.success(tokenInfo, "로그인에 성공했습니다.");
     }
@@ -47,10 +46,22 @@ public class UsersController {
         return response.success("로그아웃 되었습니다.");
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyUserInfo() {
+        UserResponseDto.UserInfo userInfo = usersService.getMyUserInfo();
+        return response.success(userInfo, "내 프로필 조회에 성공했습니다.");
+    }
+
     @PatchMapping("/me")
     public ResponseEntity<?> updateMyUserInfo(@Valid @RequestBody UserRequestDto.Update update) {
         usersService.updateMyUserInfo(update);
         return response.success("회원 정보가 변경되었습니다.");
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMyUser(@RequestBody UserRequestDto.Delete delete) {
+        usersService.deleteMyUser(delete);
+        return response.success("회원 탈퇴에 성공했습니다.");
     }
 
     @GetMapping("/{userId}")
@@ -63,6 +74,18 @@ public class UsersController {
     public ResponseEntity<?> searchUsers(String query) {
         List<UserResponseDto.UserInfoForSearching> userInfos = usersService.searchUsers(query);
         return response.success(userInfos, "회원 목록 조회에 성공했습니다.");
+    }
+
+    @GetMapping("/forgot-username")
+    public ResponseEntity<?> findUsername(String email) {
+        UserResponseDto.UserInfoForForgetting userInfo = usersService.findUsername(email);
+        return response.success(userInfo, "아이디 찾기에 성공했습니다.");
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> resetPassword(String email) {
+        usersService.resetPassword(email);
+        return response.success("비밀번호 재설정에 성공했습니다.");
     }
 
     @GetMapping("/authority")
@@ -83,5 +106,6 @@ public class UsersController {
         log.info("ROLE_ADMIN TEST");
         return response.success();
     }
+
 
 }

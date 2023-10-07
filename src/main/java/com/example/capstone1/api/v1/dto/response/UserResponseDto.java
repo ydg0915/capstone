@@ -31,4 +31,10 @@ public class UserResponseDto {
         private String id;
         private String username;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class UserInfoForForgetting {
+        private String username;
+    }
 }

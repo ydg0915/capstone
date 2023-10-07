@@ -2,8 +2,13 @@ package com.example.capstone1.api.security;
 
 import com.example.capstone1.api.exception.CustomException;
 import com.example.capstone1.api.exception.ErrorCode;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.socket.WebSocketHandler;
+
+import java.util.Map;
 
 public class SecurityUtil {
 
@@ -14,4 +19,5 @@ public class SecurityUtil {
         }
         return authentication.getName();
     }
+
 }

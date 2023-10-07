@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -28,6 +29,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handleMissingRequestHeaderEx(MissingRequestHeaderException e) {
         log.error("MissingRequestHeaderException throw Exception : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<?> handleAuthenticationEx(AuthenticationException e) {
+        log.error("AuthenticationException throw Exception : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(HttpStatus.FORBIDDEN, "아이디 또는 비밀번호를 잘못 입력했습니다.");
     }
 
     @Override
