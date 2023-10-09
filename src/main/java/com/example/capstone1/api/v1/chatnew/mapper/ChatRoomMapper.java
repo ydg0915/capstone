@@ -11,7 +11,15 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ChatRoomMapper {
-    ChatRoomResponseDto.Response chatRoomToChatRoomResponseDto(ChatRoom chatRoom);
+    default ChatRoomResponseDto.Response chatRoomToChatRoomResponseDto(ChatRoom chatRoom,String username){
+        ChatRoomResponseDto.Response response = new ChatRoomResponseDto.Response();
+        response.setUserCount(chatRoom.getUserCount());
+        response.setRoomName(chatRoom.getRoomName());
+        response.setId(chatRoom.getId());
+        response.setUsername(username);
+
+        return response;
+    }
     ChatRoom chatRoomRequestDtoPostToChatRoom(ChatRoomRequestDto.Post post);
     ChatRoom chatRoomRequestDtoPatchToChatRoom(ChatRoomRequestDto.Patch patch);
 

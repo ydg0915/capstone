@@ -14,7 +14,7 @@ public class ChatRoomResponseDto {
     public static class Response {
         private long id; //채팅방 아이디
         private String roomName;// 채팅방 이름
-        private String sender;
+        private String username;
         private long userCount; // 채팅방 인원수
     }
 

@@ -6,6 +6,7 @@ import com.example.capstone1.api.v1.chatnew.entity.ChatRoom;
 import com.example.capstone1.api.v1.chatnew.service.ChatRoomService;
 import com.example.capstone1.api.v1.chatnew.service.ChatService;
 import com.example.capstone1.api.v1.dto.Response;
+import com.example.capstone1.api.v1.dto.response.UserResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,15 +49,11 @@ public class ChatRoomController {
         return response.success(responses, "채팅방 생성에 성공했습니다.");
     }
 
-    // 채팅방 입장 화면
-    // 파라미터로 넘어오는 roomId를 확인 후 해당 roomId 를 기준으로
-    // 채팅방을 찾아서 클라이언트를 chatroom 으로 보낸다.
-    @GetMapping("/chat/joinroom")
-    public String joinRoom(long roomId,Model model){
+    //채팅방에 속한 유저 List 조회
+    @GetMapping("/joinUser")
+    public ResponseEntity joinRoom(@RequestParam long roomId){
 
-        log.info("roomId : {}",roomId);
-        model.addAttribute("room",chatRoomService.findByRoomId(roomId));
-
-        return "chatroom";
+        List<UserResponseDto.UserInfo> responses = chatService.getUserList(roomId);
+        return response.success(responses, "채팅방에 속한 유저 조회에 성공했습니다..");
     }
 }

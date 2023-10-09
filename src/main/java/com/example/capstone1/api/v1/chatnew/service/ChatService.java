@@ -4,6 +4,7 @@ import com.example.capstone1.api.entity.Users;
 import com.example.capstone1.api.enums.MessageType;
 import com.example.capstone1.api.exception.BusinessLogicException;
 import com.example.capstone1.api.exception.ExceptionCode;
+import com.example.capstone1.api.mapper.UsersMapper;
 import com.example.capstone1.api.v1.chatnew.dto.ChatRequestDto;
 import com.example.capstone1.api.v1.chatnew.dto.ChatResponseDto;
 import com.example.capstone1.api.v1.chatnew.entity.Chat;
@@ -11,6 +12,7 @@ import com.example.capstone1.api.v1.chatnew.entity.ChatRoom;
 import com.example.capstone1.api.v1.chatnew.mapper.ChatMapper;
 import com.example.capstone1.api.v1.chatnew.repo.ChatRepository;
 import com.example.capstone1.api.v1.chatnew.repo.ChatRoomRepository;
+import com.example.capstone1.api.v1.dto.response.UserResponseDto;
 import com.example.capstone1.api.v1.repository.UsersRepository;
 import com.example.capstone1.api.v1.service.UsersService;
 import lombok.AllArgsConstructor;
@@ -28,10 +30,10 @@ public class ChatService {
 
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
-    private final UsersService usersService;
     private final UsersRepository usersRepository;
     private final ChatRoomService chatRoomService;
     private final ChatMapper chatMapper;
+    private final UsersMapper usersMapper;
 
 
 
@@ -60,8 +62,19 @@ public class ChatService {
             log.info("여기 엔터 확인111111");
             log.info(chat.getRoomId());
             //채팅방 유저 +1;
-            chatRoomService.increaseUser(chat.getRoomId());
-        }
+            //여기서 채팅방에 이미 존재하는 사람이라면 안되게
+            List<Chat> chats = chatRepository.findChatByUserNameAndRoomId(chat.getUsername(),chat.getRoomId());
+            for(int i=0;i<chats.size();i++){
+                if(MessageType.ENTER.equals(chats.get(i).getType())){
+                    throw new BusinessLogicException(ExceptionCode.USERS_ALREADY_EXIST);
+                }else{
+                    chatRoomService.increaseUser(chat.getRoomId());
+                }
+            }
+            }
+
+
+
 
         Optional<ChatRoom> chatRoom1 = chatRoomRepository.findById(chat.getRoomId());
         ChatRoom chatRoom = chatRoom1.get();
@@ -71,6 +84,9 @@ public class ChatService {
 
         chat1.setUsers(users.get());
         chat1.setChatRoom(chatRoom);
+        if(MessageType.ENTER.equals(chat.getType())){
+            chat1.setMessage(chat1.getUsers().getUsername()+"님이 입장하셨습니다.");
+        }
         log.info("Test!!!!!!!!!!!!!");
         log.info(chat1.getMessage());
         log.info(chat1.getType());
@@ -86,30 +102,42 @@ public class ChatService {
         return response;
     }
 
+    //채팅방에 참여한 유저 리스트
+    public List<UserResponseDto.UserInfo> getUserList(long roomId) {
+        Optional<List<Chat>> chats = chatRepository.findChatByRoomId(roomId);
+        List<Chat> chatList = chats.orElse(new ArrayList<>()); // 미리 빈 리스트를 할당하여 NullPointerException 방지
+        Set<Users> users = new HashSet<>(); // HashSet을 사용하여 중복 제거
 
-/*
-    // 채팅방 유저 이름 중복 확인
-    public String isDuplicateName(String roomId,String username){
-
-        ChatRoom chatRoom = chatRoomRepository.findChatRoomByRoomId(roomId);
-        String temp = username;
-
-        // 만약 username이 중복이라면 랜덤한 숫자를 붙여준다.
-        // 이 때 랜덤한 숫자를 붙였을때 getUserList 안에 있는 닉네임이라면 다시 랜덤한 숫자 붙이기
-        while(chatRoom.getUsername().equals(temp)){
-            int ranNum = (int) (Math.random() * 100) + 1;
-            temp = username+ranNum;
+        for(int i = 0; i < chatList.size(); i++) {
+            Users users1 = chatList.get(i).getUsers();
+            users.add(users1); // 이미 존재하는 users1은 무시됨
         }
 
-        return temp;
+        List<UserResponseDto.UserInfo> userL = usersMapper.toUserInfoList(new ArrayList<>(users));
+
+        return userL;
     }
 
- */
+    //채팅방 Chat 조회
+    public List<ChatResponseDto.ListResponse> getChatList(long roomId){
+
+        Optional<List<Chat>> chats = chatRepository.findChatByRoomId(roomId);
+        List<Chat> chatList = chats.get();
+
+        List<ChatResponseDto.ListResponse> response = sortListByCreateDate(chatMapper.chatToChatListResponseDto(chatList));
+
+        return response;
+    }
+
+    public List<ChatResponseDto.ListResponse> sortListByCreateDate(List<ChatResponseDto.ListResponse> list) {
+        Collections.sort(list, Comparator.comparing(ChatResponseDto.ListResponse::getCreateDate));
+        return list;
+    }
+
+
 
 
 /*
-    // 채팅방 유저 리스트 삭제 ->이것도 유저 미드에서 삭제
-    //미드에서 채팅 가져오자
     public void deleteUser(String roomId,String userUUID){
         ChatRoom chatRoom = chatRoomRepository.findChatRoomByRoomId(roomId);
         chatRoom.getUserList().remove(userUUID);
@@ -117,26 +145,8 @@ public class ChatService {
 
 
  */
-    /*
-    // 채팅방에 참여한 유저 리스트
-    public String getUserName(String roomId,String userUUID){
-        ChatRoom chatRoom = chatRoomMap.get(roomId);
 
-        return chatRoom.getUserList().get(userUUID);
-    }
-
-     */
 /*
-    //채팅방 전체 userList 조회
-    public List<String> getUserList(String roomId){
-        List<String> list = new ArrayList<>();
-
-        ChatRoom chatRoom = chatRoomMap.get(roomId);
-
-        chatRoom.getUserList().forEach((key,value) -> list.add(value));
-        
-        return list;
-    }
 
 
  */

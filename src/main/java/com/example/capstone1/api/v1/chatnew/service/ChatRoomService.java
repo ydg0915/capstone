@@ -18,10 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -41,12 +38,8 @@ public class ChatRoomService {
 
     // roomName 으로 채팅방 만들기
     public ChatRoomResponseDto.Response createChatRoom(ChatRoomRequestDto.Post post){
-        ChatRoom post1 = chatRoomMapper.chatRoomRequestDtoPostToChatRoom(post);
-        log.info(post1);
         String username = SecurityUtil.getCurrentUsername();
-
-
-
+        ChatRoom post1 = chatRoomMapper.chatRoomRequestDtoPostToChatRoom(post);
         long userCount =0;
         post1.setUserCount(userCount);
         log.info(post1.getRoomName());
@@ -55,7 +48,7 @@ public class ChatRoomService {
         chatRoomRepository.save(post1);
 
         //response
-        ChatRoomResponseDto.Response response = chatRoomMapper.chatRoomToChatRoomResponseDto(post1);
+        ChatRoomResponseDto.Response response = chatRoomMapper.chatRoomToChatRoomResponseDto(post1,username);
         log.info("------여기 2번 ");
         log.info(response);
         log.info(response.getId());
@@ -64,22 +57,19 @@ public class ChatRoomService {
     }
 
 
-    public List<ChatRoomResponseDto.ListResponse> findAllRoom(){
+    public List<ChatRoomResponseDto.ListResponse> findAllRoom() {
         String username = SecurityUtil.getCurrentUsername();
         List<Chat> chats = chatRepository.findChatByUserName(username);
-        List<ChatRoom> chatRooms = new ArrayList<>();
-        for(int i=0;i<chats.size();i++){
-            ChatRoom chatRoom = new ChatRoom();
-            chatRoom = chats.get(i).getChatRoom();
-            chatRooms.add(chatRoom);
+        Set<ChatRoom> chatRooms = new HashSet<>(); // HashSet을 사용하여 중복 제거
+
+        for (int i = 0; i < chats.size(); i++) {
+            ChatRoom chatRoom = chats.get(i).getChatRoom();
+            chatRooms.add(chatRoom); // 이미 존재하는 chatRoom은 무시됨
         }
-        List<ChatRoomResponseDto.ListResponse> chatList = chatRoomMapper.ChatRoomToChatRoomResponseList(chatRooms);
+
+        List<ChatRoomResponseDto.ListResponse> chatList = chatRoomMapper.ChatRoomToChatRoomResponseList(new ArrayList<>(chatRooms));
         return chatList;
     }
-
-
-
-
 
 
     // roomId 기준으로 채팅방 찾기
@@ -122,10 +112,10 @@ public class ChatRoomService {
 
 
 
-    // 채팅방에 참여한 유저 리스트
+    //채팅방에 참여한 유저 리스트
     public List<Users> getUserName(String roomId){
-        Chat cha
-        ChatRoom chatRoom = chatRoomMap.get(roomId);
+
+        List<Users> users = ChatService.
 
         return chatRoom.getUserList().get(userUUID);
     }

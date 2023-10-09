@@ -21,4 +21,14 @@ public class ChatResponseDto {
         private LocalDateTime createDate; // 채팅 발송 시간
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ListResponse {
+        private String sender;//채팅을 보낸 사람
+        private String message;// 메세지
+        private LocalDateTime createDate; // 채팅 발송 시간
+    }
+
 }

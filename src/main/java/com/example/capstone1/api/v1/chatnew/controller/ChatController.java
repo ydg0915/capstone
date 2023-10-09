@@ -3,11 +3,14 @@ package com.example.capstone1.api.v1.chatnew.controller;
 import com.example.capstone1.api.enums.MessageType;
 import com.example.capstone1.api.v1.chatnew.dto.ChatRequestDto;
 import com.example.capstone1.api.v1.chatnew.dto.ChatResponseDto;
+import com.example.capstone1.api.v1.chatnew.dto.ChatRoomResponseDto;
 import com.example.capstone1.api.v1.chatnew.service.ChatService;
+import com.example.capstone1.api.v1.dto.Response;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -17,6 +20,8 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Controller
@@ -28,6 +33,7 @@ public class ChatController{
     // convertAndSend 는 객체를 인자로 넘겨주면 자동으로 Message 객체로 변환 후 도착지로 전송한다.
     private final SimpMessageSendingOperations template;
     private final ChatService chatService;
+    private final Response response;
 
     @MessageMapping("/chat/{roomNo}")
     public void enterUser(@DestinationVariable(value = "roomNo") final String chatRoomNo,
@@ -55,6 +61,17 @@ public class ChatController{
 
 
     }
+
+
+    // 채팅방에 속한 채팅 반환
+    @GetMapping("/chatroom/chatList")
+    public ResponseEntity userList(@RequestParam long roomId){
+        List<ChatResponseDto.ListResponse> responses =chatService.getChatList(roomId);
+        return response.success(responses, "채팅 조회에 성공했습니다.");
+    }
+
+
+
     /*
     //유저 퇴장 시에는 EventListener 를 통해서 유저 퇴장을 확인
     @EventListener
@@ -91,17 +108,6 @@ public class ChatController{
     }
 
  */
-/*
-    // 채팅에 참여한 유저 리스트 반환
-    @GetMapping("/uselist")
-    @ResponseBody
-    public List<String> userList(String roomId){
-
-        return chatService.getUserList(roomId);
-    }
-
- */
-
 
 /*
     // 채팅에 참여한 유저 닉네임 중복 확인
