@@ -13,8 +13,8 @@ public class ChatRequestDto {
 
         //메시지 타입 :  입장 채팅
         private MessageType type; //메시지 타입
-        private String roomId;
-        private String nickname;//채팅을 보낸 사람
+        private Long roomId;
+        private String username;
         private String message;// 메세지
 
 

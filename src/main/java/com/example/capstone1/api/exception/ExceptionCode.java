@@ -9,6 +9,7 @@ public enum ExceptionCode {
 
     FOLLOW_ALREADY_EXISTS(404, "Follow Already Exists"),
     BOOKMARK_ALREADY_EXISTS(404, "BookMark Already Exists"),
+    ENTER_ALREADY_EXISTS(404, "Enter Already Exists"),
 
     USERS_ALREADY_EXIST(404, "USERS Already Exists");
 

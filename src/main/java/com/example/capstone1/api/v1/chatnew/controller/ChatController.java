@@ -3,8 +3,6 @@ package com.example.capstone1.api.v1.chatnew.controller;
 import com.example.capstone1.api.enums.MessageType;
 import com.example.capstone1.api.v1.chatnew.dto.ChatRequestDto;
 import com.example.capstone1.api.v1.chatnew.dto.ChatResponseDto;
-import com.example.capstone1.api.v1.chatnew.entity.ChatMid;
-import com.example.capstone1.api.v1.chatnew.repo.ChatRepository;
 import com.example.capstone1.api.v1.chatnew.service.ChatService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +17,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @Slf4j
@@ -38,23 +33,23 @@ public class ChatController{
     public void enterUser(@DestinationVariable(value = "roomNo") final String chatRoomNo,
             @Payload ChatRequestDto.Post chat, SimpMessageHeaderAccessor headerAccessor){
         log.info(chat.getMessage());
-        log.info(chat.getNickname());
+        log.info(chat.getUsername());
 
         if(MessageType.ENTER.equals(chat.getType())){
             //채팅방에 유저 추가 및 UserUUID 반환
-            ChatMid chatMid = chatService.addUser(chat);
-
-            //채팅방 유저 +1;
-            chatService.increaseUser(chat.getRoomId());
-            chat.setMessage(chat.getNickname() + "님이 입장하셨습니다.");
-            template.convertAndSend("/sub/chat/room/"+chatRoomNo,chat);
+            ChatResponseDto.Response chat1 = chatService.sendMessage(chat);
+            log.info("ENTER!!!!!!!");
+            log.info("chat1 : {}",chat1.getType());
+            log.info("ENTER!!!!!!!");
+            chat1.setMessage(chat1.getSender() + "님이 입장하셨습니다.");
+            template.convertAndSend("/sub/chat/"+chatRoomNo,chat1);
 
         } else if (MessageType.TALK.equals(chat.getType())) {
-            log.info("chat : {}",chat);
-            chat.setMessage(chat.getMessage());
-            ChatResponseDto.Response reponse = chatService.sendMessage(chat);
-            chat.setMessage(chat.getNickname() + "님이 입장하셨습니다.22");
-            template.convertAndSend("/sub/chat/room/"+chatRoomNo,reponse);
+            log.info("TALK!!!!!!!");
+            log.info("chat : {}",chat.getType());
+            log.info("TALK!!!!!!!");
+            ChatResponseDto.Response response = chatService.sendMessage(chat);
+            template.convertAndSend("/sub/chat/"+chatRoomNo,response);
 
         }
 
@@ -108,7 +103,7 @@ public class ChatController{
  */
 
 
-
+/*
     // 채팅에 참여한 유저 닉네임 중복 확인
     @GetMapping("/duplicateName")
     @ResponseBody
@@ -120,6 +115,8 @@ public class ChatController{
 
         return userName;
     }
+
+ */
 
 
 }

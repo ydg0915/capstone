@@ -1,6 +1,6 @@
 package com.example.capstone1.api.entity;
 
-import com.example.capstone1.api.v1.chatnew.entity.ChatMid;
+import com.example.capstone1.api.v1.chatnew.entity.Chat;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -89,6 +89,6 @@ public class Users extends BaseTime implements UserDetails {
     private List<Follow> follows = new ArrayList<>();
 
     @OneToMany(mappedBy = "users", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<ChatMid> chatMids = new ArrayList<>();
+    private List<Chat> Chat = new ArrayList<>();
 
 }
