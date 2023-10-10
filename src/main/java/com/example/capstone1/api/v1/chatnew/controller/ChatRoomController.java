@@ -1,5 +1,6 @@
 package com.example.capstone1.api.v1.chatnew.controller;
 
+import com.example.capstone1.api.v1.chatnew.dto.ChatResponseDto;
 import com.example.capstone1.api.v1.chatnew.dto.ChatRoomRequestDto;
 import com.example.capstone1.api.v1.chatnew.dto.ChatRoomResponseDto;
 import com.example.capstone1.api.v1.chatnew.entity.ChatRoom;
@@ -49,11 +50,17 @@ public class ChatRoomController {
         return response.success(responses, "채팅방 생성에 성공했습니다.");
     }
 
-    //채팅방에 속한 유저 List 조회
+    //채팅방에 속한 유저  조회
     @GetMapping("/joinUser")
     public ResponseEntity joinRoom(@RequestParam long roomId){
-
         List<UserResponseDto.UserInfo> responses = chatService.getUserList(roomId);
         return response.success(responses, "채팅방에 속한 유저 조회에 성공했습니다..");
+    }
+
+    @GetMapping("/exitUser")
+    public ResponseEntity Exituser(@RequestParam long roomId,String username){
+
+        List<ChatResponseDto.ListResponse> responses = chatRoomService.exitChat(roomId,username);
+        return response.success(responses, "채팅방에 속한 유저 삭제에 성공했습니다..");
     }
 }

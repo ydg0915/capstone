@@ -3,6 +3,7 @@ package com.example.capstone1.api.v1.chatnew.service;
 
 import com.example.capstone1.api.entity.Users;
 import com.example.capstone1.api.security.SecurityUtil;
+import com.example.capstone1.api.v1.chatnew.dto.ChatResponseDto;
 import com.example.capstone1.api.v1.chatnew.dto.ChatRoomRequestDto;
 import com.example.capstone1.api.v1.chatnew.dto.ChatRoomResponseDto;
 import com.example.capstone1.api.v1.chatnew.entity.Chat;
@@ -101,24 +102,38 @@ public class ChatRoomService {
         chatRoom.setUserCount(chatRoom.getUserCount()-1);
         chatRoomRepository.save(chatRoom);
     }
-/*
-    // 채팅방 유저 리스트 삭제 ->이것도 유저 미드에서 삭제
-    //미드에서 채팅 가져오자
-    public void deleteUser(String roomId,String userUUID){
+
+    //채팅방에서 유저가 나갈때
+    public List<ChatResponseDto.ListResponse> exitChat(long roomId,String username){
+        List<Chat> chats = chatRepository.findChatByUserNameAndRoomId(username,roomId);
+        List<ChatResponseDto.ListResponse> chatList = new ArrayList<>();
+        for(int i=0;i<chats.size();i++){
+            Chat chat = new Chat();
+            ChatResponseDto.ListResponse ls = new ChatResponseDto.ListResponse();
+            chat = chats.get(i);
+            chat.setUsers(null);
+            chatRepository.save(chat);
+            String name = "알수없는 유저 ";
+            ls.setSender(name);
+            ls.setMessage(chat.getMessage());
+            ls.setCreateDate(chat.getCreateDate());
+            chatList.add(ls);
+        }
+
         ChatRoom chatRoom = chatRoomRepository.findChatRoomByRoomId(roomId);
-        chatRoom.getUserList().remove(userUUID);
+        if(chatRoom.getUserCount()==0){
+            chatRoomRepository.save(chatRoom);
+        }else{
+            chatRoom.setUserCount(chatRoom.getUserCount()-1);
+        }
+
+        return chatList;
     }
 
 
 
 
-    //채팅방에 참여한 유저 리스트
-    public List<Users> getUserName(String roomId){
 
-        List<Users> users = ChatService.
-
-        return chatRoom.getUserList().get(userUUID);
-    }
 
 
 /*

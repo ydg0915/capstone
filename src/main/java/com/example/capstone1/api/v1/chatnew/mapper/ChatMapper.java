@@ -30,7 +30,11 @@ public interface ChatMapper {
         List<ChatResponseDto.ListResponse> chatList = new ArrayList<>();
         for(int i=0;i<chat.size();i++){
             ChatResponseDto.ListResponse chat1 = new ChatResponseDto.ListResponse();
-            chat1.setSender(chat.get(i).getUsers().getUsername());
+            if(chat.get(i).getUsers() == null){
+                chat1.setSender("알수없는 유저");
+            }else{
+                chat1.setSender(chat.get(i).getUsers().getUsername());
+            }
             chat1.setMessage(chat.get(i).getMessage());
             chat1.setCreateDate(chat.get(i).getCreateDate());
             chatList.add(chat1);

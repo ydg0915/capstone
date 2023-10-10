@@ -57,6 +57,9 @@ public class ChatController{
             ChatResponseDto.Response response = chatService.sendMessage(chat);
             template.convertAndSend("/sub/chat/"+chatRoomNo,response);
 
+        } else if(MessageType.LEAVE.equals(chat.getType())) {
+            chat.setMessage(chat.getUsername() + "님이 퇴장하셨습니다.");
+            template.convertAndSend("/sub/chat/"+chatRoomNo,response);
         }
 
 
