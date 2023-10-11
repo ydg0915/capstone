@@ -26,7 +26,7 @@ public class SpringConfig implements WebSocketMessageBrokerConfigurer {
                 .setErrorHandler(stompExceptionHandler)
                 .addEndpoint("/ws-stomp")
                 .setAllowedOriginPatterns("*")
-                .addInterceptors();
+                .addInterceptors(stompHandler);
         }
 
 
