@@ -3,22 +3,16 @@ package com.example.capstone1.api.v1.chatnew.controller;
 import com.example.capstone1.api.v1.chatnew.dto.ChatResponseDto;
 import com.example.capstone1.api.v1.chatnew.dto.ChatRoomRequestDto;
 import com.example.capstone1.api.v1.chatnew.dto.ChatRoomResponseDto;
-import com.example.capstone1.api.v1.chatnew.entity.ChatRoom;
 import com.example.capstone1.api.v1.chatnew.service.ChatRoomService;
 import com.example.capstone1.api.v1.chatnew.service.ChatService;
 import com.example.capstone1.api.v1.dto.Response;
 import com.example.capstone1.api.v1.dto.response.UserResponseDto;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
