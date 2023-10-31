@@ -3,6 +3,7 @@ package com.example.capstone1.api.v1.chatnew.controller;
 import com.example.capstone1.api.enums.MessageType;
 import com.example.capstone1.api.v1.chatnew.dto.ChatRequestDto;
 import com.example.capstone1.api.v1.chatnew.dto.ChatResponseDto;
+import com.example.capstone1.api.v1.chatnew.entity.ChatRoom;
 import com.example.capstone1.api.v1.chatnew.service.ChatService;
 import com.example.capstone1.api.v1.dto.Response;
 import lombok.RequiredArgsConstructor;

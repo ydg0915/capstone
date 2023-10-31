@@ -55,6 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         configuration.applyPermitDefaultValues();
         configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("ws://localhost:8080/ws-stomp");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         //configuration.setAllowCredentials(true);

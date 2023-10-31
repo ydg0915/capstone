@@ -1,8 +1,11 @@
 package com.example.capstone1.api.v1.chatnew.handler;
 
+import com.example.capstone1.api.exception.BusinessLogicException;
+import com.example.capstone1.api.exception.ExceptionCode;
 import com.example.capstone1.api.jwt.JwtTokenProvider;
 import com.example.capstone1.api.v1.chatnew.config.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.ServerHttpRequest;
@@ -14,33 +17,51 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.server.HandshakeInterceptor;
+
 
 import java.util.Map;
 
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
-public class StompHandler implements HandshakeInterceptor {
+public class StompHandler implements ChannelInterceptor {
 
-    private final JwtUtils jwtUtils;
+
     private final JwtTokenProvider jwtTokenProvider;
+    private static final String BEARER_PREFIX = "Bearer";
+
 
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                                   WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        String authorization = request.getHeaders().get ("Authorization").get(0);
-        authorization = authorization.replace ("Bearer ", "");
-        jwtTokenProvider.validateToken(authorization);
-        return true;
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
+        StompCommand command = headerAccessor.getCommand();
+        if (!command.equals(StompCommand.CONNECT)) {
+            return message;
+        }
+        String authorization = String.valueOf(headerAccessor.getNativeHeader("Authorization"));
+        if (authorization == null || authorization.equals("null") || !authorization.startsWith(BEARER_PREFIX)) {
+            throw new BusinessLogicException(ExceptionCode.INVALID_JWT_TOKEN);
+
+
+        }
+
+        // 토큰 만들기 authorization -> token
+        String token = authorization.substring(8, authorization.length() - 1);
+        // 검증
+        jwtTokenProvider.validateToken(token);
+        log.info("검증 통과");
+        return message;
     }
 
-    @Override
-    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
-
+    private void printStompHead(StompHeaderAccessor headerAccessor) {
+        Map<String, Object> headers = headerAccessor.toMap();
+        for (Map.Entry<String, Object> entry : headers.entrySet()) {
+            String headerName = entry.getKey();
+            Object headerValue = entry.getValue();
+            log.info("Header - {}: {}", headerName, headerValue);
+        }
     }
 }

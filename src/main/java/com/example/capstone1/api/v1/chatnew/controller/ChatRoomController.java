@@ -57,4 +57,6 @@ public class ChatRoomController {
         List<ChatResponseDto.ListResponse> responses = chatRoomService.exitChat(roomId,username);
         return response.success(responses, "채팅방에 속한 유저 삭제에 성공했습니다..");
     }
+
+
 }

@@ -11,7 +11,10 @@ public enum ExceptionCode {
     BOOKMARK_ALREADY_EXISTS(404, "BookMark Already Exists"),
     ENTER_ALREADY_EXISTS(404, "Enter Already Exists"),
 
-    USERS_ALREADY_EXIST(404, "USERS Already Exists");
+    USERS_ALREADY_EXIST(404, "USERS Already Exists"),
+
+    INVALID_JWT_TOKEN(404, "Invalid Jwt Token")
+    ;
 
     @Getter
     private double status;
