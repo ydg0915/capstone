@@ -38,6 +38,9 @@ public class SpringConfig implements WebSocketMessageBrokerConfigurer {
         // 메시지를 발행하는 요청 url -> 메시지를 보낼 때
         registry.setApplicationDestinationPrefixes("/pub");
     }
-
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(stompHandler);
+    }
 
 }

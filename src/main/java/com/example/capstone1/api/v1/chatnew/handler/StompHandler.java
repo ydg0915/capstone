@@ -35,22 +35,22 @@ public class StompHandler implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        
+
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
+        printStompHead(headerAccessor);
+
+        log.info("연결확인!!");
         StompCommand command = headerAccessor.getCommand();
         if (!command.equals(StompCommand.CONNECT)) {
             return message;
         }
+
+
         String authorization = String.valueOf(headerAccessor.getNativeHeader("Authorization"));
-        if (authorization == null || authorization.equals("null") || !authorization.startsWith(BEARER_PREFIX)) {
-            throw new BusinessLogicException(ExceptionCode.INVALID_JWT_TOKEN);
+        log.info("여기!!!" + authorization);
 
-
-        }
-
-        // 토큰 만들기 authorization -> token
         String token = authorization.substring(8, authorization.length() - 1);
-        // 검증
+        log.info("여기토큰!!"+token);
         jwtTokenProvider.validateToken(token);
         log.info("검증 통과");
         return message;
