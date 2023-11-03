@@ -6,10 +6,13 @@ import com.example.capstone1.api.v1.dto.response.UserResponseDto;
 import com.example.capstone1.api.v1.service.UsersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -68,6 +71,12 @@ public class UsersController {
     public ResponseEntity<?> getUserInfoById(@PathVariable Long userId) {
         UserResponseDto.UserInfo userInfo = usersService.getUserInfoById(userId);
         return response.success(userInfo, "회원 프로필 조회에 성공했습니다.");
+    }
+
+    @PatchMapping(value = "/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity patchImageHotel(UserRequestDto.PatchImage patchImage) throws IOException {
+        UserResponseDto.UserInfo userInfo = usersService.uploadUserImage(patchImage.getImage());
+        return response.success(userInfo, "회원 프로필 이미지 생성에 성공했습니다.");
     }
 
     @GetMapping("/search")

@@ -1,8 +1,10 @@
 package com.example.capstone1.api.v1.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
@@ -53,5 +55,13 @@ public class UserRequestDto {
     @Setter
     public static class Delete {
         private String password;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class PatchImage {
+
+        private MultipartFile image;
     }
 }

@@ -52,6 +52,9 @@ public class Users extends BaseTime implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    @Column
+    private String image; //S3 사진 업로드
+
     @Override
     public String getUsername() {
         return username;

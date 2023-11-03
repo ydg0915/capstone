@@ -59,6 +59,11 @@ dependencies {
 	// spring websocket
 	implementation 'org.webjars:webjars-locator-core'
 
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+
+
+
 
 }
 

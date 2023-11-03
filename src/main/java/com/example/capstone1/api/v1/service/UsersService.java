@@ -6,11 +6,13 @@ import com.example.capstone1.api.exception.CustomException;
 import com.example.capstone1.api.jwt.JwtTokenProvider;
 import com.example.capstone1.api.mapper.UsersMapper;
 import com.example.capstone1.api.security.SecurityUtil;
+import com.example.capstone1.api.utils.S3Uploader;
 import com.example.capstone1.api.v1.dto.request.UserRequestDto;
 import com.example.capstone1.api.v1.dto.response.UserResponseDto;
 import com.example.capstone1.api.v1.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,7 +23,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +47,7 @@ public class UsersService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RedisTemplate redisTemplate;
     private final JavaMailSender javaMailSender;
+    private final S3Uploader s3Uploader;
 
     public void signUp(UserRequestDto.SignUp signUp) {
         if (usersRepository.existsByUsername(signUp.getUsername())) {
@@ -207,6 +212,7 @@ public class UsersService {
         return users1;
     }
 
+
     public UserResponseDto.UserInfoForForgetting findUsername(String email) {
         Optional<Users> optionalUser = usersRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {
@@ -220,6 +226,25 @@ public class UsersService {
         return userInfo;
     }
 
+    //S3 이미지 업로드
+    public UserResponseDto.UserInfo uploadUserImage(MultipartFile multipartFile) throws IOException {
+        String username = SecurityUtil.getCurrentUsername();
+
+        Optional<Users> users = usersRepository.findByUsername(username);
+        Users users1 = users.get();
+        // 이미 저장되어 있는 이미지 삭제
+        if(users1.getImage() != null)
+            s3Uploader.deleteFile(users1.getImage());
+
+        // 이미지 업로드
+        String s3ImageUrl = s3Uploader.uploadFile(multipartFile);
+        users1.setImage(s3ImageUrl);
+
+        Users users2 = usersRepository.save(users1);
+        UserResponseDto.UserInfo userInfo = UsersMapper.INSTANCE.toUserInfo(users2);
+
+        return userInfo;
+    }
     public void resetPassword(String email) {
         Optional<Users> optionalUser = usersRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {

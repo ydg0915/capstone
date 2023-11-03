@@ -23,6 +23,7 @@ public class UserResponseDto {
         private String username;
         private String email;
         private String introduction;
+        private String image;
     }
 
     @Getter

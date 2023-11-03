@@ -13,7 +13,10 @@ public enum ExceptionCode {
 
     USERS_ALREADY_EXIST(404, "USERS Already Exists"),
 
-    INVALID_JWT_TOKEN(404, "Invalid Jwt Token")
+    INVALID_JWT_TOKEN(404, "Invalid Jwt Token"),
+
+    S3_DELETE_ERROR(404, "S3 Delete Error"),
+    LOGO_NOT_FOUND(404, "Logo not found")
     ;
 
     @Getter
