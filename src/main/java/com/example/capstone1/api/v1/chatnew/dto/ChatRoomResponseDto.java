@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 
 public class ChatRoomResponseDto {
     @Getter
@@ -27,6 +29,7 @@ public class ChatRoomResponseDto {
         private long id; //채팅방 아이디
         private String roomName;// 채팅방 이름
         private long userCount; // 채팅방 인원수
+        private LocalDateTime createDate;
     }
 
 

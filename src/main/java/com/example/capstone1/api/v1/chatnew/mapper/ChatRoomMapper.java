@@ -7,7 +7,9 @@ import com.example.capstone1.api.v1.chatnew.entity.ChatRoom;
 import org.mapstruct.Mapper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ChatRoomMapper {
@@ -25,15 +27,18 @@ public interface ChatRoomMapper {
     ChatRoom chatRoomRequestDtoPatchToChatRoom(ChatRoomRequestDto.Patch patch);
 
     default List<ChatRoomResponseDto.ListResponse> ChatRoomToChatRoomResponseList(List<ChatRoom> chatRooms){
-        List<ChatRoomResponseDto.ListResponse> chatList = new ArrayList<>();
-        for(int i=0;i<chatRooms.size();i++){
-            ChatRoomResponseDto.ListResponse chat = new ChatRoomResponseDto.ListResponse();
-            chat.setRoomName(chatRooms.get(i).getRoomName());
-            chat.setId(chatRooms.get(i).getId());
-            chat.setUserCount(chatRooms.get(i).getUserCount());
-            chatList.add(chat);
+        List<ChatRoomResponseDto.ListResponse> chatList = chatRooms.stream()
+                .map(chatRoom -> {
+                    ChatRoomResponseDto.ListResponse chat = new ChatRoomResponseDto.ListResponse();
+                    chat.setRoomName(chatRoom.getRoomName());
+                    chat.setId(chatRoom.getId());
+                    chat.setUserCount(chatRoom.getUserCount());
+                    chat.setCreateDate(chatRoom.getCreateDate());
+                    return chat;
+                })
+                .sorted(Comparator.comparing(ChatRoomResponseDto.ListResponse::getCreateDate))
+                .collect(Collectors.toList());
 
-        }
         return chatList;
     }
 }
