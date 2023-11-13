@@ -55,6 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         configuration.applyPermitDefaultValues();
         configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("https://dreamy-zuccutto-2b0cc6.netlify.app");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         //configuration.setAllowCredentials(true);
